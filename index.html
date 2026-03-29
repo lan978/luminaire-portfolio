@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电商售后 AI 客服系统 | 产品作品集</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          },
+          colors: {
+            brand: {
+              bg: "#FDFCF9",
+              dark: "#0F291E",
+              gold: "#C5A059",
+              gray: "#8C8C8C",
+              light: "#F5F2EA"
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background: #FDFCF9;
+      color: #1A1A1A;
+      scroll-behavior: smooth;
+    }
+
+    .glass-nav {
+      background: rgba(253, 252, 249, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 320px;
+    }
+
+    .hover-card {
+      transition: all 0.3s ease;
+    }
+
+    .hover-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(15, 41, 30, 0.08);
+      border-color: #C5A059;
+    }
+
+    .showcase-content {
+      display: none;
+    }
+
+    .showcase-content.active {
+      display: block;
+      animation: fadeIn 0.35s ease-in;
+    }
+
+    .showcase-tab-active {
+      background: #0F291E;
+      color: #FDFCF9;
+      border-color: #0F291E;
+      box-shadow: 0 12px 28px rgba(15, 41, 30, 0.16);
+    }
+
+    .showcase-tab-default {
+      background: transparent;
+      color: #8C8C8C;
+      border-color: #EAE6DC;
+    }
+
+    .showcase-tab-default:hover {
+      color: #0F291E;
+      border-color: #C5A059;
+      background: rgba(245, 242, 234, 0.55);
+    }
+
+    .showcase-shot {
+      border: 1px solid rgba(15, 41, 30, 0.1);
+      border-radius: 24px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 24px 48px rgba(15, 41, 30, 0.08);
+    }
+
+    .showcase-shot img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #fff;
+    }
+
+    .showcase-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #C5A059;
+      font-weight: 700;
+    }
+
+    .soft-grid {
+      background-image:
+        linear-gradient(rgba(15, 41, 30, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 41, 30, 0.03) 1px, transparent 1px);
+      background-size: 26px 26px;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased">
+  <nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="font-serif font-bold text-xl tracking-tight text-brand-dark">
+        Luminaire
+        <span class="font-sans text-xs font-normal uppercase tracking-widest text-brand-gold ml-2">Portfolio</span>
+      </div>
+      <div class="hidden md:flex space-x-8 text-sm font-medium text-brand-gray">
+        <a href="#problem" class="hover:text-brand-dark transition-colors">业务背景</a>
+        <a href="#architecture" class="hover:text-brand-dark transition-colors">系统架构</a>
+        <a href="#suite" class="hover:text-brand-dark transition-colors">核心产品线</a>
+        <a href="#showcase" class="hover:text-brand-dark transition-colors">界面展示</a>
+        <a href="#impact" class="hover:text-brand-dark transition-colors">项目价值</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+    <div class="grid xl:grid-cols-12 gap-10 items-end mb-14">
+      <div class="xl:col-span-8 fade-in-up">
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-brand-gold mb-6 flex items-center gap-4">
+          <span class="w-8 h-[1px] bg-brand-gold"></span>
+          AI Product Case Study
+        </p>
+        <h1 class="font-serif text-5xl md:text-7xl font-semibold text-brand-dark leading-tight mb-8">
+          电商售后 AI 客服协同系统
+        </h1>
+        <p class="text-xl md:text-2xl font-light text-gray-600 mb-8 leading-relaxed max-w-4xl">
+          基于 FAQ + RAG + Workflow + Human-in-the-loop 的多角色智能服务系统设计。
+        </p>
+        <p class="text-base text-gray-500 mb-8 max-w-4xl leading-relaxed">
+          面向服饰电商高频服务场景，独立完成需求拆解、方案设计、核心界面、评测闭环与版本迭代，
+          打通商品咨询、订单、物流、售后与人工接管链路。
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <span class="px-4 py-2 border border-brand-dark/20 rounded-full text-xs font-semibold tracking-wider text-brand-dark uppercase bg-white">FAQ + RAG + Workflow</span>
+          <span class="px-4 py-2 border border-brand-dark/20 rounded-full text-xs font-semibold tracking-wider text-brand-dark uppercase bg-white">人机协同</span>
+          <span class="px-4 py-2 border border-brand-dark/20 rounded-full text-xs font-semibold tracking-wider text-brand-dark uppercase bg-white">知识运营</span>
+          <span class="px-4 py-2 border border-brand-dark/20 rounded-full text-xs font-semibold tracking-wider text-brand-dark uppercase bg-white">评测闭环</span>
+        </div>
+      </div>
+
+      <div class="xl:col-span-4 fade-in-up">
+        <div class="bg-white rounded-[28px] border border-brand-dark/10 p-8 shadow-sm">
+          <p class="showcase-label mb-4">Case Snapshot</p>
+          <div class="space-y-4 text-sm leading-relaxed text-gray-600">
+            <div>
+              <div class="text-xs uppercase tracking-[0.18em] text-brand-gray mb-1">Scope</div>
+              <div class="font-semibold text-brand-dark">电商售后 AI 客服协同系统</div>
+            </div>
+            <div>
+              <div class="text-xs uppercase tracking-[0.18em] text-brand-gray mb-1">Ownership</div>
+              <div>需求拆解、产品方案、界面设计、评测方法、bad case 优化</div>
+            </div>
+            <div>
+              <div class="text-xs uppercase tracking-[0.18em] text-brand-gray mb-1">Coverage</div>
+              <div>商品咨询、订单、物流、售后、转人工与风险场景处理</div>
+            </div>
+            <div>
+              <div class="text-xs uppercase tracking-[0.18em] text-brand-gray mb-1">Deliverables</div>
+              <div>用户服务入口、客服工作台、知识库运营后台、评测数据看板</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+        <div class="showcase-label mb-3">Ownership</div>
+        <h3 class="text-lg font-semibold text-brand-dark mb-3">独立完成全链路设计</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          覆盖需求分析、场景拆解、方案设计、知识结构、评测体系与 bad case 持续优化。
+        </p>
+      </div>
+      <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+        <div class="showcase-label mb-3">System Design</div>
+        <h3 class="text-lg font-semibold text-brand-dark mb-3">四层处理机制</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          由 FAQ、RAG、Workflow 和人工兜底构成，让系统兼顾效率、准确性与风险控制。
+        </p>
+      </div>
+      <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+        <div class="showcase-label mb-3">Business Scope</div>
+        <h3 class="text-lg font-semibold text-brand-dark mb-3">覆盖完整服务链路</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          从商品咨询到售后判断，再到人工接管与后续复盘，形成完整闭环。
+        </p>
+      </div>
+      <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+        <div class="showcase-label mb-3">Data Chain</div>
+        <h3 class="text-lg font-semibold text-brand-dark mb-3">打通真实业务状态</h3>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          已贯通 user_id、session_id、conversations、messages 与 handoff_tickets，让用户服务入口、数据库与客服工作台真实联动。
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <section id="problem" class="py-24 bg-brand-light">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <p class="showcase-label mb-4">Problem Context</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">复杂售后场景下的服务瓶颈</h2>
+        <p class="text-brand-gray max-w-3xl leading-relaxed">
+          传统问答系统只能覆盖 FAQ，难以进入订单、物流和售后等真实业务动作；
+          一旦进入复杂争议场景，AI 与人工之间就会出现明显断点。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-brand-gold/20">
+          <h3 class="text-center text-sm font-bold uppercase tracking-widest text-brand-gray mb-6">客服工作量痛点分布 (示意)</h3>
+          <div class="chart-container">
+            <canvas id="workloadChart"></canvas>
+          </div>
+        </div>
+
+        <div class="space-y-8">
+          <div class="flex gap-4">
+            <div class="w-12 h-12 shrink-0 rounded-full bg-brand-dark text-brand-bg flex items-center justify-center font-serif text-xl">1</div>
+            <div>
+              <h4 class="text-lg font-bold text-brand-dark mb-2">标准问题与复杂问题并存</h4>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                物流、FAQ 等高频问题适合自动化处理，但售后争议、退款判断、异常状态识别需要更强的业务链路能力。
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-12 h-12 shrink-0 rounded-full bg-brand-dark text-brand-bg flex items-center justify-center font-serif text-xl">2</div>
+            <div>
+              <h4 class="text-lg font-bold text-brand-dark mb-2">知识更新滞后直接影响应答质量</h4>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                商品知识、政策规则、FAQ 一旦维护不及时，就会导致 RAG 命中不稳、话术不准，进而扩大 bad case 数量。
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-12 h-12 shrink-0 rounded-full bg-brand-dark text-brand-bg flex items-center justify-center font-serif text-xl">3</div>
+            <div>
+              <h4 class="text-lg font-bold text-brand-dark mb-2">AI 与人工协同链路容易断裂</h4>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                转人工后若无法继承前序对话、订单与风险判断，客服就需要重新理解上下文，用户也会失去连续服务体验。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="scenarios" class="py-24 bg-white border-t border-brand-dark/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <p class="showcase-label mb-4">Scenario Breakdown</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">场景拆解</h2>
+        <p class="text-brand-gray max-w-4xl leading-relaxed">
+          电商售后不是单一问答场景，而是由售前、售中、售后与高风险场景共同构成。
+          先拆清问题类型，后续的分层路由设计才有依据。
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-7 grid md:grid-cols-2 gap-5">
+          <div class="bg-brand-light rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Scene 01</div>
+            <h3 class="text-xl font-semibold text-brand-dark mb-3">售前场景</h3>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+              以商品咨询和推荐为主，强调属性理解、知识命中与回答准确性。
+            </p>
+            <div class="space-y-2 text-sm text-gray-600">
+              <div><strong class="text-brand-dark">典型问题：</strong>尺码、版型、材质、洗护、穿着建议</div>
+              <div><strong class="text-brand-dark">核心能力：</strong>FAQ + 商品知识 RAG</div>
+            </div>
+          </div>
+          <div class="bg-brand-light rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Scene 02</div>
+            <h3 class="text-xl font-semibold text-brand-dark mb-3">售中场景</h3>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+              订单和物流状态查询频次高，适合标准化流程处理，但需要接入真实业务状态。
+            </p>
+            <div class="space-y-2 text-sm text-gray-600">
+              <div><strong class="text-brand-dark">典型问题：</strong>发货时间、物流进度、地址修改、支付状态</div>
+              <div><strong class="text-brand-dark">核心能力：</strong>Workflow 查询 + 状态管理</div>
+            </div>
+          </div>
+          <div class="bg-brand-light rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Scene 03</div>
+            <h3 class="text-xl font-semibold text-brand-dark mb-3">售后场景</h3>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+              退换货、退款与换货判断依赖订单状态、政策规则与上下文，业务复杂度显著提高。
+            </p>
+            <div class="space-y-2 text-sm text-gray-600">
+              <div><strong class="text-brand-dark">典型问题：</strong>退货退款、换货、签收异常、售后条件判断</div>
+              <div><strong class="text-brand-dark">核心能力：</strong>规则判断 + Workflow + 人工接管</div>
+            </div>
+          </div>
+          <div class="bg-brand-dark text-white rounded-2xl border border-brand-dark p-6 shadow-xl hover-card">
+            <div class="showcase-label mb-3 text-brand-gold">Scene 04</div>
+            <h3 class="text-xl font-semibold mb-3">高风险场景</h3>
+            <p class="text-sm text-white/80 leading-relaxed mb-4">
+              一旦涉及争议、投诉、边界不清或服务失败，就必须将“自动处理”切换为“风险控制优先”。
+            </p>
+            <div class="space-y-2 text-sm text-white/80">
+              <div><strong class="text-white">典型问题：</strong>仅退款争议、投诉升级、复杂情绪、边界不清售后</div>
+              <div><strong class="text-white">核心能力：</strong>风险识别 + 工单流转 + 人工兜底</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white rounded-[28px] border border-brand-dark/10 p-8 shadow-sm">
+          <p class="showcase-label mb-3">Routing Strategy</p>
+          <h3 class="font-serif text-2xl text-brand-dark mb-5">场景与处理链路的对应关系</h3>
+          <div class="space-y-4 text-sm text-gray-600 leading-relaxed">
+            <div class="border border-brand-dark/10 rounded-2xl p-4">
+              <div class="font-semibold text-brand-dark mb-2">FAQ 规则层</div>
+              <div>优先承接标准问法和固定规则问题，保证高频问题低成本处理。</div>
+            </div>
+            <div class="border border-brand-dark/10 rounded-2xl p-4">
+              <div class="font-semibold text-brand-dark mb-2">RAG 检索层</div>
+              <div>处理商品属性、政策规则、长文本知识问答，降低模型幻觉。</div>
+            </div>
+            <div class="border border-brand-dark/10 rounded-2xl p-4">
+              <div class="font-semibold text-brand-dark mb-2">Workflow 业务层</div>
+              <div>接入订单、物流、库存、售后等真实业务状态，推动系统执行而不只是回答。</div>
+            </div>
+            <div class="border border-brand-dark/10 rounded-2xl p-4 bg-brand-light">
+              <div class="font-semibold text-brand-dark mb-2">人工兜底层</div>
+              <div>在高风险、复杂争议和边界不清场景中接管服务，保障用户体验与结果可控。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="principles" class="py-24 bg-brand-light border-t border-brand-dark/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <p class="showcase-label mb-4">Goals & Principles</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">产品目标与设计原则</h2>
+        <p class="text-brand-gray max-w-4xl leading-relaxed">
+          目标不是简单接入大模型，而是围绕业务效率、服务体验和风险控制，
+          搭建一套既能自动承接、又能稳定协同人工的售后服务体系。
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-5 bg-white rounded-[28px] border border-brand-dark/10 p-8 shadow-sm">
+          <p class="showcase-label mb-3">Product Goals</p>
+          <h3 class="font-serif text-2xl text-brand-dark mb-6">希望解决什么问题</h3>
+          <div class="space-y-4 text-sm text-gray-600 leading-relaxed">
+            <div class="border-l-2 border-brand-dark pl-4">
+              <div class="font-semibold text-brand-dark mb-1">提升标准问题自动化效率</div>
+              <div>让高频 FAQ、商品咨询、订单和物流查询优先被系统自动承接，释放人工产能。</div>
+            </div>
+            <div class="border-l-2 border-brand-dark pl-4">
+              <div class="font-semibold text-brand-dark mb-1">增强复杂售后判断能力</div>
+              <div>让退款、换货、争议和高风险场景不再停留在模糊问答，而是进入真实的决策链路。</div>
+            </div>
+            <div class="border-l-2 border-brand-dark pl-4">
+              <div class="font-semibold text-brand-dark mb-1">打通用户端与客服工作流</div>
+              <div>减少转人工后的信息丢失，让客服可以直接继承上下文继续处理。</div>
+            </div>
+            <div class="border-l-2 border-brand-dark pl-4">
+              <div class="font-semibold text-brand-dark mb-1">建立可评测、可优化的演进机制</div>
+              <div>通过评测与 bad case 回流，让系统具备持续优化能力，而不是一次性交付。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 grid md:grid-cols-2 gap-5">
+          <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Principle 01</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">分层路由，不做纯大模型直答</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              优先用 FAQ、RAG、Workflow 与人工兜底分层承接，不把复杂业务直接交给单一大模型判断。
+            </p>
+          </div>
+          <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Principle 02</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">先准确承接，再追求表达体验</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              在业务场景里，回答“好听”不如判断“正确”。所有界面和流程都围绕准确承接服务诉求展开。
+            </p>
+          </div>
+          <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Principle 03</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">高风险场景优先考虑人工兜底</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              当系统识别到复杂争议、边界不清或情绪风险时，应优先控制风险，而不是强行自动化完成。
+            </p>
+          </div>
+          <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Principle 04</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">让数据和 bad case 驱动产品迭代</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              通过转人工率、场景分布和异常案例来定义问题优先级，让优化动作有依据、有验证、有结果。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="architecture" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20">
+        <p class="showcase-label mb-4">Core Mechanism</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-6">四层处理机制与多角色协同生态</h2>
+        <p class="text-brand-gray max-w-3xl mx-auto leading-relaxed">
+          这不是单纯的对话页，而是把用户服务入口、客服工作台、知识库运营后台和评测数据看板串成一个可运营、可评测、可迭代的服务闭环。
+        </p>
+      </div>
+
+      <div class="mb-20">
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-stretch">
+          <div class="flex-1 bg-brand-light border border-brand-dark/10 p-6 rounded-lg text-center hover-card">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-brand-gray mb-4">Layer 1</div>
+            <h4 class="font-serif text-xl text-brand-dark mb-2">FAQ 规则层</h4>
+            <p class="text-xs text-gray-500 leading-relaxed">优先处理高频固定问题，保证基础场景的响应速度与准确度。</p>
+          </div>
+          <div class="flex-1 bg-brand-light border border-brand-dark/10 p-6 rounded-lg text-center hover-card">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-brand-gray mb-4">Layer 2</div>
+            <h4 class="font-serif text-xl text-brand-dark mb-2">RAG 检索层</h4>
+            <p class="text-xs text-gray-500 leading-relaxed">结合商品静态知识与长文本政策，提升长尾问法和商品问答的稳定性。</p>
+          </div>
+          <div class="flex-1 bg-brand-light border border-brand-dark/10 p-6 rounded-lg text-center hover-card">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-brand-gray mb-4">Layer 3</div>
+            <h4 class="font-serif text-xl text-brand-dark mb-2">Workflow 业务层</h4>
+            <p class="text-xs text-gray-500 leading-relaxed">驱动订单、物流、售后、库存等真实动作，让 AI 进入业务流程而非停留在问答。</p>
+          </div>
+          <div class="flex-1 bg-brand-dark text-brand-bg p-6 rounded-lg text-center hover-card shadow-lg">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-brand-gold mb-4">Layer 4</div>
+            <h4 class="font-serif text-xl mb-2">人工兜底层</h4>
+            <p class="text-xs text-white/70 leading-relaxed">高风险、复杂争议与边界不清场景自动转接人工，保障服务结果可控。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="p-6 border-t-2 border-brand-dark/20">
+          <h5 class="font-bold text-sm mb-1">用户 (Client)</h5>
+          <p class="text-xs text-gray-500">在统一入口发起商品咨询、物流查询与售后请求。</p>
+        </div>
+        <div class="p-6 border-t-2 border-brand-gold">
+          <h5 class="font-bold text-sm mb-1">客服专员 (Specialist)</h5>
+          <p class="text-xs text-gray-500">承接 AI 无法稳定处理的问题，继承上下文并继续完成服务。</p>
+        </div>
+        <div class="p-6 border-t-2 border-brand-dark/20">
+          <h5 class="font-bold text-sm mb-1">知识运营 (Strategist)</h5>
+          <p class="text-xs text-gray-500">维护知识资产，排查异常 chunk，修复线上 bad case 根因。</p>
+        </div>
+        <div class="p-6 border-t-2 border-brand-dark/20">
+          <h5 class="font-bold text-sm mb-1">产品策略 (Director)</h5>
+          <p class="text-xs text-gray-500">通过转人工率、场景分布与 bad case 记录推动版本优化。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="suite" class="py-24 bg-brand-light">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-14">
+        <p class="showcase-label mb-4">System Overview</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">全链路终端设计</h2>
+        <p class="text-brand-gray max-w-3xl leading-relaxed">
+          这一部分聚焦 5 个关键终端在系统闭环中的职责分工。
+          详细界面说明与完整截图统一放在下方“界面展示”中。
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-5 gap-4 mb-8">
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-5 shadow-sm hover-card">
+          <div class="showcase-label mb-3">01</div>
+          <h3 class="text-lg font-semibold text-brand-dark mb-3">登录与角色分发</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">统一身份入口，按客服专员、知识运营、产品策略分发到不同工作台。</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-5 shadow-sm hover-card">
+          <div class="showcase-label mb-3">02</div>
+          <h3 class="text-lg font-semibold text-brand-dark mb-3">用户服务入口</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">承担商品咨询、订单查询、物流追踪与售后请求的智能首接。</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-5 shadow-sm hover-card">
+          <div class="showcase-label mb-3">03</div>
+          <h3 class="text-lg font-semibold text-brand-dark mb-3">客服工作台</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">接续 AI 未完成的会话，整合订单、工单与 AI 洞察，支持人工介入。</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-5 shadow-sm hover-card">
+          <div class="showcase-label mb-3">04</div>
+          <h3 class="text-lg font-semibold text-brand-dark mb-3">知识库运营</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">负责知识上传、chunk 解析、节点校验和异常知识排查。</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-5 shadow-sm hover-card">
+          <div class="showcase-label mb-3">05</div>
+          <h3 class="text-lg font-semibold text-brand-dark mb-3">评测数据看板</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">从转人工率、bad case 与场景分布切入，形成持续迭代回路。</p>
+        </div>
+      </div>
+
+      <div class="bg-white border border-brand-dark/10 rounded-[28px] p-8 md:p-10 soft-grid">
+        <div class="grid lg:grid-cols-12 gap-8 items-start">
+          <div class="lg:col-span-4">
+            <p class="showcase-label mb-4">Data Chain</p>
+            <h3 class="font-serif text-2xl text-brand-dark mb-4">系统真正打通的是数据与动作链</h3>
+            <p class="text-sm text-gray-600 leading-relaxed mb-5">
+              本项目的价值不只在于设计出几个好看的界面，而是让用户行为、会话状态、客服接管、知识维护与数据复盘共享同一条业务链路。
+            </p>
+            <div class="space-y-3 text-sm text-gray-600 leading-relaxed">
+              <div><strong class="text-brand-dark">用户侧：</strong>产生 user_id、session_id 与实时会话。</div>
+              <div><strong class="text-brand-dark">客服侧：</strong>通过 handoff_tickets 接续高风险或复杂诉求。</div>
+              <div><strong class="text-brand-dark">知识侧：</strong>针对 bad case 回补知识，修复 RAG 命中盲区。</div>
+              <div><strong class="text-brand-dark">数据侧：</strong>记录转人工率、坏例与场景分布，形成迭代依据。</div>
+            </div>
+          </div>
+          <div class="lg:col-span-8">
+            <div class="grid md:grid-cols-4 gap-3 text-sm">
+              <div class="bg-brand-light rounded-2xl border border-brand-dark/10 p-4">
+                <div class="showcase-label mb-3">Step 1</div>
+                <div class="font-semibold text-brand-dark mb-2">user_id / session_id</div>
+                <div class="text-xs text-gray-500 leading-relaxed">用户在智能服务入口发起咨询并沉淀会话上下文。</div>
+              </div>
+              <div class="bg-brand-light rounded-2xl border border-brand-dark/10 p-4">
+                <div class="showcase-label mb-3">Step 2</div>
+                <div class="font-semibold text-brand-dark mb-2">conversations / messages</div>
+                <div class="text-xs text-gray-500 leading-relaxed">AI 自动处理标准问题，并记录完整消息链路。</div>
+              </div>
+              <div class="bg-brand-light rounded-2xl border border-brand-dark/10 p-4">
+                <div class="showcase-label mb-3">Step 3</div>
+                <div class="font-semibold text-brand-dark mb-2">handoff_tickets</div>
+                <div class="text-xs text-gray-500 leading-relaxed">复杂诉求生成工单，携带上下文进入客服工作台。</div>
+              </div>
+              <div class="bg-brand-dark text-white rounded-2xl border border-brand-dark p-4">
+                <div class="showcase-label mb-3 text-brand-gold">Step 4</div>
+                <div class="font-semibold mb-2">评测与回流优化</div>
+                <div class="text-xs text-white/75 leading-relaxed">结合知识运营与数据看板，完成 bad case 复盘与策略修正。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="showcase" class="py-24 bg-white border-t border-brand-dark/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <p class="showcase-label mb-4">Interface Showcase</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">真实界面展示</h2>
+        <p class="text-brand-gray max-w-4xl leading-relaxed">
+          这里集中展示项目中的 5 个关键界面。左侧解释页面在闭环中的职责，
+          右侧直接使用真实截图展示完整页面结构。
+        </p>
+        <div class="flex flex-wrap gap-3 mt-6">
+          <span class="px-3 py-1.5 rounded-full border border-brand-dark/10 bg-brand-light text-xs font-medium text-brand-dark">智能问答</span>
+          <span class="px-3 py-1.5 rounded-full border border-brand-dark/10 bg-brand-light text-xs font-medium text-brand-dark">客服辅助</span>
+          <span class="px-3 py-1.5 rounded-full border border-brand-dark/10 bg-brand-light text-xs font-medium text-brand-dark">工单流转</span>
+          <span class="px-3 py-1.5 rounded-full border border-brand-dark/10 bg-brand-light text-xs font-medium text-brand-dark">工作台优化</span>
+          <span class="px-3 py-1.5 rounded-full border border-brand-dark/10 bg-brand-light text-xs font-medium text-brand-dark">知识运营</span>
+          <span class="px-3 py-1.5 rounded-full border border-brand-dark/10 bg-brand-light text-xs font-medium text-brand-dark">数据分析</span>
+          <span class="px-3 py-1.5 rounded-full border border-brand-dark/10 bg-brand-light text-xs font-medium text-brand-dark">持续迭代优化</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10">
+        <button onclick="switchShowcaseTab('login', this)" class="showcase-tab showcase-tab-active border px-4 py-4 rounded-2xl text-left transition-all">
+          <div class="text-[10px] uppercase tracking-widest text-brand-gold mb-2">内部员工</div>
+          <div class="text-sm font-bold mb-1">登录入口</div>
+          <div class="text-xs opacity-80">统一角色入口</div>
+        </button>
+        <button onclick="switchShowcaseTab('customer', this)" class="showcase-tab showcase-tab-default border px-4 py-4 rounded-2xl text-left transition-all">
+          <div class="text-[10px] uppercase tracking-widest text-brand-gold mb-2">消费者</div>
+          <div class="text-sm font-bold mb-1">用户服务入口</div>
+          <div class="text-xs opacity-80">智能售后入口</div>
+        </button>
+        <button onclick="switchShowcaseTab('workspace', this)" class="showcase-tab showcase-tab-default border px-4 py-4 rounded-2xl text-left transition-all">
+          <div class="text-[10px] uppercase tracking-widest text-brand-gold mb-2">客服专员</div>
+          <div class="text-sm font-bold mb-1">客服工作台</div>
+          <div class="text-xs opacity-80">工单与协同</div>
+        </button>
+        <button onclick="switchShowcaseTab('knowledge', this)" class="showcase-tab showcase-tab-default border px-4 py-4 rounded-2xl text-left transition-all">
+          <div class="text-[10px] uppercase tracking-widest text-brand-gold mb-2">知识运营</div>
+          <div class="text-sm font-bold mb-1">知识库运营后台</div>
+          <div class="text-xs opacity-80">知识治理</div>
+        </button>
+        <button onclick="switchShowcaseTab('analytics', this)" class="showcase-tab showcase-tab-default border px-4 py-4 rounded-2xl text-left transition-all">
+          <div class="text-[10px] uppercase tracking-widest text-brand-gold mb-2">产品策略</div>
+          <div class="text-sm font-bold mb-1">评测数据看板</div>
+          <div class="text-xs opacity-80">评测与迭代</div>
+        </button>
+      </div>
+
+      <div class="bg-brand-light border border-brand-dark/10 rounded-[28px] p-6 md:p-8">
+        <div id="showcase-login" class="showcase-content active">
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">LoginPage</p>
+                <h3 class="font-serif text-2xl text-brand-dark">登录入口</h3>
+              </div>
+              <div class="text-sm text-gray-600 leading-relaxed space-y-4">
+                <div><strong class="text-brand-dark block mb-1">界面定位</strong>内部业务系统的统一安全入口，负责角色识别与工作台分发。</div>
+                <div><strong class="text-brand-dark block mb-1">面向角色</strong>客服专员、知识运营、产品策略 / 管理角色。</div>
+                <div><strong class="text-brand-dark block mb-1">核心功能</strong>统一账号登录、角色切换与工作台分流，建立清晰的 RBAC 访问边界。</div>
+                <div><strong class="text-brand-dark block mb-1">解决的问题</strong>避免系统账号割裂、入口混乱和身份体系不一致。</div>
+                <div><strong class="text-brand-dark block mb-1">设计价值</strong>它让项目从单页 demo 提升为完整的多角色协同后台。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/showcase/login-screen.png" alt="登录入口完整截图">
+              </div>
+              <div class="mt-3 flex justify-end">
+                <a href="assets/showcase/login-screen.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="showcase-customer" class="showcase-content">
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">customer_app.py</p>
+                <h3 class="font-serif text-2xl text-brand-dark">用户服务入口</h3>
+              </div>
+              <div class="text-sm text-gray-600 leading-relaxed space-y-4">
+                <div><strong class="text-brand-dark block mb-1">界面定位</strong>面向消费者的统一服务入口，承接商品咨询、订单、物流和售后问题。</div>
+                <div><strong class="text-brand-dark block mb-1">面向角色</strong>C 端用户 / 电商消费者。</div>
+                <div><strong class="text-brand-dark block mb-1">核心功能</strong>通过推荐问题、开放提问与状态提示，将用户路由到 FAQ、RAG、Workflow 或人工接管流程。</div>
+                <div><strong class="text-brand-dark block mb-1">解决的问题</strong>避免普通聊天框缺少业务边界，让标准问题自动处理、复杂问题有序转人工。</div>
+                <div><strong class="text-brand-dark block mb-1">设计价值</strong>这一页集中体现了智能问答、服务路由与人工兜底能力，且会话与后台链路保持同步。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/showcase/customer-screen.png" alt="用户服务入口完整截图">
+              </div>
+              <div class="mt-3 flex justify-end">
+                <a href="assets/showcase/customer-screen.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="showcase-workspace" class="showcase-content">
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">WorkspacePage.jsx</p>
+                <h3 class="font-serif text-2xl text-brand-dark">客服工作台</h3>
+              </div>
+              <div class="text-sm text-gray-600 leading-relaxed space-y-4">
+                <div><strong class="text-brand-dark block mb-1">界面定位</strong>复杂问题承接工作台，是人机协同真正发生的中枢。</div>
+                <div><strong class="text-brand-dark block mb-1">面向角色</strong>客服专员 / 人工坐席。</div>
+                <div><strong class="text-brand-dark block mb-1">核心功能</strong>展示会话队列、会话内容、关联订单、AI 洞察、建议回复与快捷操作，支持客服快速接单和处理。</div>
+                <div><strong class="text-brand-dark block mb-1">解决的问题</strong>客服无需从零理解问题，可直接继承历史会话、订单状态和风险判断。</div>
+                <div><strong class="text-brand-dark block mb-1">设计价值</strong>这一页最集中地体现了客服辅助、工单流转与工作台优化能力。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/showcase/workspace-screen.png" alt="客服工作台完整截图">
+              </div>
+              <div class="mt-3 flex justify-end">
+                <a href="assets/showcase/workspace-screen.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="showcase-knowledge" class="showcase-content">
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">KnowledgePage.jsx</p>
+                <h3 class="font-serif text-2xl text-brand-dark">知识库运营后台</h3>
+              </div>
+              <div class="text-sm text-gray-600 leading-relaxed space-y-4">
+                <div><strong class="text-brand-dark block mb-1">界面定位</strong>面向运营侧的知识资产管理后台，负责保障 RAG 的知识质量。</div>
+                <div><strong class="text-brand-dark block mb-1">面向角色</strong>知识运营人员。</div>
+                <div><strong class="text-brand-dark block mb-1">核心功能</strong>支持文档上传、分类管理、chunk 预览、状态追踪和异常删除，并可针对 bad case 快速回补知识。</div>
+                <div><strong class="text-brand-dark block mb-1">解决的问题</strong>把知识维护转成可视、可校验、可追溯的运营动作，减少知识滞后带来的回答漂移。</div>
+                <div><strong class="text-brand-dark block mb-1">设计价值</strong>它强化了知识运营与 RAG 数据治理能力，让项目覆盖到底层知识机制。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/showcase/knowledge-screen.png" alt="知识库运营后台完整截图">
+              </div>
+              <div class="mt-3 flex justify-end">
+                <a href="assets/showcase/knowledge-screen.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="showcase-analytics" class="showcase-content">
+          <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">AnalyticsPage.jsx</p>
+                <h3 class="font-serif text-2xl text-brand-dark">评测数据看板</h3>
+              </div>
+              <div class="text-sm text-gray-600 leading-relaxed space-y-4">
+                <div><strong class="text-brand-dark block mb-1">界面定位</strong>系统评测与策略优化的控制台，用于观察 AI 的真实承载效果。</div>
+                <div><strong class="text-brand-dark block mb-1">面向角色</strong>产品 / 策略角色。</div>
+                <div><strong class="text-brand-dark block mb-1">核心功能</strong>呈现人工接入量、转人工率、bad case、场景分布与优化建议，并支持进入下一轮策略调整。</div>
+                <div><strong class="text-brand-dark block mb-1">解决的问题</strong>把模型上线后的“黑盒状态”拆解为可量化指标，帮助判断优先级并验证优化是否生效。</div>
+                <div><strong class="text-brand-dark block mb-1">设计价值</strong>这一页最能体现数据分析、评测体系与持续迭代优化能力。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/showcase/analytics-screen.png" alt="评测数据看板完整截图">
+              </div>
+              <div class="mt-3 flex justify-end">
+                <a href="assets/showcase/analytics-screen.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="evaluation" class="py-24 bg-brand-light border-t border-brand-dark/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <p class="showcase-label mb-4">Evaluation Loop</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">评测与 Bad Case 闭环</h2>
+        <p class="text-brand-gray max-w-4xl leading-relaxed">
+          这个项目不是“上线一个 AI 页面就结束”，而是通过离线评测、开放问法补充、线上坏例回流和知识修复，
+          建立从发现问题到优化验证的迭代链路。
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5 mb-10">
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+          <div class="showcase-label mb-3">Method 01</div>
+          <h3 class="text-lg font-semibold text-brand-dark mb-3">主流程离线评测</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            先围绕 FAQ、RAG、Workflow 与人工兜底构造标准测试集，验证核心流程是否稳定通过，确保主链路可用。
+          </p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+          <div class="showcase-label mb-3">Method 02</div>
+          <h3 class="text-lg font-semibold text-brand-dark mb-3">开放问法补充评测</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            在标准问法之外补充长尾表达、模糊提问与多轮追问，用来检验系统面对真实用户语料时的鲁棒性。
+          </p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+          <div class="showcase-label mb-3">Method 03</div>
+          <h3 class="text-lg font-semibold text-brand-dark mb-3">线上 Bad Case 回流</h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            把转人工异常、回答不稳、路由失败等线上案例结构化记录，并推动知识修复、规则补充和策略迭代。
+          </p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-7 bg-white rounded-[28px] border border-brand-dark/10 p-8 shadow-sm">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <p class="showcase-label mb-3">Representative Cases</p>
+              <h3 class="font-serif text-2xl text-brand-dark">代表性 Bad Case 记录</h3>
+            </div>
+            <div class="text-xs text-brand-gray uppercase tracking-[0.18em]">From Review & Insight</div>
+          </div>
+
+          <div class="space-y-5">
+            <div class="border border-brand-dark/10 rounded-2xl p-5">
+              <div class="flex items-center justify-between mb-4">
+                <div class="text-lg font-semibold text-brand-dark">已签收仅退款误判</div>
+                <div class="px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-medium">Case 01</div>
+              </div>
+              <div class="grid md:grid-cols-3 gap-4 text-sm leading-relaxed">
+                <div>
+                  <div class="showcase-label mb-2">Issue Reason</div>
+                  <p class="text-gray-600">早期逻辑没有充分区分待发货、已发货和已签收三类状态，导致售后判断边界不够清晰。</p>
+                </div>
+                <div>
+                  <div class="showcase-label mb-2">Optimization</div>
+                  <p class="text-gray-600">统一状态判断逻辑，增加下一步建议，并在高风险状态下直接转入人工复核。</p>
+                </div>
+                <div>
+                  <div class="showcase-label mb-2">Result</div>
+                  <p class="text-brand-dark font-medium">售后判断链路更稳定，客服能够更快确认处理方向，减少反复追问。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="border border-brand-dark/10 rounded-2xl p-5">
+              <div class="flex items-center justify-between mb-4">
+                <div class="text-lg font-semibold text-brand-dark">长尾属性回答不稳</div>
+                <div class="px-3 py-1 rounded-full bg-brand-light text-brand-dark text-xs font-medium">Case 02</div>
+              </div>
+              <div class="grid md:grid-cols-3 gap-4 text-sm leading-relaxed">
+                <div>
+                  <div class="showcase-label mb-2">Issue Reason</div>
+                  <p class="text-gray-600">商品知识字段覆盖不足，缺少属性补充和澄清策略，导致复杂追问下回答稳定性下降。</p>
+                </div>
+                <div>
+                  <div class="showcase-label mb-2">Optimization</div>
+                  <p class="text-gray-600">补充属性标签策略、澄清问法模板，并将相关问题沉淀到 bad case 回流流程中。</p>
+                </div>
+                <div>
+                  <div class="showcase-label mb-2">Result</div>
+                  <p class="text-brand-dark font-medium">开放问法下回答更稳定，复杂追问更容易识别并在必要时转人工处理。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-5">
+          <div class="bg-brand-dark text-white rounded-[28px] p-8 shadow-xl">
+            <p class="showcase-label mb-3 text-brand-gold">Iteration Logic</p>
+            <h3 class="font-serif text-2xl mb-4">从问题发现到版本优化</h3>
+            <div class="space-y-4 text-sm text-white/80 leading-relaxed">
+              <div><strong class="text-white block mb-1">1. 收集问题</strong>结合离线评测、线上会话与客服反馈定位异常场景。</div>
+              <div><strong class="text-white block mb-1">2. 定位根因</strong>判断问题来自知识缺口、路由策略、状态管理还是人工接管边界。</div>
+              <div><strong class="text-white block mb-1">3. 制定优化</strong>补充知识、修正规则、增强提示词或调整人工兜底策略。</div>
+              <div><strong class="text-white block mb-1">4. 复测验证</strong>重新回到离线评测与 bad case 清单中验证版本是否真正变好。</div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-[28px] border border-brand-dark/10 p-8 shadow-sm">
+            <p class="showcase-label mb-3">What This Proves</p>
+            <h3 class="font-serif text-2xl text-brand-dark mb-4">这一页想证明的能力</h3>
+            <div class="space-y-3 text-sm text-gray-600 leading-relaxed">
+              <div><strong class="text-brand-dark">评测方法：</strong>不只会做页面，也会设计 AI 产品的验证方式。</div>
+              <div><strong class="text-brand-dark">问题拆解：</strong>能把“回答不好”继续拆成知识、流程、路由和策略问题。</div>
+              <div><strong class="text-brand-dark">优化闭环：</strong>可以从发现 bad case 一路推进到修复、回测与版本迭代。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="iterations" class="py-24 bg-white border-t border-brand-dark/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <p class="showcase-label mb-4">Version History</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">版本迭代记录</h2>
+        <p class="text-brand-gray max-w-4xl leading-relaxed">
+          这个项目的价值不在于一次性把功能堆满，而在于围绕真实问题逐步补齐能力边界。
+          我将迭代拆成四个阶段，每一步都对应一个更明确的业务目标。
+        </p>
+      </div>
+
+      <div class="space-y-5">
+        <div class="grid lg:grid-cols-12 gap-6 bg-brand-light rounded-[28px] border border-brand-dark/10 p-6 md:p-8">
+          <div class="lg:col-span-2">
+            <div class="showcase-label mb-3">Version 1</div>
+            <h3 class="font-serif text-3xl text-brand-dark">V1.0</h3>
+          </div>
+          <div class="lg:col-span-4">
+            <div class="text-lg font-semibold text-brand-dark mb-2">先搭建 FAQ + RAG 的基础问答能力</div>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              先验证商品咨询、基础 FAQ 与知识检索链路是否成立，让系统能够稳定回答高频标准问题。
+            </p>
+          </div>
+          <div class="lg:col-span-3">
+            <div class="showcase-label mb-2">Why This Version</div>
+            <p class="text-sm text-gray-600 leading-relaxed">优先证明智能问答能力可用，建立最小可运行版本。</p>
+          </div>
+          <div class="lg:col-span-3">
+            <div class="showcase-label mb-2">What Changed</div>
+            <p class="text-sm text-gray-600 leading-relaxed">完成 FAQ 规则拦截、商品知识 RAG 和基础用户对话入口。</p>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-6 bg-white rounded-[28px] border border-brand-dark/10 p-6 md:p-8 shadow-sm">
+          <div class="lg:col-span-2">
+            <div class="showcase-label mb-3">Version 2</div>
+            <h3 class="font-serif text-3xl text-brand-dark">V2.0</h3>
+          </div>
+          <div class="lg:col-span-4">
+            <div class="text-lg font-semibold text-brand-dark mb-2">把 AI 问答推进到业务流程里</div>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              不再停留在“能回答”，而是开始接入订单、物流和售后流程，让系统能做业务判断和状态承接。
+            </p>
+          </div>
+          <div class="lg:col-span-3">
+            <div class="showcase-label mb-2">Why This Version</div>
+            <p class="text-sm text-gray-600 leading-relaxed">解决“传统 AI 客服只能答，不能办”的核心问题。</p>
+          </div>
+          <div class="lg:col-span-3">
+            <div class="showcase-label mb-2">What Changed</div>
+            <p class="text-sm text-gray-600 leading-relaxed">引入 Workflow 处理订单与物流场景，并补充售后判断与转人工链路。</p>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-6 bg-brand-light rounded-[28px] border border-brand-dark/10 p-6 md:p-8">
+          <div class="lg:col-span-2">
+            <div class="showcase-label mb-3">Version 3</div>
+            <h3 class="font-serif text-3xl text-brand-dark">V3.0</h3>
+          </div>
+          <div class="lg:col-span-4">
+            <div class="text-lg font-semibold text-brand-dark mb-2">补齐人机协同与知识运营后台</div>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              把客服工作台和知识库管理独立出来，让系统具备人工介入、知识维护和异常修复能力。
+            </p>
+          </div>
+          <div class="lg:col-span-3">
+            <div class="showcase-label mb-2">Why This Version</div>
+            <p class="text-sm text-gray-600 leading-relaxed">解决 AI 与人工链路断裂，以及知识无法快速修复的问题。</p>
+          </div>
+          <div class="lg:col-span-3">
+            <div class="showcase-label mb-2">What Changed</div>
+            <p class="text-sm text-gray-600 leading-relaxed">完成 handoff_tickets、客服工作台、文档上传、chunk 可视化与知识节点管理。</p>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-6 bg-brand-dark text-white rounded-[28px] border border-brand-dark p-6 md:p-8 shadow-xl">
+          <div class="lg:col-span-2">
+            <div class="showcase-label mb-3 text-brand-gold">Version 4</div>
+            <h3 class="font-serif text-3xl">V4.0</h3>
+          </div>
+          <div class="lg:col-span-4">
+            <div class="text-lg font-semibold mb-2">建立评测、Bad Case 与数据看板闭环</div>
+            <p class="text-sm text-white/80 leading-relaxed">
+              在系统可运行后，进一步补上评测和复盘机制，让优化不依赖主观感受，而是回到数据和坏例上。
+            </p>
+          </div>
+          <div class="lg:col-span-3">
+            <div class="showcase-label mb-2 text-brand-gold">Why This Version</div>
+            <p class="text-sm text-white/80 leading-relaxed">让系统具备持续迭代能力，而不是停留在一次性交付。</p>
+          </div>
+          <div class="lg:col-span-3">
+            <div class="showcase-label mb-2 text-brand-gold">What Changed</div>
+            <p class="text-sm text-white/80 leading-relaxed">增加离线评测、开放问法补充评测、bad case 回流与数据看板，支撑版本优化。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="py-24 bg-brand-light border-t border-brand-dark/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <p class="showcase-label mb-4">Results Snapshot</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">结果指标与落地产出</h2>
+        <p class="text-brand-gray max-w-4xl leading-relaxed">
+          这部分不只展示“做了哪些页面”，而是把系统落地后的能力产出拆成可理解、可复盘的结果项。
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-4 gap-5 mb-10">
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm">
+          <div class="showcase-label mb-3">Metric 01</div>
+          <div class="text-4xl font-serif text-brand-dark mb-2">82.4%</div>
+          <div class="text-sm font-semibold text-brand-dark mb-2">AI 独立解决率</div>
+          <p class="text-xs text-gray-500 leading-relaxed">说明标准问题和部分长尾问题已能被系统自动承接。</p>
+        </div>
+        <div class="bg-brand-dark text-white rounded-2xl border border-brand-dark p-6 shadow-xl">
+          <div class="showcase-label mb-3 text-brand-gold">Metric 02</div>
+          <div class="text-4xl font-serif mb-2">15.1%</div>
+          <div class="text-sm font-semibold mb-2">当前转人工率</div>
+          <p class="text-xs text-white/70 leading-relaxed">高风险与复杂问题被有意识地引导进入人工处理，而不是错误自动化。</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm">
+          <div class="showcase-label mb-3">Metric 03</div>
+          <div class="text-4xl font-serif text-brand-dark mb-2">36</div>
+          <div class="text-sm font-semibold text-brand-dark mb-2">本周已解决 Bad Case</div>
+          <p class="text-xs text-gray-500 leading-relaxed">说明系统具备持续收集、修复和复测的优化能力。</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-brand-dark/10 p-6 shadow-sm">
+          <div class="showcase-label mb-3">Metric 04</div>
+          <div class="text-4xl font-serif text-brand-dark mb-2">12</div>
+          <div class="text-sm font-semibold text-brand-dark mb-2">待优化问题池</div>
+          <p class="text-xs text-gray-500 leading-relaxed">通过问题池管理明确后续版本优先级，而不是零散修补。</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-7 bg-white rounded-[28px] border border-brand-dark/10 p-8 shadow-sm">
+          <p class="showcase-label mb-3">Delivered Outputs</p>
+          <h3 class="font-serif text-2xl text-brand-dark mb-6">最终交付的不是单点页面，而是一套系统</h3>
+          <div class="grid md:grid-cols-2 gap-5 text-sm text-gray-600 leading-relaxed">
+            <div class="border border-brand-dark/10 rounded-2xl p-5">
+              <div class="font-semibold text-brand-dark mb-2">用户端服务入口</div>
+              <div>统一承接商品咨询、订单、物流、售后与转人工请求。</div>
+            </div>
+            <div class="border border-brand-dark/10 rounded-2xl p-5">
+              <div class="font-semibold text-brand-dark mb-2">客服协同工作台</div>
+              <div>实现工单承接、客服辅助、AI 洞察和人工复核。</div>
+            </div>
+            <div class="border border-brand-dark/10 rounded-2xl p-5">
+              <div class="font-semibold text-brand-dark mb-2">知识库运营后台</div>
+              <div>支持文档上传、chunk 解析、异常排查与知识修复。</div>
+            </div>
+            <div class="border border-brand-dark/10 rounded-2xl p-5">
+              <div class="font-semibold text-brand-dark mb-2">评测与数据看板</div>
+              <div>支持转人工率追踪、bad case 管理与版本迭代复盘。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-5">
+          <div class="bg-white rounded-[28px] border border-brand-dark/10 p-8 shadow-sm">
+            <p class="showcase-label mb-3">What Changed</p>
+            <h3 class="font-serif text-2xl text-brand-dark mb-4">相较传统 AI 客服的变化</h3>
+            <div class="space-y-4 text-sm text-gray-600 leading-relaxed">
+              <div><strong class="text-brand-dark block mb-1">从单轮问答，到全链路服务承接</strong>系统不只回答，还能接入订单、物流和售后判断。</div>
+              <div><strong class="text-brand-dark block mb-1">从客服孤立处理，到人机协同</strong>人工接手时自动继承上下文，不再让用户重复描述。</div>
+              <div><strong class="text-brand-dark block mb-1">从知识黑盒，到运营可治理</strong>知识内容可视、可修复、可追踪，支持持续优化。</div>
+            </div>
+          </div>
+
+          <div class="bg-brand-dark text-white rounded-[28px] p-8 shadow-xl">
+            <p class="showcase-label mb-3 text-brand-gold">Why It Matters</p>
+            <h3 class="font-serif text-2xl mb-4">这页想证明的结果</h3>
+            <div class="space-y-3 text-sm text-white/80 leading-relaxed">
+              <div>我不只是设计了一组界面，而是搭建了一套可运行、可协同、可评测的 AI 客服系统。</div>
+              <div>我不只是发现问题，也能把问题推进到策略修正、版本升级和结果复测。</div>
+              <div>这份作品集最终证明的是系统设计能力、AI 产品判断力和持续优化能力。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="impact" class="py-24 bg-white border-t border-brand-dark/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <p class="showcase-label mb-4">Project Value</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-6">系统闭环与项目价值落地</h2>
+        <p class="text-brand-gray max-w-3xl mx-auto leading-relaxed">
+          最终产出并非“一个智能客服页面”，而是一套由用户服务入口、客服工作台、知识库运营后台和评测数据看板共同支撑的可运行服务系统。
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div class="bg-brand-light p-8 rounded-2xl border border-brand-dark/5">
+          <h3 class="text-center text-sm font-bold uppercase tracking-widest text-brand-dark mb-6">核心指标迭代优化趋势</h3>
+          <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="p-6 border border-brand-dark/10 rounded-lg bg-brand-bg">
+            <h4 class="font-serif text-xl text-brand-dark mb-3">真实业务链路打通</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              已完成 <code>user_id</code>、<code>session_id</code>、<code>conversations</code>、<code>messages</code> 与 <code>handoff_tickets</code> 的联动，
+              让用户服务入口、数据库状态与客服工作台共享同一条服务链。
+            </p>
+          </div>
+          <div class="p-6 border border-brand-dark/10 rounded-lg bg-brand-bg">
+            <h4 class="font-serif text-xl text-brand-dark mb-3">评测与 bad case 回流机制</h4>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              通过离线评测、开放问法补充评测、bad case 记录与知识回补，建立了从发现问题到修复策略再到结果复测的持续优化方式。
+            </p>
+          </div>
+          <div class="p-6 bg-brand-dark text-brand-bg rounded-lg shadow-xl">
+            <h4 class="font-serif text-xl mb-3">个人能力验证</h4>
+            <p class="text-sm text-white/80 leading-relaxed">
+              独立完成需求拆解、方案架构、界面落地、知识治理、评测闭环与版本迭代，完整验证了 AI 产品从 0 到 1 的系统化设计能力。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-brand-dark text-center py-12">
+    <p class="text-xs text-white/50 uppercase tracking-widest font-bold mb-2">Designed & Architected for Portfolio</p>
+    <p class="text-[10px] text-white/30 tracking-wider">© 2026 E-commerce AI Service Ecosystem</p>
+  </footer>
+
+  <script>
+    function switchShowcaseTab(tabId, btn) {
+      document.querySelectorAll(".showcase-content").forEach((el) => {
+        el.classList.remove("active");
+      });
+
+      document.querySelectorAll(".showcase-tab").forEach((el) => {
+        el.classList.remove("showcase-tab-active");
+        el.classList.add("showcase-tab-default");
+      });
+
+      const target = document.getElementById("showcase-" + tabId);
+      if (target) {
+        target.classList.add("active");
+      }
+
+      btn.classList.remove("showcase-tab-default");
+      btn.classList.add("showcase-tab-active");
+    }
+
+    window.onload = function() {
+      const ctxWorkload = document.getElementById("workloadChart").getContext("2d");
+      new Chart(ctxWorkload, {
+        type: "doughnut",
+        data: {
+          labels: ["标准查询 (65%)", "复杂诉求 (35%)"],
+          datasets: [{
+            data: [65, 35],
+            backgroundColor: ["#0F291E", "#C5A059"],
+            borderWidth: 0,
+            hoverOffset: 15
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "70%",
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { font: { family: "Inter", size: 10 } }
+            }
+          }
+        }
+      });
+
+      const ctxTrend = document.getElementById("trendChart").getContext("2d");
+      new Chart(ctxTrend, {
+        type: "line",
+        data: {
+          labels: ["W1", "W2", "W3", "W4", "W5", "W6"],
+          datasets: [
+            {
+              label: "转人工率 (Handoff %)",
+              data: [45, 38, 28, 22, 16, 14],
+              borderColor: "#0F291E",
+              backgroundColor: "rgba(15, 41, 30, 0.1)",
+              fill: true,
+              tension: 0.4
+            },
+            {
+              label: "Bad Case 解决数",
+              data: [5, 12, 18, 25, 32, 36],
+              borderColor: "#C5A059",
+              borderDash: [5, 5],
+              tension: 0.1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, grid: { display: false } },
+            x: { grid: { display: false } }
+          },
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { font: { family: "Inter", size: 10 } }
+            }
+          }
+        }
+      });
+    };
+  </script>
+</body>
+</html>
