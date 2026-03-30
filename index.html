@@ -768,6 +768,159 @@
       </div>
     </div>
   </section>
+  <section id="dialog-stories" class="py-24 bg-white border-t border-brand-dark/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <p class="showcase-label mb-4">Representative Dialogues</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">代表性对话验证</h2>
+        <p class="text-brand-gray max-w-4xl leading-relaxed">
+          这一部分不再展示系统页面本身，而是用最新版本的真实对话截图，证明系统在商品问答、焦点商品切换、售后 workflow 和高风险兜底四类核心场景中的处理能力。
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <article class="bg-white rounded-[28px] border border-brand-dark/10 p-6 md:p-8 shadow-sm">
+          <div class="grid xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">Entry State</p>
+                <h3 class="font-serif text-2xl text-brand-dark">用户刚进入界面的状态</h3>
+              </div>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                这张图放在 4 组代表性对话之前，用来先交代用户服务入口的初始状态：系统如何向用户说明可处理场景、如何通过推荐问题降低提问门槛，以及为什么它不是普通聊天框，而是统一承接商品、订单、物流、售后与人工协同的服务入口。
+              </p>
+              <div class="space-y-3 text-sm text-gray-600 leading-relaxed">
+                <div><strong class="text-brand-dark block mb-1">这一屏想表达什么</strong>用户一进入页面，就能知道系统支持哪些服务范围，以及复杂问题最终会如何进入人工协同链路。</div>
+                <div><strong class="text-brand-dark block mb-1">设计价值</strong>先用结构化入口建立服务边界，再把后续 4 组能力验证串起来，让读者理解“这些对话不是孤立案例，而是基于同一个完整入口发生的”。</div>
+                <div><strong class="text-brand-dark block mb-1">推荐放置位置</strong>作为“代表性对话验证”模块的开场图，位于四种能力场景之前。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/dialogs/dialog-entry-state.png" alt="用户刚进入界面的状态截图">
+              </div>
+              <div class="mt-3 flex justify-between items-center">
+                <div class="text-xs text-brand-gray">作品集中的对话能力展示将从这一屏状态开始展开</div>
+                <a href="assets/dialogs/dialog-entry-state.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-brand-light rounded-[28px] border border-brand-dark/10 p-6 md:p-8">
+          <div class="grid xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">Dialogue 01</p>
+                <h3 class="font-serif text-2xl text-brand-dark">焦点商品记忆 + 多轮连续追问 + 商品知识 RAG 问答</h3>
+              </div>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                这一组对话重点证明：当用户已经明确商品后，系统能够持续记住当前焦点商品，并在材质、洗护、适穿场景等连续追问下维持同一商品语境，不会被相似商品错误带偏。
+              </p>
+              <div class="space-y-3 text-sm text-gray-600 leading-relaxed">
+                <div><strong class="text-brand-dark block mb-1">验证链路</strong>商品识别 → 焦点商品记忆 → query rewrite → 商品知识 RAG 回答。</div>
+                <div><strong class="text-brand-dark block mb-1">用户动作</strong>先问“重磅230g纯棉宽松短袖T恤适合什么季节穿”，再追问“100%纯棉的吗”“可以机洗吗”。</div>
+                <div><strong class="text-brand-dark block mb-1">想证明的能力</strong>商品记忆、多轮追问承接、属性型问题的稳定回答。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/dialogs/dialog-memory-rag.png" alt="焦点商品记忆与多轮连续追问截图">
+              </div>
+              <div class="mt-3 flex justify-between items-center">
+                <div class="text-xs text-brand-gray">已预留为最新对话截图展示位</div>
+                <a href="assets/dialogs/dialog-memory-rag.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-[28px] border border-brand-dark/10 p-6 md:p-8 shadow-sm">
+          <div class="grid xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">Dialogue 02</p>
+                <h3 class="font-serif text-2xl text-brand-dark">新商品优先识别 + 焦点商品切换 + 跨商品多轮问答</h3>
+              </div>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                这一组对话用来证明系统不是只会围绕一个商品重复回答，而是能够在用户明确提出新商品时优先切换焦点，并让后续“这款”“那这件”之类的追问自动承接新的商品对象。
+              </p>
+              <div class="space-y-3 text-sm text-gray-600 leading-relaxed">
+                <div><strong class="text-brand-dark block mb-1">验证链路</strong>新商品实体识别 → 焦点切换 → 库存 / 属性问答 → 跨商品连续承接。</div>
+                <div><strong class="text-brand-dark block mb-1">用户动作</strong>先问 T 恤材质，再切到“抗皱高腰西装裤有哪些尺码”，最后追问“那这款适合通勤穿吗”。</div>
+                <div><strong class="text-brand-dark block mb-1">想证明的能力</strong>多商品上下文切换、商品优先识别、跨商品多轮问答的稳定性。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/dialogs/dialog-focus-switch.png" alt="新商品优先识别与焦点切换截图">
+              </div>
+              <div class="mt-3 flex justify-between items-center">
+                <div class="text-xs text-brand-gray">已预留为最新对话截图展示位</div>
+                <a href="assets/dialogs/dialog-focus-switch.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-brand-light rounded-[28px] border border-brand-dark/10 p-6 md:p-8">
+          <div class="grid xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">Dialogue 03</p>
+                <h3 class="font-serif text-2xl text-brand-dark">售后意图识别 + 订单号追问 + 事务型 Workflow 连续处理</h3>
+              </div>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                这一组对话重点展示系统如何把模糊售后咨询转成可执行流程：先识别退款意图，再追问订单号，最后进入具体的事务处理链路，并承接“多久到账”这类后续售后问题。
+              </p>
+              <div class="space-y-3 text-sm text-gray-600 leading-relaxed">
+                <div><strong class="text-brand-dark block mb-1">验证链路</strong>售后意图识别 → 订单号补全 → 事务型 workflow → 后续售后解释。</div>
+                <div><strong class="text-brand-dark block mb-1">用户动作</strong>先问“能不能退款”，输入订单号“0001”，再追问“那多久到账”。</div>
+                <div><strong class="text-brand-dark block mb-1">想证明的能力</strong>事务型流程设计、状态承接、订单号追问恢复和售后规则解释。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/dialogs/dialog-after-sale-workflow.png" alt="售后意图识别与订单号追问截图">
+              </div>
+              <div class="mt-3 flex justify-between items-center">
+                <div class="text-xs text-brand-gray">已预留为最新对话截图展示位</div>
+                <a href="assets/dialogs/dialog-after-sale-workflow.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-[28px] border border-brand-dark/10 p-6 md:p-8 shadow-sm">
+          <div class="grid xl:grid-cols-12 gap-8 items-start">
+            <div class="xl:col-span-4 space-y-5">
+              <div>
+                <p class="showcase-label mb-3">Dialogue 04</p>
+                <h3 class="font-serif text-2xl text-brand-dark">高风险场景识别 + 人工兜底 + 风险控制边界</h3>
+              </div>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                这一组对话用于证明系统在投诉、赔偿、情绪升级等高风险场景中不会盲目自动化，而是优先进入人工兜底机制，并同步工单号与后续承接信息，确保服务结果可控。
+              </p>
+              <div class="space-y-3 text-sm text-gray-600 leading-relaxed">
+                <div><strong class="text-brand-dark block mb-1">验证链路</strong>风险关键词识别 → 路由人工 → 创建工单 → 同步客服接管信息。</div>
+                <div><strong class="text-brand-dark block mb-1">用户动作</strong>输入“你们的服务太差了我要投诉”或“这个订单我一定要赔偿”。</div>
+                <div><strong class="text-brand-dark block mb-1">想证明的能力</strong>风险边界设定、人工兜底策略、投诉类场景的控制能力。</div>
+              </div>
+            </div>
+            <div class="xl:col-span-8">
+              <div class="showcase-shot">
+                <img src="assets/dialogs/dialog-risk-handoff.png" alt="高风险投诉与人工兜底截图">
+              </div>
+              <div class="mt-3 flex justify-between items-center">
+                <div class="text-xs text-brand-gray">已预留为最新对话截图展示位</div>
+                <a href="assets/dialogs/dialog-risk-handoff.png" target="_blank" rel="noopener" class="text-xs text-brand-dark underline underline-offset-4">查看原图</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
   <section id="evaluation" class="py-24 bg-brand-light border-t border-brand-dark/5">
     <div class="max-w-7xl mx-auto px-6">
       <div class="mb-16">
