@@ -1,0 +1,1 @@
+import{R as t,j as e,a as s,F as a}from"./styles-B8CO87T1.js";t.createRoot(document.getElementById("root")).render(e.jsx(s.StrictMode,{children:e.jsx("div",{className:"flex w-full justify-center bg-transparent",children:e.jsx("div",{className:"w-full max-w-[430px]",children:e.jsx(a,{})})})}));

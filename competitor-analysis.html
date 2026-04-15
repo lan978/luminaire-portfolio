@@ -1,0 +1,2273 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>运动健康 App 拆解</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8f6f1;
+      --panel: #ffffff;
+      --soft: #fbf9f4;
+      --ink: #14281f;
+      --muted: #6f6a63;
+      --gold: #b88e4b;
+      --line: rgba(20, 40, 31, 0.08);
+      --shadow: 0 18px 40px rgba(20, 40, 31, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Inter", sans-serif;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .masthead {
+      border-bottom: 1px solid rgba(184, 142, 75, 0.18);
+      margin-bottom: 40px;
+    }
+
+    .topbar-inner,
+    .hero,
+    .page {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 280px;
+    }
+
+    .topbar-inner {
+      padding-top: 18px;
+      padding-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 20px;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+
+    .brand {
+      font-family: "Noto Serif SC", serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .nav-links {
+      position: fixed;
+      top: 112px;
+      right: 24px;
+      z-index: 20;
+      width: 232px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 18px 42px rgba(20, 40, 31, 0.14);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-link {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.2;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+
+    .nav-link-static {
+      cursor: default;
+      color: var(--ink);
+      background: rgba(184, 142, 75, 0.08);
+    }
+
+    .nav-link:hover {
+      background: rgba(184, 142, 75, 0.08);
+      color: var(--ink);
+      transform: translateX(-2px);
+    }
+
+    .nav-link-static:hover {
+      transform: none;
+    }
+
+    .nav-subnav {
+      display: grid;
+      gap: 6px;
+      padding-left: 42px;
+    }
+
+    .nav-sublink {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.45;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+
+    .nav-sublink:hover {
+      background: rgba(184, 142, 75, 0.08);
+      color: var(--ink);
+      transform: translateX(-2px);
+    }
+
+    .nav-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 6px 12px rgba(20, 40, 31, 0.06);
+      flex: 0 0 auto;
+    }
+
+    .nav-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .nav-icon-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      background: linear-gradient(160deg, #f5efe4 0%, #ece3d2 100%);
+    }
+
+    .hero {
+      padding-top: 28px;
+      padding-bottom: 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .hero h1,
+    .app-name {
+      margin: 0;
+      font-family: "Noto Serif SC", serif;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 6vw, 80px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 14px 0 0;
+      max-width: 760px;
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+
+    .page {
+      padding-top: 0;
+      padding-bottom: 80px;
+    }
+
+    .app-section {
+      scroll-margin-top: 80px;
+      margin-top: 28px;
+      padding: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .analysis-group[id] {
+      scroll-margin-top: 88px;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .logo-shell {
+      width: 76px;
+      height: 76px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      flex: 0 0 auto;
+    }
+
+    .logo-shell img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-shell-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      background: linear-gradient(160deg, #f5efe4 0%, #ece3d2 100%);
+    }
+
+    .region {
+      margin: 0 0 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--gold);
+    }
+
+    .app-name {
+      font-size: clamp(28px, 3vw, 38px);
+      line-height: 1.08;
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 420px);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .analysis-group {
+      display: grid;
+      gap: 18px;
+      padding: 24px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, #fffdf8 0%, #fbf7ef 100%);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .analysis-group + .analysis-group {
+      margin-top: 18px;
+    }
+
+    .analysis-header {
+      display: grid;
+      gap: 8px;
+    }
+
+    .analysis-kicker {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--gold);
+    }
+
+    .analysis-title {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    .subpoint-card {
+      padding: 22px;
+      border-radius: 24px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .subpoint-card[id] {
+      scroll-margin-top: 88px;
+    }
+
+    .subpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .subpoint-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #f6efe3;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .subpoint-title {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.25;
+      color: var(--ink);
+    }
+
+    .subpoint-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .subpoint-copy {
+      display: grid;
+      gap: 12px;
+    }
+
+    .subpoint-copy p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .scenario-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .scenario-block {
+      padding: 18px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #fffdfa 0%, #fcf7ee 100%);
+      border: 1px solid var(--line);
+    }
+
+    .scenario-block h5 {
+      margin: 0 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .scenario-block p + p {
+      margin-top: 10px;
+    }
+
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .agent-card {
+      padding: 20px;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 22px rgba(20, 40, 31, 0.05);
+    }
+
+    .agent-mode {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      height: 28px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #f6efe3;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .agent-card h5 {
+      margin: 0 0 12px;
+      font-size: 22px;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+
+    .agent-lead {
+      margin: 0 0 14px;
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+
+    .agent-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .agent-item {
+      display: grid;
+      gap: 4px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .agent-item:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .agent-item strong {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .agent-item p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .keep-gallery {
+      grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.68fr);
+      align-items: start;
+    }
+
+    .keep-gallery-wrap {
+      display: grid;
+      gap: 16px;
+    }
+
+    .keep-gallery .shot {
+      background: #fff;
+    }
+
+    .keep-gallery .shot img {
+      height: auto;
+      aspect-ratio: auto;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .shot-kaka img {
+      object-position: top center;
+    }
+
+    .shot-gemini img {
+      object-position: top center;
+    }
+
+    .voice-gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .skills-gallery {
+      grid-template-columns: minmax(220px, 0.96fr) minmax(180px, 0.72fr);
+      grid-template-areas:
+        "main side-1"
+        "main side-2"
+        "main side-3";
+      align-items: start;
+    }
+
+    .skills-gallery .shot-main {
+      grid-area: main;
+    }
+
+    .skills-gallery .shot-side-1 {
+      grid-area: side-1;
+    }
+
+    .skills-gallery .shot-side-2 {
+      grid-area: side-2;
+    }
+
+    .skills-gallery .shot-side-3 {
+      grid-area: side-3;
+    }
+
+    .skills-gallery .shot img {
+      aspect-ratio: auto;
+      height: auto;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .voice-gallery .shot img {
+      aspect-ratio: auto;
+      height: auto;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .freeletics-gallery .shot img {
+      aspect-ratio: auto;
+      height: auto;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .app-layout.freeletics-layout {
+      grid-template-columns: minmax(0, 1.42fr) minmax(300px, 360px);
+      gap: 28px;
+    }
+
+    .freeletics-gallery {
+      grid-template-columns: minmax(220px, 0.88fr) minmax(280px, 1.22fr);
+      grid-template-areas:
+        "side-top hero"
+        "side-bottom hero";
+      align-items: start;
+      gap: 20px;
+    }
+
+    .freeletics-gallery .shot {
+      align-self: start;
+      padding: 10px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #fffdf8 0%, #f5efe5 100%);
+      box-shadow: 0 18px 40px rgba(20, 40, 31, 0.08);
+    }
+
+    .freeletics-gallery .shot figcaption {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px 12px 10px;
+    }
+
+    .freeletics-gallery .shot img {
+      border-radius: 22px;
+      background: #fff;
+    }
+
+    .freeletics-gallery .shot:nth-child(1) {
+      grid-area: side-top;
+      margin-top: 10px;
+    }
+
+    .freeletics-gallery .shot:nth-child(2) {
+      grid-area: side-bottom;
+      margin-top: -8px;
+    }
+
+    .freeletics-gallery .shot:nth-child(3) {
+      grid-area: hero;
+      margin-top: 14px;
+      padding: 12px;
+      box-shadow: 0 26px 54px rgba(20, 40, 31, 0.12);
+    }
+
+    .voice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .voice-item {
+      padding: 16px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 22px rgba(20, 40, 31, 0.05);
+    }
+
+    .voice-item strong {
+      display: block;
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .voice-item p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .shot {
+      overflow: hidden;
+      border-radius: 22px;
+      background: #f2eee6;
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 24px rgba(20, 40, 31, 0.05);
+    }
+
+    .shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      aspect-ratio: 9 / 19.5;
+    }
+
+    .shot figcaption {
+      padding: 10px 12px 12px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .shot-card {
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .shot-body {
+      flex: 1;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff 0%, #fcfaf6 100%);
+    }
+
+    .shot-label {
+      margin: 0 0 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .shot-title {
+      margin: 0 0 12px;
+      font-size: 18px;
+      line-height: 1.5;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .shot-points {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .shot-points li::marker {
+      color: var(--gold);
+    }
+
+    .flow-diagram {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .flow-compare {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .flow-column {
+      padding: 16px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .flow-heading {
+      margin: 0 0 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .flow-lane {
+      display: grid;
+      gap: 18px;
+    }
+
+    .flow-node {
+      position: relative;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: #fcfaf6;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(20, 40, 31, 0.05);
+    }
+
+    .flow-node:not(:last-child)::after {
+      content: "↓";
+      position: absolute;
+      left: 50%;
+      bottom: -18px;
+      transform: translateX(-50%);
+      color: var(--gold);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .flow-node-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      margin-bottom: 8px;
+      border-radius: 999px;
+      background: rgba(184, 142, 75, 0.14);
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .flow-node-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .compare-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .summary-card {
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 22px rgba(20, 40, 31, 0.05);
+    }
+
+    .summary-label {
+      display: inline-block;
+      margin: 0 0 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(184, 142, 75, 0.12);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .summary-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .summary-card code,
+    .voice-item code {
+      display: block;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f7f2e8;
+      color: var(--ink);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .summary-card code + code,
+    .voice-item code + code {
+      margin-top: 8px;
+    }
+
+    .project-showcase-intro {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .project-showcase-intro p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+
+    .project-showcase-label {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .project-showcase-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .project-showcase-tab {
+      width: 100%;
+      padding: 18px 16px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: #fff;
+      text-align: left;
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(20, 40, 31, 0.04);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .project-showcase-tab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 28px rgba(20, 40, 31, 0.08);
+    }
+
+    .project-showcase-tab.active {
+      background: var(--ink);
+      color: #fff;
+      border-color: rgba(20, 40, 31, 0.58);
+      box-shadow: 0 18px 34px rgba(20, 40, 31, 0.16);
+    }
+
+    .project-showcase-role {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .project-showcase-tab strong {
+      display: block;
+      margin: 0 0 6px;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .project-showcase-caption {
+      display: block;
+      font-size: 12px;
+      line-height: 1.5;
+      opacity: 0.76;
+    }
+
+    .project-showcase-shell {
+      padding: 24px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #fffdfa 0%, #f5efe4 100%);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 40px rgba(20, 40, 31, 0.08);
+    }
+
+    .project-showcase-content {
+      display: none;
+    }
+
+    .project-showcase-content.active {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.94fr) minmax(0, 1.56fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .project-showcase-copy {
+      display: grid;
+      gap: 18px;
+    }
+
+    .project-showcase-copy h5 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.12;
+      color: var(--ink);
+      font-family: "Noto Serif SC", serif;
+      font-weight: 600;
+    }
+
+    .project-showcase-points {
+      display: grid;
+      gap: 14px;
+    }
+
+    .project-showcase-point strong {
+      display: block;
+      margin: 0 0 6px;
+      font-size: 15px;
+      line-height: 1.4;
+      color: var(--ink);
+    }
+
+    .project-showcase-point p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+
+    .project-showcase-shot {
+      overflow: hidden;
+      border-radius: 24px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 20px 42px rgba(20, 40, 31, 0.10);
+    }
+
+    .project-showcase-shot img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .project-showcase-actions {
+      margin-top: 12px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .project-showcase-actions a {
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      text-underline-offset: 4px;
+    }
+
+    .flow-step {
+      position: relative;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.7;
+      box-shadow: 0 8px 18px rgba(20, 40, 31, 0.05);
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      left: 50%;
+      bottom: -18px;
+      transform: translateX(-50%);
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .note-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .note-card {
+      padding: 20px;
+      border-radius: 24px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+    }
+
+    .note-card h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .note-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .flow-list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .flow-list li::marker {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .compare-note {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(20, 40, 31, 0.14);
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .compare-table {
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+    }
+
+    .compare-row + .compare-row {
+      border-top: 1px solid var(--line);
+    }
+
+    .compare-key {
+      padding: 14px 16px;
+      background: #fbf7ef;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .compare-value {
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .placeholder-copy {
+      color: #9b948c;
+    }
+
+    .freeletics-panel {
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      border-radius: 28px;
+      background: linear-gradient(160deg, #f6f2ea 0%, #f1ece3 100%);
+      border: 1px solid var(--line);
+    }
+
+    .freeletics-panel > div {
+      max-width: 280px;
+      display: grid;
+      gap: 16px;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .freeletics-panel .logo-shell {
+      width: 88px;
+      height: 88px;
+    }
+
+    .freeletics-panel p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .freeletics-flow-row {
+      display: grid;
+      grid-template-columns: minmax(340px, 0.86fr) minmax(420px, 1.14fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .freeletics-flow-card {
+      min-height: 100%;
+    }
+
+    .freeletics-flow-card .flow-compare {
+      grid-template-columns: 1fr;
+    }
+
+    .freeletics-flow-card .flow-column {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #fffdfa 0%, #f7f2e8 100%);
+    }
+
+    .freeletics-flow-card .flow-lane {
+      gap: 16px;
+    }
+
+    .freeletics-flow-card .flow-node {
+      padding: 14px 16px 16px;
+    }
+
+    .freeletics-hero-card {
+      overflow: hidden;
+      display: block;
+      min-height: 100%;
+      padding: 14px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #fffdfa 0%, #f3ede3 100%);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 38px rgba(20, 40, 31, 0.08);
+    }
+
+    .freeletics-hero-card img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      object-position: center center;
+      display: block;
+      border-radius: 22px;
+      background: #dfe7ec;
+    }
+
+    @media (max-width: 1080px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .freeletics-flow-row {
+        grid-template-columns: 1fr;
+      }
+
+      .project-showcase-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .project-showcase-content.active {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .topbar-inner,
+      .hero,
+      .page {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        position: static;
+        width: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 18px;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
+      .nav-group {
+        width: 100%;
+      }
+
+      .nav-link {
+        width: auto;
+        padding: 0;
+        border-radius: 0;
+      }
+
+      .nav-link:hover {
+        background: transparent;
+        transform: none;
+      }
+
+      .nav-link-static {
+        background: transparent;
+      }
+
+      .nav-subnav {
+        padding-left: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+      }
+
+      .nav-sublink {
+        padding: 0;
+        border-radius: 0;
+      }
+
+      .nav-sublink:hover {
+        background: transparent;
+        transform: none;
+      }
+
+      .nav-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 8px;
+        box-shadow: none;
+      }
+
+      .masthead {
+        margin-bottom: 28px;
+      }
+
+      .app-section {
+        padding: 20px;
+        border-radius: 24px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .keep-gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .compare-row {
+        grid-template-columns: 1fr;
+      }
+
+      .compare-key {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .flow-compare {
+        grid-template-columns: 1fr;
+      }
+
+      .compare-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .subpoint-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .agent-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .voice-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .voice-gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .skills-gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .project-showcase-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .project-showcase-shell {
+        padding: 18px;
+      }
+
+      .project-showcase-copy h5 {
+        font-size: 28px;
+      }
+
+      .app-name {
+        font-size: 28px;
+      }
+
+      .logo-shell {
+        width: 64px;
+        height: 64px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <nav class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-wrap">
+          <div class="brand">Luminaire</div>
+          <div class="brand-tag">Portfolio</div>
+        </div>
+        <div class="nav-links">
+          <div class="nav-group">
+            <div class="nav-link nav-link-static"><span class="nav-icon"><img src="assets/app-logos/keep.png" alt="Keep"></span><span>Keep</span></div>
+            <div class="nav-subnav">
+              <a class="nav-sublink" href="#keep-plan">KAKA 智能体训练方案生成</a>
+              <a class="nav-sublink" href="#keep-voice">AI 语音指导</a>
+              <a class="nav-sublink" href="#keep-skills">KAKA 新增 Skills</a>
+            </div>
+          </div>
+          <div class="nav-group">
+            <div class="nav-link nav-link-static"><span class="nav-icon"><img src="assets/app-logos/freeletics.png" alt="Freeletics"></span><span>Freeletics</span></div>
+            <div class="nav-subnav">
+              <a class="nav-sublink" href="#freeletics-position">平台定位与产品理解</a>
+              <a class="nav-sublink" href="#freeletics-product">拆解产品</a>
+            </div>
+          </div>
+          <div class="nav-group">
+            <div class="nav-link nav-link-static"><span class="nav-icon nav-icon-text">AI</span><span>我的项目</span></div>
+            <div class="nav-subnav">
+              <a class="nav-sublink" href="#my-project-overview">产品落地与闭环</a>
+              <a class="nav-sublink" href="#my-project-showcase">真实界面展示</a>
+              <a class="nav-sublink" href="#my-project-summary">总结</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="hero">
+      <p class="eyebrow">Portfolio</p>
+      <h1>AI 产品与竞品分析作品集</h1>
+      <p>这里集中整理竞品拆解、产品理解、AI 应用落地场景，以及我自己的智能电商客服项目闭环展示，让整份内容更像一套完整作品集。</p>
+    </div>
+  </header>
+
+  <main class="page">
+    <section id="keep" class="app-section">
+      <div class="app-header">
+        <div class="logo-shell">
+          <img src="assets/app-logos/keep.png" alt="Keep logo">
+        </div>
+        <div>
+          <p class="region">China</p>
+          <h2 class="app-name">Keep</h2>
+        </div>
+      </div>
+      <div id="keep-plan" class="analysis-group">
+        <div class="analysis-header">
+          <p class="analysis-kicker">第一大点</p>
+          <h3 class="analysis-title">KAKA 智能体训练方案生成</h3>
+        </div>
+        <article class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">01</span>
+              <h4 class="subpoint-title">拆解</h4>
+          </div>
+          <div class="app-layout freeletics-layout">
+            <div class="keep-gallery-wrap">
+              <div class="gallery keep-gallery">
+                <figure class="shot shot-kaka">
+                  <img src="assets/competitor/kaka-plan-output.jpg" alt="KAKA 生成训练计划截图">
+                  <figcaption>KAKA 训练计划结果</figcaption>
+                </figure>
+                <figure class="shot shot-gemini">
+                  <img src="assets/competitor/gemini-plan-output.png" alt="Gemini 生成训练计划截图">
+                  <figcaption>Gemini 训练计划结果</figcaption>
+                </figure>
+              </div>
+              <div class="compare-summary">
+                <article class="summary-card">
+                  <p class="summary-label">KAKA</p>
+                  <p>KAKA 的优势更清楚：它不是只给出训练方案，而是先通过问卷收集条件，再生成个性化计划，并继续接课程介绍和训练日程，把用户直接带进后续训练流程。</p>
+                </article>
+                <article class="summary-card">
+                  <p class="summary-label">Gemini</p>
+                  <p>Gemini 生成的训练方案也是合理的，动作安排、天数分配和训练逻辑都有很强的参考价值，尤其适合先快速得到一版完整计划。</p>
+                </article>
+              </div>
+            </div>
+            <div class="note-stack">
+              <article class="note-card">
+                <h3>拆产品：KAKA 训练计划 vs Gemini</h3>
+                <div class="flow-compare">
+                  <div class="flow-column">
+                    <p class="flow-heading">KAKA 流程</p>
+                    <div class="flow-lane">
+                      <div class="flow-node">
+                        <div class="flow-node-index">1</div>
+                        <p class="flow-node-copy">用户说“生成训练计划”，KAKA 发起训练问卷。</p>
+                      </div>
+                      <div class="flow-node">
+                        <div class="flow-node-index">2</div>
+                        <p class="flow-node-copy">填写训练部位、训练天数、训练时长、训练难度、是否有伤病。</p>
+                      </div>
+                      <div class="flow-node">
+                        <div class="flow-node-index">3</div>
+                        <p class="flow-node-copy">提交后，问卷整理成 KAKA 的新提示词，并生成个性化训练计划。</p>
+                      </div>
+                      <div class="flow-node">
+                        <div class="flow-node-index">4</div>
+                        <p class="flow-node-copy">接着给出计划介绍、对应课程，用户选择训练日后生成日程表开始训练。</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flow-column">
+                    <p class="flow-heading">Gemini 流程</p>
+                    <div class="flow-lane">
+                      <div class="flow-node">
+                        <div class="flow-node-index">1</div>
+                        <p class="flow-node-copy">用户输入同样的增肌目标、训练部位、训练频率、训练时长和强度要求。</p>
+                      </div>
+                      <div class="flow-node">
+                        <div class="flow-node-index">2</div>
+                        <p class="flow-node-copy">Gemini 先解释当前体型基础，判断核心目标是增肌和增加围度。</p>
+                      </div>
+                      <div class="flow-node">
+                        <div class="flow-node-index">3</div>
+                        <p class="flow-node-copy">接着给出 5 天训练安排，按推、拉、腿、上肢、下肢拆分训练逻辑，并补充动作、组数、次数和饮食建议。</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </article>
+        <div class="subpoint-grid">
+          <article class="subpoint-card">
+            <div class="subpoint-header">
+              <span class="subpoint-index">02</span>
+              <h4 class="subpoint-title">我的思考</h4>
+            </div>
+            <div class="subpoint-copy">
+              <p>从用户体验看，KAKA 最有价值的不是“会生成一份计划”，而是把用户条件真正转成了可执行课程。对新手小白和普通健身爱好者来说，它解决的是“没有合适训练计划、不知道怎么开始练”的实际问题。</p>
+              <p>很多平台有教练线上教学视频，很多 AI 工具也能生成训练方案，但 Keep 自己本身已经有训练数据、课程和视频资产。KAKA 把这些内容重新组织成个性化计划，再继续接训练日程，所以不是只给建议，而是直接提高用户进入训练和持续执行的效率。</p>
+              <p>这也是为什么 KAKA 的效果会更好：AI 负责理解条件和生成路径，Keep 负责把路径落到课程和日程里，最终给用户的是“可以马上开始练”的体验。</p>
+            </div>
+          </article>
+          <article class="subpoint-card">
+            <div class="subpoint-header">
+              <span class="subpoint-index">03</span>
+              <h4 class="subpoint-title">AI 场景思考</h4>
+            </div>
+            <div class="scenario-stack">
+              <div class="scenario-block subpoint-copy">
+                <h5>场景判断</h5>
+                <p>这里更准确的说法不是两个分散入口，而是一个首页可点击进入、可以持续交互的智能训练师。用户不只是让它生成个性化训练计划，还会继续追问训练、饮食、运动中的不适怎么缓解、恢复怎么调整，以及饮食健康等问题。</p>
+                <p>从产品落地看，这个智能体可以分成两种方案：第一种是像 Gemini 一样先给个性化训练方案；第二种是在训练方案之外，再接入 AI 数字人，把生成的计划继续变成可讲解、可多语言、可执行的课程体验。</p>
+              </div>
+              <div class="agent-grid">
+                <article class="agent-card">
+                  <span class="agent-mode">方案版</span>
+                  <h5>轻量版智能训练师</h5>
+                  <p class="agent-lead">这是首页的一个智能体入口，用户点击后可以直接发问题、持续对话，更接近“会交流的训练顾问”。</p>
+                  <div class="agent-list">
+                    <div class="agent-item">
+                      <strong>是什么</strong>
+                      <p>基于 LLM、结构化问卷和计划生成流程的交互式训练智能体，先理解用户条件，再输出个性化训练方案。</p>
+                    </div>
+                    <div class="agent-item">
+                      <strong>可以做什么</strong>
+                      <p>生成训练计划，回答训练、饮食、运动中的不适、恢复调整和饮食健康等问题；涉及受伤风险时，给出调整建议并提示用户寻求专业意见。</p>
+                    </div>
+                    <div class="agent-item">
+                      <strong>解决什么问题</strong>
+                      <p>解决用户没有合适训练计划、不知道怎么开始练，以及遇到训练和饮食问题时没有即时建议的问题。</p>
+                    </div>
+                    <div class="agent-item">
+                      <strong>技术问题</strong>
+                      <p>问卷和上下文如何结构化，训练方案是否稳定，饮食与恢复建议的安全边界如何控制，以及连续对话是否能保持一致。</p>
+                    </div>
+                  </div>
+                </article>
+                <article class="agent-card">
+                  <span class="agent-mode">教学版</span>
+                  <h5>完整教学版智能训练师</h5>
+                  <p class="agent-lead">这是更完整的方案：训练师先生成个性化计划，再由 AI 数字人把计划里的动作和课程讲清楚。</p>
+                  <div class="agent-list">
+                    <div class="agent-item">
+                      <strong>是什么</strong>
+                      <p>在智能训练师基础上接入 AI 数字人，用来承接课程讲解、动作说明和多语言本地化体验。</p>
+                    </div>
+                    <div class="agent-item">
+                      <strong>可以做什么</strong>
+                      <p>根据生成的个性化训练计划，用不同语言去讲解动作要点、训练节奏和课程内容，让用户更直观看懂怎么练。</p>
+                    </div>
+                    <div class="agent-item">
+                      <strong>解决什么问题</strong>
+                      <p>解决纯文本方案不够直观、用户拿到计划却不会练，以及海外多语言用户看不清动作和听不懂讲解的问题。</p>
+                    </div>
+                    <div class="agent-item">
+                      <strong>技术问题</strong>
+                      <p>动作演示素材是否足够标准清楚，语音和口型是否自然，个性化计划和教学内容是否能稳定同步，以及怎样降低持续制作成本。</p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div id="keep-voice" class="analysis-group">
+        <div class="analysis-header">
+          <p class="analysis-kicker">第二大点</p>
+          <h3 class="analysis-title">AI 语音指导</h3>
+        </div>
+        <article class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">01</span>
+              <h4 class="subpoint-title">AI 语音细节</h4>
+          </div>
+          <div class="app-layout">
+            <div class="keep-gallery-wrap">
+              <div class="gallery voice-gallery">
+                <figure class="shot">
+                  <img src="assets/competitor/keep-voice-training.jpg" alt="Keep 训练中 AI 语音指导截图">
+                  <figcaption>训练中语音播报</figcaption>
+                </figure>
+                <figure class="shot">
+                  <img src="assets/competitor/keep-voice-rest.jpg" alt="Keep 训练休息倒计时截图">
+                  <figcaption>休息与下一个动作提示</figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="note-stack">
+              <article class="note-card">
+                <h3>拆产品：Keep AI 语音指导</h3>
+                <div class="voice-grid">
+                  <div class="voice-item">
+                    <strong>训练中</strong>
+                    <p>AI 直接嵌进训练过程里，按动作节奏播报次数、动作名称和关键发力点，用户不用自己盯着屏幕也能继续跟练。</p>
+                  </div>
+                  <div class="voice-item">
+                    <strong>动作提示</strong>
+                    <p>不同动作会切换不同提示重点，不只是报动作名称，还会补标准动作的细节和要点，这一层更像训练中的即时纠偏。</p>
+                  </div>
+                  <div class="voice-item">
+                    <strong>休息切换</strong>
+                    <p>休息页不只是倒计时，还加入名人名言、跳过休息和延长 20 秒这些交互，让用户在恢复阶段也保持节奏感和控制感。</p>
+                  </div>
+                  <div class="voice-item">
+                    <strong>体验特点</strong>
+                    <p>从产品设计看，这一环节的价值是把训练过程做成低操作负担的连续体验：开始、动作、休息、下一个动作之间切换顺，用户几乎不用自己管理流程。</p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </article>
+        <article class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">02</span>
+            <h4 class="subpoint-title">我的思考</h4>
+          </div>
+          <div class="subpoint-copy">
+            <p>从用户体验看，这一层 AI 语音指导最有价值的地方，是它真的把“教练带着练”的感觉做出来了。视频动作指导负责让用户看清楚动作怎么做，AI 语音播报则负责提醒动作细节、节奏和次数，两层结合后，用户在训练中更容易保持动作质量。</p>
+            <p>对训练小白来说，这一层体验很重要。即使没有报私教课，也没有线下教练盯着，用户仍然可以在跟练过程中知道自己现在做到第几次、这一组什么时候结束、下一个动作是什么，不容易在训练中乱掉节奏。</p>
+            <p>对普通训练者来说，它解决的也是非常实际的问题：组间休息更清楚，动作切换更顺，不会忘记组数，也不会总是低头看屏幕确认下一步。整体流程丝滑、没有明显打断感，所以这不是简单的语音功能，而是在真实训练场景里承担了“节奏管理”和“动作提醒”的角色。</p>
+          </div>
+        </article>
+        <article class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">03</span>
+            <h4 class="subpoint-title">AI 落地思考</h4>
+          </div>
+          <div class="scenario-stack">
+            <div class="scenario-block subpoint-copy">
+              <h5>场景判断</h5>
+              <p>这一层可以继续拆成两种 AI 语音方案：一种是更偏力量训练氛围的高能语音教练，另一种是更偏通用训练陪伴的普通语音教练。两者都不是简单播报次数，而是把训练中的提醒、节奏和情绪价值一起做进课程里。</p>
+            </div>
+            <div class="agent-grid">
+              <article class="agent-card">
+                <span class="agent-mode">力量训练版</span>
+                <h5>AI 语音教练</h5>
+                <p class="agent-lead">这一版更适合长期做力量训练、喜欢强节奏音乐和高燃训练氛围的用户，语气更激进、更有推动感，像一个充满能量的教练在不断逼你突破极限。</p>
+                <div class="agent-list">
+                  <div class="agent-item">
+                    <strong>可以做什么</strong>
+                    <p>在训练中数次数、播报动作名称、提醒动作细节，还会在用户接近极限或完成挑战后给出更强情绪反馈，比如鼓励用户继续突破、强化自信和训练兴奋感。</p>
+                  </div>
+                  <div class="agent-item">
+                    <strong>解决什么问题</strong>
+                    <p>解决力量训练里“节奏不够燃、坚持感不足、一个人练容易泄劲”的问题，让用户在没有真实教练陪练时，也能感受到被推动和被鼓励的训练氛围。</p>
+                  </div>
+                  <div class="agent-item">
+                    <strong>技术问题</strong>
+                    <p>语音风格需要足够有激情但不能过度打扰；不同动作和不同训练强度下，鼓励话术、节奏提示和安全提醒要能稳定切换，不能只是一套固定台词反复播放。</p>
+                  </div>
+                </div>
+              </article>
+              <article class="agent-card">
+                <span class="agent-mode">普通版</span>
+                <h5>AI 语音教练</h5>
+                <p class="agent-lead">这一版比 Keep 当前的语音播报再往前走一步，不只是播报和计数，而是更像真实教练在旁边持续提醒动作标准、节奏控制和训练重点。</p>
+                <div class="agent-list">
+                  <div class="agent-item">
+                    <strong>可以做什么</strong>
+                    <p>训练时提醒用户核心保持收紧、控制节奏、维持动作标准；休息时不只是等待倒计时，而是复盘刚刚这一组训练到了什么肌群、这一组的训练目的和作用，让用户更理解自己在练什么。</p>
+                  </div>
+                  <div class="agent-item">
+                    <strong>解决什么问题</strong>
+                    <p>解决现在很多课程“有人带练但没人解释”的问题，让用户在训练和休息两个阶段都保持沉浸感，不只是做完动作，而是更清楚训练目标、训练效果和下一个动作应该怎么接。</p>
+                  </div>
+                  <div class="agent-item">
+                    <strong>技术问题</strong>
+                    <p>需要把动作阶段和休息阶段的语音逻辑拆开；既要保证播报和训练节奏严格同步，也要让休息时的补充说明足够自然、不过长、不过度打断用户恢复节奏。</p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </article>
+        <div id="keep-skills" class="analysis-group">
+          <div class="analysis-header">
+            <p class="analysis-kicker">第三大点</p>
+            <h3 class="analysis-title">KAKA 新增 Skills</h3>
+          </div>
+          <article class="subpoint-card">
+            <div class="subpoint-header">
+              <span class="subpoint-index">01</span>
+              <h4 class="subpoint-title">Skills 与记录玩法</h4>
+            </div>
+            <div class="app-layout">
+              <div class="keep-gallery-wrap">
+                <div class="gallery skills-gallery">
+                  <figure class="shot shot-main">
+                    <img src="assets/competitor/kaka-skills-menu.jpg" alt="KAKA 全部技能截图">
+                    <figcaption>全部技能</figcaption>
+                  </figure>
+                  <figure class="shot shot-side-1">
+                    <img src="assets/competitor/kaka-record-menu.png" alt="KAKA 记录数据入口截图">
+                    <figcaption>记录数据</figcaption>
+                  </figure>
+                  <figure class="shot shot-side-2">
+                    <img src="assets/competitor/kaka-food-record.jpg" alt="KAKA 记饮食截图">
+                    <figcaption>记饮食</figcaption>
+                  </figure>
+                  <figure class="shot shot-side-3">
+                    <img src="assets/competitor/kaka-weight-record.jpg" alt="KAKA 记体重截图">
+                    <figcaption>记体重</figcaption>
+                  </figure>
+                </div>
+              </div>
+              <div class="note-stack">
+                <article class="note-card">
+                  <h3>拆产品：更多技能与记录入口</h3>
+                  <div class="voice-grid">
+                    <div class="voice-item">
+                      <strong>新增 Skills</strong>
+                      <p>KAKA 不只会生成训练计划，还额外提供身体评估、动作评估和健康评估等技能入口，让用户可以继续探索更多使用场景。</p>
+                    </div>
+                    <div class="voice-item">
+                      <strong>记录能力</strong>
+                      <p>它也把记体重、记饮食、记运动、记围度、记睡眠等记录入口整合进来，帮助用户把训练外的数据持续留下来。</p>
+                    </div>
+                    <div class="voice-item">
+                      <strong>用户价值</strong>
+                      <p>这一层的价值在于玩法变多了。用户不只是在训练时打开 KAKA，也可以把它当成一个持续记录和观察自己状态的入口。</p>
+                    </div>
+                    <div class="voice-item">
+                      <strong>使用方式</strong>
+                      <p>从截图看，它既有技能菜单，也有直接记录饮食和体重的结果确认页，整体路径不复杂，属于比较容易尝试的轻交互玩法。</p>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </article>
+          <article class="subpoint-card">
+            <div class="subpoint-header">
+              <span class="subpoint-index">02</span>
+              <h4 class="subpoint-title">我的判断</h4>
+            </div>
+            <div class="voice-grid">
+              <div class="voice-item">
+                <strong>优势</strong>
+                <p>这一层最大的优势是玩法多。用户可以继续记体重、记饮食，也可以尝试体态评估、动作分析和健康评估，探索空间比单一训练计划更大。</p>
+              </div>
+              <div class="voice-item">
+                <strong>问题</strong>
+                <p>但从体验看，身体评估和动作分析这类识别型能力效果并不稳定，数据也不够准，用户容易觉得“可以玩，但不好用”，所以这层更像加分玩法，不是核心体验。</p>
+              </div>
+            </div>
+          </article>
+          <article class="subpoint-card">
+            <div class="subpoint-header">
+              <span class="subpoint-index">03</span>
+              <h4 class="subpoint-title">AI 场景思考</h4>
+            </div>
+            <div class="scenario-stack">
+              <div class="scenario-block subpoint-copy">
+                <h5>营养记录 Skill</h5>
+                <p>如果把 KAKA 的新增 Skills 往真实使用场景里看，我觉得最值得做深的是营养记录。很多用户不只是需要训练计划，还需要知道自己每天的蛋白质、优质碳水和补剂摄入到底够不够，这一层如果做得好，会让产品从运动指导继续延伸到营养管理。</p>
+              </div>
+              <article class="note-card">
+                <div class="voice-grid">
+                  <div class="voice-item">
+                    <strong>是什么</strong>
+                    <p>一个围绕饮食、补剂和日常营养摄入的记录 Skill，用户只要记录自己吃了什么、补了什么，系统就自动累计并判断是否达到个人营养目标。</p>
+                  </div>
+                  <div class="voice-item">
+                    <strong>可以做什么</strong>
+                    <p>根据用户的体重、训练目标和训练强度，给出每日蛋白质、碳水和基础营养的参考标准；用户每记录一次饮食或补剂，系统就自动叠加并反馈当天是否达标。</p>
+                  </div>
+                  <div class="voice-item">
+                    <strong>解决什么问题</strong>
+                    <p>解决普通用户、力量训练人群和有补剂习惯的用户“不知道自己到底该吃多少、补多少”的问题。它把原本分散在网上、计算起来很复杂的营养建议，变成一个可直接使用的工具。</p>
+                  </div>
+                  <div class="voice-item">
+                    <strong>产品思考</strong>
+                    <p>从 AI 产品视角看，这个 Skill 的价值不只是“帮用户记饮食”，而是让健身 App 从训练指导进一步承担营养师的角色。用户不需要自己反复计算摄入，也能更稳定地避免营养不足，让训练结果更容易真正落地。</p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="freeletics" class="app-section">
+      <div class="app-header">
+        <div class="logo-shell">
+             <img src="assets/app-logos/freeletics.png" alt="Freeletics logo">
+        </div>
+        <div>
+          <p class="region">Overseas</p>
+          <h2 class="app-name">Freeletics</h2>
+        </div>
+      </div>
+      <div class="analysis-group" id="freeletics-position">
+        <div class="analysis-header">
+          <p class="analysis-kicker">第一大点</p>
+          <h3 class="analysis-title">平台定位与产品理解</h3>
+        </div>
+        <article class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">01</span>
+            <h4 class="subpoint-title">先看产品</h4>
+          </div>
+          <div class="app-layout">
+            <div class="keep-gallery-wrap">
+              <div class="gallery freeletics-gallery">
+                <figure class="shot">
+                  <img src="assets/competitor/freeletics-transform-3.jpg" alt="Freeletics YouTube 社区与频道说明截图">
+                  <figcaption>FreeAthletes 社区与频道表达</figcaption>
+                </figure>
+                <figure class="shot">
+                  <img src="assets/competitor/freeletics-transform-1.jpg" alt="Freeletics 用户转变内容截图">
+                  <figcaption>Transformation 故事内容</figcaption>
+                </figure>
+                <figure class="shot">
+                  <img src="assets/competitor/freeletics-transform-2.jpg" alt="Freeletics 90 天前后变化截图">
+                  <figcaption>前后变化的结果展示</figcaption>
+                </figure>
+              </div>
+            </div>
+            <article class="freeletics-panel">
+              <div>
+                <div class="logo-shell">
+                  <img src="assets/app-logos/freeletics.png" alt="Freeletics logo">
+                </div>
+                <h3>我的想法</h3>
+                <p>我会把 Freeletics 理解成一个以 AI Coach 为核心、以 transformation story 为叙事、以 #FreeAthletes community 为氛围的数字训练平台。</p>
+                <p>它卖的不只是训练内容，而是“持续训练后身体真的会变化”的信心。用户进入产品，不只是为了拿到训练方案，也是被前后变化内容和社区氛围激发去坚持训练。</p>
+                <p>从公开对外的信息看，它也很强调平台势能：60 million users、450 million training sessions 和 700+ exercises，这些都在强化它作为数字健身平台的规模感。</p>
+              </div>
+            </article>
+          </div>
+        </article>
+      </div>
+      <div class="analysis-group" id="freeletics-product">
+        <div class="analysis-header">
+          <p class="analysis-kicker">第二大点</p>
+          <h3 class="analysis-title">拆解产品</h3>
+        </div>
+        <article class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">01</span>
+            <h4 class="subpoint-title">买了 AI Coach 之后会发生什么</h4>
+          </div>
+          <div class="note-stack">
+            <div class="freeletics-flow-row">
+              <article class="note-card freeletics-flow-card">
+                <h3>订阅后的训练流程</h3>
+                <div class="flow-compare">
+                  <div class="flow-column" style="max-width: 100%;">
+                    <p class="flow-heading">Freeletics 流程</p>
+                    <div class="flow-lane">
+                      <div class="flow-node">
+                        <div class="flow-node-index">1</div>
+                        <p class="flow-node-copy">先做 onboarding，回答目标、训练基础和偏好等问题。</p>
+                      </div>
+                      <div class="flow-node">
+                        <div class="flow-node-index">2</div>
+                        <p class="flow-node-copy">选择 Training Journey，再设置每周训练天数、器械条件和跑步偏好。</p>
+                      </div>
+                      <div class="flow-node">
+                        <div class="flow-node-index">3</div>
+                        <p class="flow-node-copy">系统生成个性化训练计划，同时解锁更多 workouts、exercises 和 runs。</p>
+                      </div>
+                      <div class="flow-node">
+                        <div class="flow-node-index">4</div>
+                        <p class="flow-node-copy">开始训练后，用户会在每次训练结束后提交反馈，AI Coach 再根据反馈继续调整下一次训练。</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              <figure class="freeletics-hero-card">
+                <img src="assets/competitor/freeletics-coach-hero.png" alt="Freeletics Personalized workout plans 官网截图">
+              </figure>
+            </div>
+            <div class="compare-summary">
+              <article class="summary-card">
+                <p class="summary-label">订阅后得到什么</p>
+                <p>买会员后得到的不是一对一真人教练，而是 AI Coach 驱动的个性化 Training Journey、更多训练内容，以及基于反馈持续调整的训练路径。</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">核心优势</p>
+                <p>最重要的一点，是它会根据你每次训练后的反馈继续调整下一次训练。这和 Keep 生成后相对固定的训练计划不同，Freeletics 的计划会持续自适应地往下走。</p>
+              </article>
+            </div>
+          </div>
+        </article>
+        <div class="subpoint-grid">
+          <article class="subpoint-card">
+            <div class="subpoint-header">
+              <span class="subpoint-index">02</span>
+              <h4 class="subpoint-title">动作指导是什么形式</h4>
+            </div>
+            <div class="subpoint-copy">
+              <p>Freeletics 的动作指导不是纯静态图，也不是典型的视频课程，而是“AI Coach 训练计划 + 动作教程视频 / 技术说明 + 训练内音频提示”的组合。</p>
+              <p>更准确地说，它有教程视频、Single Exercises 的 technique guidance，以及训练中的倒计时、时间播报和基础音频反馈，但不是 Keep 那种全程强陪伴式的语音带练。</p>
+            </div>
+          </article>
+          <article class="subpoint-card">
+            <div class="subpoint-header">
+              <span class="subpoint-index">03</span>
+              <h4 class="subpoint-title">我的思考</h4>
+            </div>
+            <div class="compare-summary">
+              <article class="summary-card">
+                <p class="summary-label">Keep</p>
+                <p>更强在训练当下的陪伴感。数次数、报动作名称、提醒动作细节、休息倒计时和自动播报下一个动作，让用户更像一直被教练带着练。在训练即时体验上，Keep 的数字人教学和语音陪练会更完整一些。</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">Freeletics</p>
+                <p>更强在长期训练路径和持续自适应。它会根据用户每次训练后的实际表现和反馈，继续调整下一次训练强度和内容，这能减少用户因为状态波动、当次没完成任务带来的挫败感。但它没有 Keep 那样的数字人教学，更像给用户一个持续打磨动作细节和训练路径的入口。</p>
+              </article>
+            </div>
+          </article>
+          <article class="subpoint-card">
+            <div class="subpoint-header">
+              <span class="subpoint-index">04</span>
+              <h4 class="subpoint-title">AI 应用场景</h4>
+            </div>
+            <div class="scenario-stack">
+              <div class="scenario-block subpoint-copy">
+                <h5>场景判断</h5>
+                <p>这一层更适合把 Freeletics 的动态化训练计划和 Keep 的 AI 语音教练结合起来。前者负责根据训练反馈持续调整计划，后者负责在训练当下提供更强的陪伴感和交流感，这样用户会更像在和一个会思考、也会带练的智能教练持续互动。</p>
+              </div>
+              <div class="voice-grid">
+                <div class="voice-item">
+                  <strong>动态化训练计划</strong>
+                  <p>保留 Freeletics 的核心优势：根据用户每次训练后的反馈，继续调整下一次训练强度、动作安排和节奏，让训练计划不是一次性生成，而是持续自适应地往下走。</p>
+                </div>
+                <div class="voice-item">
+                  <strong>AI 语音教练（教练版）</strong>
+                  <p>在高强度训练里加入更有存在感的语音教练，实时播报动作名称、次数、节奏和鼓励反馈，让用户更像被一个充满能量的教练带着练，增强情绪价值和训练沉浸感。</p>
+                </div>
+                <div class="voice-item">
+                  <strong>AI 语音教练（普通版）</strong>
+                  <p>在日常训练里提供更轻量的语音提醒，帮助用户保持动作标准、控制节奏、衔接休息和下一个动作，并在训练结束后补充训练目的与肌群作用，让整体体验更连贯。</p>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="my-project" class="app-section">
+      <div class="app-header">
+        <div class="logo-shell logo-shell-text">AI</div>
+        <div>
+          <p class="region">My Project</p>
+          <h2 class="app-name">我的项目</h2>
+        </div>
+      </div>
+      <div class="analysis-group">
+        <div class="analysis-header">
+          <p class="analysis-kicker">最后一部分</p>
+          <h3 class="analysis-title">完整体系介绍与产品落地</h3>
+        </div>
+        <article id="my-project-overview" class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">01</span>
+            <h4 class="subpoint-title">产品落地与闭环</h4>
+          </div>
+          <div class="scenario-stack">
+            <div class="scenario-block subpoint-copy">
+              <h5>大前提</h5>
+              <p>这里的大前提是，我们已经开始售卖自己的产品，比如健身衣服、水杯等运动相关商品，所以这套能力不是停留在“AI 能不能回答问题”的展示层，而是可以直接接入真实商城去落地。当前端搭建起商品展示、下单购买和售后服务链路后，智能电商客服 Agent 就能自然进入用户的交易场景，开始承接真实服务。</p>
+              <p>基于这个前提，这个项目的核心优势就在于它不是一个单独的聊天框，而是一套可以部署的自动化服务系统。AI 可以在售前负责介绍产品、回答材质、尺码和适用场景等问题，在售中承接订单、物流和状态查询，在售后处理退款、退货、换货与人工转接；同时后台再配合客服平台、知识库管理和评测数据看板，形成前台承接用户、后台持续优化的完整闭环。</p>
+            </div>
+            <div class="compare-summary">
+              <article class="summary-card">
+                <p class="summary-label">电商售卖场景</p>
+                <p>项目已经进入真实商品和真实服务场景，AI 服务的对象不再是抽象问答，而是具体的商品介绍、购买决策、订单跟进和售后处理。</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">自动化客服 Agent</p>
+                <p>这一套 Agent 的定位不是单点聊天，而是统一承接产品介绍、商品咨询、物流查询、售后判断和人工转接的自动化服务入口。</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">完整链路闭环</p>
+                <p>我已经把用户服务入口、客服工作台、知识库管理后台和评测数据看板打通，让会话、订单、工单、知识和评测结果都在同一条链路里流转。</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">产品可落地点</p>
+                <p>AI 可以直接落在售前介绍产品与推荐、售中处理订单和物流、售后判断退款退货与转人工协同，并通过 bad case 和评测数据持续优化服务质量。</p>
+              </article>
+            </div>
+          </div>
+        </article>
+        <article id="my-project-showcase" class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">02</span>
+            <h4 class="subpoint-title">真实界面展示</h4>
+          </div>
+          <div class="project-showcase-intro">
+            <p class="project-showcase-label">Interface Showcase</p>
+          </div>
+          <div class="project-showcase-tabs">
+            <button type="button" class="project-showcase-tab" onclick="switchProjectShowcase('login', this)">
+              <span class="project-showcase-role">内部员工</span>
+              <strong>登录入口</strong>
+              <span class="project-showcase-caption">统一角色入口</span>
+            </button>
+            <button type="button" class="project-showcase-tab active" onclick="switchProjectShowcase('customer', this)">
+              <span class="project-showcase-role">消费者</span>
+              <strong>用户服务入口</strong>
+              <span class="project-showcase-caption">商品咨询与服务入口</span>
+            </button>
+            <button type="button" class="project-showcase-tab" onclick="switchProjectShowcase('workspace', this)">
+              <span class="project-showcase-role">客服专员</span>
+              <strong>客服工作台</strong>
+              <span class="project-showcase-caption">工单与协同</span>
+            </button>
+            <button type="button" class="project-showcase-tab" onclick="switchProjectShowcase('knowledge', this)">
+              <span class="project-showcase-role">知识运营</span>
+              <strong>知识库管理后台</strong>
+              <span class="project-showcase-caption">知识治理</span>
+            </button>
+            <button type="button" class="project-showcase-tab" onclick="switchProjectShowcase('analytics', this)">
+              <span class="project-showcase-role">产品策略</span>
+              <strong>评测数据看板</strong>
+              <span class="project-showcase-caption">评测与迭代</span>
+            </button>
+          </div>
+          <div class="project-showcase-shell">
+            <div id="project-showcase-login" class="project-showcase-content">
+              <div class="project-showcase-copy">
+                <div>
+                  <p class="project-showcase-label">LoginPage</p>
+                  <h5>登录入口</h5>
+                </div>
+                <div class="project-showcase-points">
+                  <div class="project-showcase-point">
+                    <strong>界面定位</strong>
+                    <p>作为内部员工的统一入口，负责识别角色并把不同人员分发到客服平台、知识库管理后台和评测数据看板。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>面向角色</strong>
+                    <p>客服专员、知识运营、产品策略等内部角色。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>核心价值</strong>
+                    <p>把多角色工作台收拢成一个统一入口，让后面的客服协同、知识治理和评测分析都建立在同一套账号体系上。</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="project-showcase-shot">
+                  <img src="assets/showcase/login-screen.png" alt="登录入口完整截图">
+                </div>
+                <div class="project-showcase-actions">
+                  <a href="assets/showcase/login-screen.png" target="_blank" rel="noopener">查看原图</a>
+                </div>
+              </div>
+            </div>
+
+            <div id="project-showcase-customer" class="project-showcase-content active">
+              <div class="project-showcase-copy">
+                <div>
+                  <p class="project-showcase-label">customer_app.py</p>
+                  <h5>用户服务入口</h5>
+                </div>
+                <div class="project-showcase-points">
+                  <div class="project-showcase-point">
+                    <strong>界面定位</strong>
+                    <p>面向消费者的统一服务入口，直接承接商品介绍、商品咨询、订单、物流和售后问题。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>面向角色</strong>
+                    <p>C 端用户和真实电商消费者。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>核心功能</strong>
+                    <p>通过推荐问题、开放提问和状态提示，把用户问题路由到 FAQ、RAG、Workflow 或人工接管流程。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>产品落地点</strong>
+                    <p>这一层就是 AI 真正面向用户的落地点，让它既能介绍产品，也能处理售前、售中、售后的服务问题。</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="project-showcase-shot">
+                  <img src="assets/showcase/customer-screen.png" alt="用户服务入口完整截图">
+                </div>
+                <div class="project-showcase-actions">
+                  <a href="assets/showcase/customer-screen.png" target="_blank" rel="noopener">查看原图</a>
+                </div>
+              </div>
+            </div>
+
+            <div id="project-showcase-workspace" class="project-showcase-content">
+              <div class="project-showcase-copy">
+                <div>
+                  <p class="project-showcase-label">WorkspacePage.jsx</p>
+                  <h5>客服工作台</h5>
+                </div>
+                <div class="project-showcase-points">
+                  <div class="project-showcase-point">
+                    <strong>界面定位</strong>
+                    <p>复杂问题的承接中枢，是人机协同真正发生的地方。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>面向角色</strong>
+                    <p>客服专员和人工坐席。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>核心功能</strong>
+                    <p>展示会话队列、关联订单、AI 洞察、建议回复和快捷操作，帮助客服直接接过复杂问题继续处理。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>产品落地点</strong>
+                    <p>它证明这不是一个只会自动回复的 Agent，而是一套可以把 AI 服务平滑接入人工客服体系的产品。</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="project-showcase-shot">
+                  <img src="assets/showcase/workspace-screen.png" alt="客服工作台完整截图">
+                </div>
+                <div class="project-showcase-actions">
+                  <a href="assets/showcase/workspace-screen.png" target="_blank" rel="noopener">查看原图</a>
+                </div>
+              </div>
+            </div>
+
+            <div id="project-showcase-knowledge" class="project-showcase-content">
+              <div class="project-showcase-copy">
+                <div>
+                  <p class="project-showcase-label">KnowledgePage.jsx</p>
+                  <h5>知识库管理后台</h5>
+                </div>
+                <div class="project-showcase-points">
+                  <div class="project-showcase-point">
+                    <strong>界面定位</strong>
+                    <p>面向运营侧的知识资产管理后台，负责保证 RAG 回答的知识质量。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>面向角色</strong>
+                    <p>知识运营和内容治理人员。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>核心功能</strong>
+                    <p>支持文档上传、chunk 预览、状态追踪和异常删除，并能针对 bad case 快速补充知识。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>产品落地点</strong>
+                    <p>让知识维护变成可运营、可追踪、可验证的动作，使电商客服 Agent 具备持续学习和持续修正能力。</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="project-showcase-shot">
+                  <img src="assets/showcase/knowledge-screen.png" alt="知识库管理后台完整截图">
+                </div>
+                <div class="project-showcase-actions">
+                  <a href="assets/showcase/knowledge-screen.png" target="_blank" rel="noopener">查看原图</a>
+                </div>
+              </div>
+            </div>
+
+            <div id="project-showcase-analytics" class="project-showcase-content">
+              <div class="project-showcase-copy">
+                <div>
+                  <p class="project-showcase-label">AnalyticsPage.jsx</p>
+                  <h5>评测数据看板</h5>
+                </div>
+                <div class="project-showcase-points">
+                  <div class="project-showcase-point">
+                    <strong>界面定位</strong>
+                    <p>系统评测和策略优化的控制台，用来观察 AI 在真实业务中的承接效果。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>面向角色</strong>
+                    <p>产品、策略和评测角色。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>核心功能</strong>
+                    <p>呈现转人工率、bad case、场景分布与优化方向，帮助判断系统该优先修哪里、优化是否真的生效。</p>
+                  </div>
+                  <div class="project-showcase-point">
+                    <strong>产品落地点</strong>
+                    <p>它让这套 Agent 不只是上线，而是能被持续评估、持续迭代，最终形成闭环的产品优化机制。</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="project-showcase-shot">
+                  <img src="assets/showcase/analytics-screen.png" alt="评测数据看板完整截图">
+                </div>
+                <div class="project-showcase-actions">
+                  <a href="assets/showcase/analytics-screen.png" target="_blank" rel="noopener">查看原图</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article id="my-project-summary" class="subpoint-card">
+          <div class="subpoint-header">
+            <span class="subpoint-index">03</span>
+            <h4 class="subpoint-title">总结</h4>
+          </div>
+          <div class="scenario-stack">
+            <div class="scenario-block subpoint-copy">
+              <h5>项目总结</h5>
+              <p>整体来看，这个项目最大的价值在于，它已经不只是一个展示型智能体，而是一套可以在真实电商场景中持续自动化运作的服务系统。当前端接入商品、订单和售后链路之后，AI 就能优先承接大部分标准化问题，让商品介绍、咨询回复、订单查询、物流跟进和基础售后判断尽可能自动完成。</p>
+              <p>这意味着项目不需要过多依赖人工持续盯每一条会话。大量重复、规则清晰的问题可以由智能电商客服 Agent 先处理，只有复杂争议、高风险投诉和边界不清的场景再转给人工介入。这样既能提高整体服务效率，也能把人工资源集中在真正需要判断和协商的少数问题上。</p>
+            </div>
+            <div class="compare-summary">
+              <article class="summary-card">
+                <p class="summary-label">高自动化运作</p>
+                <p>在售前、售中、售后的大量标准场景里，系统都可以优先由 AI 自动承接，减少重复人工处理。</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">减少人工介入</p>
+                <p>人工不再需要覆盖所有问题，而是重点处理复杂、例外和高风险场景，整体投入会更可控。</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">完整服务闭环</p>
+                <p>用户服务入口、客服平台、知识库管理和评测数据看板共同配合，让系统具备承接、协同、优化的完整能力。</p>
+              </article>
+              <article class="summary-card">
+                <p class="summary-label">可持续扩展</p>
+                <p>随着商品变多、商城能力更完整，这套 Agent 也可以继续扩展到更多品类和更多自动化服务场景。</p>
+              </article>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <script>
+    function switchProjectShowcase(tabId, button) {
+      document.querySelectorAll(".project-showcase-content").forEach(function (el) {
+        el.classList.remove("active");
+      });
+
+      document.querySelectorAll(".project-showcase-tab").forEach(function (el) {
+        el.classList.remove("active");
+      });
+
+      var target = document.getElementById("project-showcase-" + tabId);
+      if (target) {
+        target.classList.add("active");
+      }
+
+      if (button) {
+        button.classList.add("active");
+      }
+    }
+  </script>
+</body>
+</html>
+

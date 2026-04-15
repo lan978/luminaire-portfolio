@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Fitness Agent 产品作品集</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f1e8;
+      --bg-deep: #ede3d3;
+      --panel: rgba(255,255,255,.88);
+      --panel-solid: #fffdfa;
+      --ink: #14231e;
+      --muted: #64706b;
+      --line: rgba(20,35,30,.1);
+      --sage: #5b796d;
+      --sand: #b88e58;
+      --sage-soft: rgba(91,121,109,.12);
+      --sand-soft: rgba(184,142,88,.14);
+      --shadow: 0 22px 48px rgba(20,35,30,.08);
+      --shadow-strong: 0 28px 60px rgba(20,35,30,.14);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Manrope", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(184,142,88,.18), transparent 26%),
+        radial-gradient(circle at top right, rgba(91,121,109,.15), transparent 28%),
+        linear-gradient(180deg, #fbf7f0 0%, var(--bg) 44%, var(--bg-deep) 100%);
+    }
+    img { display: block; max-width: 100%; }
+    a, button { font: inherit; color: inherit; }
+    .page-shell { max-width: 1480px; margin: 0 auto; padding: 22px 24px 80px; }
+    .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 22px; }
+    .eyebrow, .section-tag, .card-kicker, .nav-label, .pill {
+      margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--sand);
+    }
+    .brand-title { margin: 8px 0 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+    .topbar-note {
+      max-width: 560px; padding: 12px 16px; border: 1px solid rgba(184,142,88,.22); border-radius: 999px;
+      background: rgba(255,255,255,.68); color: var(--muted); font-size: 12px; line-height: 1.75;
+    }
+    .layout { display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 24px; }
+    .content { min-width: 0; display: grid; gap: 24px; }
+    .section {
+      position: relative; overflow: hidden; padding: 30px; border-radius: 34px; border: 1px solid var(--line);
+      background: var(--panel); box-shadow: var(--shadow); backdrop-filter: blur(18px);
+    }
+    .section::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.46), transparent 34%), radial-gradient(circle at top right, rgba(184,142,88,.09), transparent 22%);
+      pointer-events: none;
+    }
+    .section > * { position: relative; z-index: 1; }
+    .hero { padding: 34px; }
+    .hero-grid, .analysis-grid, .module-top, .panel-layout, .priority-grid, .footer-grid, .hero-stats, .source-grid, .three-grid, .two-grid, .mini-grid, .process-strip, .split-note, .flow-grid, .evidence-row {
+      display: grid; gap: 16px;
+    }
+    .hero-grid { grid-template-columns: minmax(0,1.06fr) minmax(380px,.94fr); align-items: start; gap: 24px; }
+    .analysis-grid, .module-top, .panel-layout, .footer-grid, .two-grid, .source-grid, .split-note { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .hero-stats, .three-grid, .mini-grid, .priority-grid, .flow-grid, .evidence-row { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .process-strip { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .hero-title, .section-head h2 {
+      margin: 0; font-family: "Noto Serif SC", "Songti SC", serif; font-weight: 600; letter-spacing: -.04em; color: var(--ink);
+    }
+    .hero-title { font-size: clamp(34px,4.6vw,58px); line-height: 1.08; }
+    .hero-subtitle, .section-head p, .card p, .card li, .summary-block p, .metric-card p, .priority-band p, .note-card p, .step-card p, .footer-card p, .image-caption p, .step-chip p {
+      margin: 0; color: var(--muted); font-size: 13px; line-height: 1.85;
+    }
+    .hero-subtitle { margin-top: 16px; max-width: 860px; font-size: 15px; line-height: 1.95; }
+    .section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; margin-bottom: 22px; }
+    .section-head h2 { font-size: clamp(26px,3vw,38px); line-height: 1.12; }
+    .chips, .tab-buttons, .priority-stack, .note-stack { display: grid; gap: 14px; }
+    .priority-stack { align-content: start; align-self: start; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .chip, .tab-button {
+      padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,.88); border: 1px solid rgba(20,35,30,.08);
+      font-size: 12px; font-weight: 800;
+    }
+    .tab-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tab-button { color: var(--muted); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: .18s ease; }
+    .tab-button:hover, .tab-button.active { color: var(--ink); background: rgba(91,121,109,.14); transform: translateY(-1px); }
+    .card, .metric-card, .summary-block, .priority-band, .note-card, .step-card, .footer-card {
+      padding: 20px; background: var(--panel-solid); border: 1px solid var(--line); border-radius: 26px; box-shadow: 0 16px 32px rgba(20,35,30,.05);
+    }
+    .mockup-card, .image-card {
+      overflow: hidden; border-radius: 30px; border: 1px solid rgba(184,142,88,.16);
+      background: linear-gradient(150deg, rgba(255,255,255,.98), rgba(246,239,227,.92)); box-shadow: var(--shadow-strong);
+    }
+    .mockup-card { padding: 18px; }
+    .mockup-card img, .image-card img { width: 100%; border-radius: 22px; }
+    .prototype-shell {
+      padding: 16px;
+      border-radius: 30px;
+      border: 1px solid rgba(184,142,88,.16);
+      background: linear-gradient(150deg, rgba(255,255,255,.98), rgba(246,239,227,.92));
+      box-shadow: var(--shadow-strong);
+    }
+    .prototype-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .prototype-bar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .prototype-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(20,35,30,.08);
+      background: rgba(255,255,255,.92);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .prototype-viewport {
+      position: relative;
+      width: min(100%, 430px);
+      margin: 0 auto;
+      aspect-ratio: 430 / 860;
+      border-radius: 40px;
+      overflow: hidden;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+    .prototype-frame {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent;
+    }
+    .layout-insight-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, .82fr) minmax(0, 1.18fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+    .layout-insight-visual {
+      padding: 18px;
+      border-radius: 30px;
+      border: 1px solid rgba(184,142,88,.16);
+      background: linear-gradient(150deg, rgba(255,255,255,.98), rgba(246,239,227,.92));
+      box-shadow: var(--shadow-strong);
+    }
+    .layout-insight-frame {
+      min-height: 420px;
+      border-radius: 24px;
+      border: 1px dashed rgba(91,121,109,.26);
+      background:
+        radial-gradient(circle at top right, rgba(184,142,88,.12), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(244,239,230,.92));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .layout-insight-placeholder {
+      max-width: 280px;
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+    }
+    .layout-insight-placeholder-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(91,121,109,.16), rgba(184,142,88,.16));
+      color: var(--sage);
+      font-size: 24px;
+      font-weight: 800;
+      box-shadow: 0 14px 30px rgba(20,35,30,.08);
+    }
+    .layout-insight-placeholder strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.35;
+      color: var(--ink);
+    }
+    .layout-insight-placeholder p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.85;
+    }
+    .layout-insight-notes {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+    .layout-visual-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .layout-visual-status {
+      flex-shrink: 0;
+      min-height: 40px;
+      padding: 10px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(184,142,88,.22);
+      background: rgba(255,255,255,.82);
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.74);
+    }
+    .layout-media-shell {
+      min-height: 420px;
+      border-radius: 24px;
+      border: 1px dashed rgba(91,121,109,.26);
+      background:
+        radial-gradient(circle at top right, rgba(184,142,88,.12), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(244,239,230,.92));
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+    .layout-media-stage {
+      padding: 18px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,242,233,.96));
+      border: 1px solid rgba(20,35,30,.08);
+      box-shadow: 0 18px 36px rgba(20,35,30,.08);
+      display: grid;
+      justify-items: center;
+    }
+    .layout-media-phone {
+      width: min(100%, 315px);
+      border-radius: 34px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(240,234,224,.94));
+      border: 1px solid rgba(20,35,30,.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.76), 0 16px 28px rgba(20,35,30,.08);
+    }
+    .layout-media-screen {
+      overflow: hidden;
+      border-radius: 28px;
+      background: #f5efe5;
+      border: 1px solid rgba(20,35,30,.08);
+      min-height: 560px;
+      display: grid;
+      place-items: center;
+    }
+    .layout-stage-media {
+      width: 100%;
+      height: 100%;
+      display: none;
+      object-fit: contain;
+      background: #f5efe5;
+    }
+    .layout-stage-media.active {
+      display: block;
+    }
+    .layout-stage-media.layout-stage-video {
+      aspect-ratio: 9 / 19.5;
+      min-height: 560px;
+    }
+    .layout-stage-media.layout-stage-image {
+      aspect-ratio: 9 / 19.5;
+      min-height: 560px;
+      object-position: center top;
+    }
+    .layout-source-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .layout-source-button {
+      width: 100%;
+      min-height: 92px;
+      padding: 16px 16px 15px;
+      border-radius: 22px;
+      border: 1px solid rgba(20,35,30,.08);
+      background: rgba(255,255,255,.86);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.72);
+      display: grid;
+      gap: 6px;
+      align-content: center;
+      text-align: left;
+      cursor: pointer;
+      transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease, background .24s ease;
+    }
+    .layout-source-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(91,121,109,.22);
+      box-shadow: 0 12px 24px rgba(20,35,30,.08), inset 0 1px 0 rgba(255,255,255,.74);
+    }
+    .layout-source-button.active {
+      border-color: rgba(91,121,109,.28);
+      background: linear-gradient(135deg, rgba(91,121,109,.12), rgba(184,142,88,.08));
+      box-shadow: 0 14px 28px rgba(20,35,30,.08), inset 0 1px 0 rgba(255,255,255,.76);
+    }
+    .layout-source-button strong {
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .layout-source-button span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.75;
+    }
+    .card h3, .summary-block h3, .priority-band strong, .note-card h3, .step-card h3, .footer-card h3, .image-caption strong, .module-highlight strong {
+      margin: 0 0 10px; color: var(--ink); line-height: 1.42;
+    }
+    .metric-card strong { display: block; margin: 0 0 8px; font-size: 30px; letter-spacing: -.03em; }
+    .hero-quote {
+      padding: 24px; border-radius: 30px; background: linear-gradient(140deg, rgba(91,121,109,.95), rgba(61,86,77,.93)); box-shadow: var(--shadow-strong);
+    }
+    .hero-quote .card-kicker { color: rgba(255,255,255,.72); }
+    .hero-quote p { margin: 12px 0 0; font-size: 14px; line-height: 1.88; color: rgba(255,255,255,.96); }
+    .summary-block { position: relative; overflow: hidden; }
+    .summary-block::before {
+      content: ""; position: absolute; inset: auto -40px -50px auto; width: 140px; height: 140px; border-radius: 50%; background: var(--sand-soft);
+      filter: blur(6px); pointer-events: none;
+    }
+    .summary-block > * { position: relative; z-index: 1; }
+    .list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+    .list li { position: relative; padding-left: 16px; }
+    .list li::before {
+      content: ""; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; border-radius: 999px; background: rgba(91,121,109,.74);
+    }
+    .accent { color: var(--sage); font-weight: 800; }
+    .logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .logo-row img { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); object-fit: cover; }
+    .logo-row strong { font-size: 18px; }
+    .step-chip { padding: 16px; border-radius: 18px; background: rgba(255,255,255,.76); border: 1px solid rgba(20,35,30,.08); }
+    .step-chip strong { display: block; margin-top: 8px; font-size: 14px; line-height: 1.5; }
+    .process-strip .step-chip { position: relative; overflow: visible; }
+    .process-strip .step-chip:not(:last-child)::after {
+      content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%);
+      font-size: 18px; font-weight: 800; color: rgba(91,121,109,.42);
+    }
+    .workflow-only { margin-top: 14px; }
+    .workflow-only .step-chip {
+      min-height: 168px; padding: 22px 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,242,233,.94));
+      border-radius: 24px;
+    }
+    .workflow-only .pill { color: var(--muted); }
+    .workflow-band {
+      margin-top: 18px; padding: 20px 22px; border-radius: 24px;
+      background: linear-gradient(135deg, rgba(91,121,109,.12), rgba(184,142,88,.08));
+      border: 1px solid rgba(91,121,109,.14);
+    }
+    .workflow-band strong { display: block; margin-bottom: 8px; font-size: 15px; color: var(--ink); }
+    .workflow-band p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.85; }
+    .tabs { margin-top: 18px; display: grid; gap: 16px; align-content: start; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .prototype-tabs { margin-top: 0; gap: 12px; align-content: start; }
+    .prototype-tabs .tab-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: start;
+    }
+    .prototype-tabs .tab-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 46px;
+      min-height: 46px;
+      padding: 0 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(184,142,88,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(245,239,229,.94));
+      box-shadow: 0 10px 22px rgba(20,35,30,.04);
+      color: #6d6a62;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .03em;
+      line-height: 1;
+      text-transform: none;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .prototype-tabs .tab-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(91,121,109,.24);
+      color: var(--ink);
+    }
+    .prototype-tabs .tab-button.active {
+      background: linear-gradient(135deg, rgba(91,121,109,.18), rgba(184,142,88,.16));
+      border-color: rgba(91,121,109,.28);
+      color: var(--ink);
+      box-shadow: 0 14px 28px rgba(91,121,109,.12);
+    }
+    .interaction-tabs .tab-buttons {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .interaction-tabs .tab-button {
+      white-space: normal;
+      line-height: 1.2;
+      padding: 0 10px;
+    }
+    .prototype-tabs .tab-panel.active { display: grid; gap: 12px; }
+    .design-story {
+      display: grid;
+      gap: 14px;
+    }
+    .design-story-card {
+      position: relative;
+      overflow: hidden;
+      padding: 18px 18px 18px 20px;
+      border-radius: 24px;
+      border: 1px solid rgba(184,142,88,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,242,233,.94));
+      box-shadow: 0 14px 28px rgba(20,35,30,.05);
+    }
+    .design-story-card::before {
+      content: "";
+      position: absolute;
+      right: -28px;
+      bottom: -38px;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(184,142,88,.14), rgba(91,121,109,.08));
+      filter: blur(4px);
+      pointer-events: none;
+    }
+    .design-story-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .design-story-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(91,121,109,.2), rgba(184,142,88,.16));
+      border: 1px solid rgba(91,121,109,.14);
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    .design-story-head h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.35;
+      color: var(--ink);
+    }
+    .design-story-card p {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.9;
+    }
+    .design-story-card .list {
+      position: relative;
+      z-index: 1;
+    }
+    .design-elements-label {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(184,142,88,.1);
+      border: 1px solid rgba(184,142,88,.18);
+      color: #8a6a3f;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .06em;
+    }
+    .design-elements-grid {
+      position: relative;
+      z-index: 1;
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .design-element {
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(20,35,30,.08);
+      background: rgba(255,255,255,.84);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+      display: inline-flex;
+      align-items: center;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .attr-label-strip {
+      position: relative;
+      z-index: 1;
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .attr-label {
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(91,121,109,.12);
+      background: linear-gradient(135deg, rgba(91,121,109,.1), rgba(184,142,88,.08));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.72);
+      display: inline-flex;
+      align-items: center;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .course-persona-grid {
+      position: relative;
+      z-index: 1;
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .course-persona {
+      padding: 12px 13px;
+      border-radius: 18px;
+      border: 1px solid rgba(20,35,30,.08);
+      background: rgba(255,255,255,.84);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.74);
+    }
+    .course-persona-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .course-persona-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(91,121,109,.16), rgba(184,142,88,.14));
+      border: 1px solid rgba(91,121,109,.12);
+      color: var(--ink);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      flex: 0 0 auto;
+    }
+    .course-persona strong {
+      display: block;
+      margin: 0;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .course-persona p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.75;
+    }
+    .design-proof {
+      margin-top: 4px;
+      padding: 18px 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(91,121,109,.13), rgba(184,142,88,.1));
+      border: 1px solid rgba(91,121,109,.12);
+      box-shadow: 0 14px 28px rgba(20,35,30,.04);
+    }
+    .design-proof strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: var(--ink);
+    }
+    .design-proof p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.9;
+    }
+    .voice-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .voice-media-shell {
+      padding: 16px;
+      border-radius: 30px;
+      border: 1px solid rgba(184,142,88,.16);
+      background: linear-gradient(150deg, rgba(255,255,255,.98), rgba(246,239,227,.92));
+      box-shadow: var(--shadow-strong);
+    }
+    .voice-media-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .voice-media-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .voice-media-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(184,142,88,.18);
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    .voice-media-stage {
+      width: min(100%, 290px);
+      margin: 0 auto;
+      aspect-ratio: 390 / 844;
+      border-radius: 34px;
+      overflow: hidden;
+      border: 1px solid rgba(184,142,88,.18);
+      background: linear-gradient(180deg, rgba(250,247,241,.98), rgba(238,232,221,.95));
+      position: relative;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    .voice-media-video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #121212;
+    }
+    .voice-media-placeholder {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 14%, rgba(20,35,30,.14) 0, rgba(20,35,30,.14) 12px, transparent 13px),
+        linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0));
+    }
+    .voice-placeholder-inner {
+      display: grid;
+      gap: 12px;
+      width: min(100%, 280px);
+      justify-items: center;
+    }
+    .voice-play-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(91,121,109,.2), rgba(184,142,88,.18));
+      border: 1px solid rgba(91,121,109,.16);
+      color: var(--ink);
+      font-size: 24px;
+      box-shadow: 0 18px 28px rgba(20,35,30,.08);
+    }
+    .voice-placeholder-inner strong {
+      color: var(--ink);
+      font-size: 20px;
+      line-height: 1.35;
+    }
+    .voice-placeholder-inner p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.85;
+    }
+    .voice-source-grid {
+      width: min(100%, 290px);
+      margin: 12px auto 0;
+      display: grid;
+      gap: 10px;
+    }
+    .voice-source-button {
+      width: 100%;
+      min-height: 88px;
+      padding: 14px 14px 13px;
+      border-radius: 20px;
+      border: 1px solid rgba(20,35,30,.08);
+      background: rgba(255,255,255,.82);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+      display: grid;
+      gap: 6px;
+      align-content: center;
+      text-align: left;
+      cursor: pointer;
+      transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease, background .24s ease;
+    }
+    .voice-source-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(91,121,109,.22);
+      box-shadow: 0 12px 24px rgba(20,35,30,.08), inset 0 1px 0 rgba(255,255,255,.72);
+    }
+    .voice-source-button.active {
+      border-color: rgba(91,121,109,.28);
+      background: linear-gradient(135deg, rgba(91,121,109,.12), rgba(184,142,88,.08));
+      box-shadow: 0 14px 28px rgba(20,35,30,.08), inset 0 1px 0 rgba(255,255,255,.76);
+    }
+    .voice-source-button strong {
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .voice-source-button span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .voice-side {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+    .voice-flow-overview {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin: 2px 0 14px;
+    }
+    .voice-flow-pill {
+      min-height: 40px;
+      padding: 10px 8px;
+      border-radius: 16px;
+      border: 1px solid rgba(20,35,30,.08);
+      background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(248,243,234,.78));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.76);
+    }
+    .voice-flow-map {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      margin-top: 6px;
+      z-index: 1;
+    }
+    .voice-flow-step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .voice-flow-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 27px;
+      top: 52px;
+      bottom: -12px;
+      width: 2px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(91,121,109,.34), rgba(184,142,88,.28));
+    }
+    .voice-flow-index {
+      position: relative;
+      z-index: 1;
+      width: 56px;
+      min-width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(91,121,109,.18), rgba(184,142,88,.14));
+      border: 1px solid rgba(91,121,109,.12);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      box-shadow: 0 10px 18px rgba(20,35,30,.05), inset 0 1px 0 rgba(255,255,255,.74);
+    }
+    .voice-flow-step > div {
+      padding: 16px 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(20,35,30,.08);
+      background: linear-gradient(145deg, rgba(255,255,255,.92), rgba(248,243,234,.8));
+      box-shadow: 0 12px 24px rgba(20,35,30,.04), inset 0 1px 0 rgba(255,255,255,.78);
+    }
+    .voice-flow-step strong {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .voice-flow-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .voice-summary {
+      margin-top: 18px;
+      padding: 20px;
+      border-radius: 28px;
+      border: 1px solid rgba(184,142,88,.16);
+      background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(247,241,232,.9));
+      box-shadow: 0 18px 34px rgba(20,35,30,.05), inset 0 1px 0 rgba(255,255,255,.82);
+      display: grid;
+      gap: 16px;
+    }
+    .voice-summary-head {
+      display: grid;
+      gap: 6px;
+    }
+    .voice-summary-head h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 26px;
+      line-height: 1.2;
+    }
+    .voice-summary-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+    .voice-summary-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .voice-summary-card {
+      padding: 18px 18px 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(20,35,30,.08);
+      background: rgba(255,255,255,.84);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.78);
+    }
+    .voice-summary-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.35;
+    }
+    .voice-summary-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.95;
+    }
+    .voice-summary-note {
+      margin-top: 14px;
+      padding: 14px 15px 13px;
+      border-radius: 18px;
+      border: 1px solid rgba(184,142,88,.14);
+      background: linear-gradient(135deg, rgba(184,142,88,.1), rgba(91,121,109,.08));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.72);
+    }
+    .voice-summary-note strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .voice-summary-note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.85;
+    }
+    .voice-summary-list {
+      display: grid;
+      gap: 10px;
+    }
+    .voice-summary-item {
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(91,121,109,.08), rgba(184,142,88,.08));
+      border: 1px solid rgba(91,121,109,.1);
+    }
+    .voice-summary-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .voice-summary-item span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+    .image-caption { padding: 16px 20px 18px; border-top: 1px solid rgba(20,35,30,.08); background: rgba(255,255,255,.86); }
+    .module-highlight {
+      padding: 16px 18px; border-radius: 22px; background: linear-gradient(135deg, rgba(184,142,88,.12), rgba(91,121,109,.08));
+      border: 1px solid rgba(184,142,88,.18);
+    }
+    .subsection-head {
+      margin: 18px 0 14px;
+      display: grid;
+      gap: 6px;
+    }
+    .subsection-head strong {
+      font-size: 18px;
+      line-height: 1.35;
+      color: var(--ink);
+    }
+    .subsection-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .note-card { border-top: 3px solid rgba(91,121,109,.5); }
+    .note-card.warning { border-top-color: rgba(184,142,88,.62); }
+    .step-card { position: relative; padding-top: 18px; }
+    .step-badge {
+      width: 34px; height: 34px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;
+      background: rgba(91,121,109,.12); color: var(--sage); font-size: 13px; font-weight: 800;
+    }
+    .evidence-shot { overflow: hidden; border-radius: 22px; border: 1px solid rgba(20,35,30,.08); background: rgba(255,255,255,.9); }
+    .evidence-shot img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+    .evidence-shot span { display: block; padding: 12px 14px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .priority-band { border-left: 4px solid rgba(91,121,109,.46); }
+    .priority-band.p1 { border-left-color: rgba(184,142,88,.58); }
+    .priority-band.p2 { border-left-color: rgba(20,35,30,.28); }
+    .priority-label {
+      display: inline-flex; align-items: center; padding: 6px 10px; margin-bottom: 10px; border-radius: 999px; background: rgba(91,121,109,.12);
+      color: var(--sage); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .priority-band.p1 .priority-label { background: rgba(184,142,88,.12); color: var(--sand); }
+    .priority-band.p2 .priority-label { background: rgba(20,35,30,.08); color: var(--muted); }
+    .footer-note {
+      padding: 18px 20px; border-radius: 24px; background: rgba(255,255,255,.8); border: 1px solid rgba(20,35,30,.08); color: var(--muted); font-size: 13px; line-height: 1.85;
+    }
+    .side-nav {
+      position: sticky; top: 18px; align-self: start; padding: 20px; border-radius: 30px; background: rgba(255,255,255,.92);
+      border: 1px solid var(--line); box-shadow: var(--shadow-strong); backdrop-filter: blur(16px); display: grid; gap: 14px;
+    }
+    .nav-list { display: grid; gap: 10px; }
+    .nav-link {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; color: var(--muted); text-decoration: none;
+      font-size: 15px; font-weight: 700; transition: .18s ease;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--ink); background: rgba(91,121,109,.12); transform: translateX(-2px); }
+    .nav-dot { width: 10px; height: 10px; border-radius: 999px; background: rgba(20,35,30,.24); flex: 0 0 auto; }
+    .nav-link.active .nav-dot { background: var(--sage); }
+    [data-reveal] { opacity: 0; transform: translateY(18px); transition: opacity .56s ease, transform .56s ease; }
+    [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 1320px) {
+      .layout { grid-template-columns: 1fr; }
+      .side-nav { position: static; order: -1; }
+    }
+    @media (max-width: 1120px) {
+      .hero-grid, .analysis-grid, .module-top, .panel-layout, .priority-grid, .footer-grid, .hero-stats, .source-grid, .three-grid, .two-grid, .mini-grid, .process-strip, .split-note, .flow-grid, .evidence-row, .layout-insight-grid {
+        grid-template-columns: 1fr;
+      }
+      .process-strip .step-chip:not(:last-child)::after { display: none; }
+    }
+    @media (max-width: 760px) {
+      .page-shell { padding: 16px 14px 64px; }
+      .topbar { flex-direction: column; }
+      .section, .hero { padding: 22px; border-radius: 26px; }
+      .hero-title { font-size: 34px; }
+      .tab-buttons { display: grid; }
+      .tab-button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">AI 产品作品集</p>
+        <p class="brand-title">AI 健身 Agent 产品分析与方案设计</p>
+      </div>
+      <div class="topbar-note">首屏先说明研究样本、分析方式、工作输出和优先级闭环，再进入界面布局、交互逻辑、数据、功能优先级四个核心模块。</div>
+    </header>
+
+    <div class="layout">
+      <main class="content">
+        <section class="section hero" id="overview" data-reveal>
+          <div class="hero-grid">
+            <div>
+              <p class="eyebrow">项目总览</p>
+              <h1 class="hero-title">基于 Keep 与 Freeletics 用户反馈的 AI 健身产品分析与方案设计</h1>
+              <p class="hero-subtitle">这份作品集想展示的，不是我做了多少页面，而是<span class="accent">我如何把真实用户反馈推进成产品判断</span>。我先研究 Keep 与 Freeletics 的用户评价，筛选高频痛点，再收敛为界面布局、交互逻辑、数据三个核心问题，并借助 AI 把抽象问题转成可视化界面，继续推进到产品思考、可落地办法和功能优先级。</p>
+              <div class="chips">
+                <span class="chip">用户痛点分析</span>
+                <span class="chip">3 个核心问题</span>
+                <span class="chip">AI 可视化界面探索</span>
+                <span class="chip">落地方案与优先级</span>
+              </div>
+              <div class="hero-stats" style="margin-top:20px;">
+                <div class="metric-card">
+                  <p class="card-kicker">研究来源</p>
+                  <strong>5+</strong>
+                  <p>覆盖华为、安卓、苹果应用商店，以及 Reddit、评价网站、Revolet 等海外渠道。</p>
+                </div>
+                <div class="metric-card">
+                  <p class="card-kicker">核心问题</p>
+                  <strong>3</strong>
+                  <p>我从大量反馈里收敛出界面布局、交互逻辑、数据三部分最值得展开的问题。</p>
+                </div>
+                <div class="metric-card">
+                  <p class="card-kicker">输出链路</p>
+                  <strong>4</strong>
+                  <p>从痛点分析、界面探索、产品思考到优先级判断，形成完整输出链路。</p>
+                </div>
+              </div>
+            </div>
+            <div class="note-stack">
+              <div class="hero-quote">
+                <p class="card-kicker">本页重点</p>
+                <p>我想证明的不是我会不会做界面，而是我能否完成从用户痛点识别、问题收敛，到方案表达与优先级判断的一整条产品链路。</p>
+              </div>
+              <div class="summary-block">
+                <p class="card-kicker">研究样本</p>
+                <h3>研究样本说明</h3>
+                <ul class="list">
+                  <li>Keep：华为、安卓、苹果应用商店，累计 600+ 条评价样本。</li>
+                  <li>Freeletics：Reddit、评价网站、Revolet 等渠道，样本量较少，用于补充海外用户视角。</li>
+                  <li>目标不是做全量舆情统计，而是识别值得推进的核心用户痛点。</li>
+                </ul>
+              </div>
+              <div class="summary-block">
+                <p class="card-kicker">展示结构</p>
+                <h3>接下来这份作品集会展示什么</h3>
+                <ul class="list">
+                  <li>先交代研究来源和筛选逻辑，再说明为什么选择这三个核心问题展开。</li>
+                  <li>再按界面布局、交互逻辑、数据三个模块展示用户痛点、我的思考和界面探索。</li>
+                  <li>每个模块都会继续推进到产品思考和可落地办法。</li>
+                  <li>最后用优先级判断把整套思考收成闭环。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="analysis" data-reveal>
+          <div class="section-head">
+            <div>
+              <div class="section-tag">01 / 工作流程</div>
+              <h2>工作流程：从核心痛点到优先级判断</h2>
+              <p>这一部分只展示我的工作流程，用一条清晰的四步路径说明我是怎么把问题推进成方案的。</p>
+            </div>
+          </div>
+
+          <div class="process-strip workflow-only">
+            <div class="step-chip">
+              <p class="pill">步骤 01</p>
+              <strong>分析核心痛点</strong>
+              <p>先从真实评价里筛选高频问题，找到最值得展开的核心痛点。</p>
+            </div>
+            <div class="step-chip">
+              <p class="pill">步骤 02</p>
+              <strong>设计核心功能</strong>
+              <p>围绕核心问题设计 App 功能，用 AI 帮助我持续探索和验证想法。</p>
+            </div>
+            <div class="step-chip">
+              <p class="pill">步骤 03</p>
+              <strong>思考落地方案</strong>
+              <p>继续往下推进功能怎么落地，以及怎样优化真实场景下的使用体验。</p>
+            </div>
+            <div class="step-chip">
+              <p class="pill">步骤 04</p>
+              <strong>判断功能优先级</strong>
+              <p>结合实现难度和产品阶段，决定哪些核心功能先落地，哪些放到后续迭代。</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="layout-module" data-reveal>
+          <div class="section-head">
+            <div>
+              <div class="section-tag">02 / 界面布局</div>
+              <h2>界面布局</h2>
+            </div>
+          </div>
+
+          <div class="subsection-head">
+            <p class="card-kicker">第一部分</p>
+            <strong>用户痛点问题与我的思考</strong>
+          </div>
+
+          <div class="layout-insight-grid">
+            <div class="layout-insight-visual">
+              <div class="layout-visual-topline">
+                <p class="card-kicker">界面展示</p>
+                <span class="layout-visual-status" data-layout-badge>当前播放 · Freeletics</span>
+              </div>
+              <div class="layout-media-shell">
+                <div class="layout-media-stage">
+                  <div class="layout-media-phone">
+                    <div class="layout-media-screen">
+                      <img
+                        class="layout-stage-media layout-stage-image active"
+                        data-layout-media="freeletics"
+                        src="assets/competitor/freeletics-layout-problem.jpg"
+                        alt="Freeletics 界面展示"
+                      >
+                      <video
+                        class="layout-stage-media layout-stage-video"
+                        data-layout-media="keep"
+                        controls
+                        preload="metadata"
+                        playsinline
+                        src="assets/videos/keep-layout-problem.mp4"
+                      ></video>
+                    </div>
+                  </div>
+                </div>
+                <div class="layout-source-grid">
+                  <button
+                    class="layout-source-button active"
+                    type="button"
+                    data-layout-target="freeletics"
+                    data-layout-label="Freeletics"
+                  >
+                    <strong>Freeletics 界面展示</strong>
+                    <span>界面相对简单，但整体缺少设计美感和交互氛围。</span>
+                  </button>
+                  <button
+                    class="layout-source-button"
+                    type="button"
+                    data-layout-target="keep"
+                    data-layout-label="Keep"
+                  >
+                    <strong>Keep 视频展示</strong>
+                    <span>功能入口很多，核心内容不够突出，信息层级也不够清晰。</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="layout-insight-notes">
+              <div class="card">
+                <p class="card-kicker">用户痛点问题</p>
+                <h3>我在界面层看到的用户痛点</h3>
+                <ul class="list">
+                  <li>Keep 的界面设计太复杂，功能很多，给人的感觉更像是在不断堆功能。</li>
+                  <li>课程、广告、训练和其他入口混在一起，核心内容不够突出，信息层级也不够清晰。</li>
+                  <li>用户进入页面后，不能很快看到自己真正需要的内容，也不容易立刻知道今天该做什么。</li>
+                  <li>Freeletics 的界面相对更简单，但整体缺少设计美感和交互性，页面虽然不杂乱，却也不够有引导感和使用氛围。</li>
+                </ul>
+              </div>
+              <div class="card">
+                <p class="card-kicker">我的思考</p>
+                <h3>我怎么理解这个问题</h3>
+                <ul class="list">
+                  <li>界面设计首先要清晰，用户一进入页面就应该快速找到自己最需要的内容，而不是先被很多功能入口打断。</li>
+                  <li>核心功能应该集中呈现，训练、营养、进度这些真正重要的内容要比其他功能更突出，整体不能杂乱。</li>
+                  <li>我的目标不是把更多功能塞进首页，而是把最核心的内容排清楚，让用户更顺畅地完成今天的训练和饮食任务。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="subsection-head">
+            <p class="card-kicker">第二部分</p>
+            <strong>我设计的 APP 界面介绍</strong>
+            <p>这一部分展示的是我之前做的 App 原型。我想通过这个界面，把前面的思考真正落到可交互的产品结构里，而不是只停留在概念描述。</p>
+          </div>
+
+          <div class="panel-layout" style="margin-top:18px;">
+            <div class="prototype-shell">
+              <div class="prototype-bar">
+                <p>APP Prototype</p>
+                <a class="prototype-link" href="./prototype-app/index.html" target="_blank" rel="noreferrer">查看完整原型</a>
+              </div>
+              <div class="prototype-viewport">
+                <iframe
+                  class="prototype-frame"
+                  src="./prototype-app/embed.html"
+                  title="AI Fitness Prototype Embed"
+                  loading="lazy"
+                  scrolling="no"
+                ></iframe>
+              </div>
+            </div>
+            <div class="priority-stack">
+              <div class="tabs prototype-tabs" data-tabs="prototype-notes">
+                <div class="tab-buttons">
+                  <button class="tab-button active" type="button" data-tab="prototype-design">界面设计</button>
+                  <button class="tab-button" type="button" data-tab="prototype-schedule">日程首页</button>
+                  <button class="tab-button" type="button" data-tab="prototype-coach">AI Coach</button>
+                  <button class="tab-button" type="button" data-tab="prototype-nutrition">营养表</button>
+                </div>
+
+                <div class="tab-panel active" data-panel="prototype-design">
+                  <div class="design-story">
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">01</span>
+                        <h3>AI Coach 的功能定位</h3>
+                      </div>
+                      <p>我不想把 AI Coach 做成像 Keep 智能体那样什么功能都接一点的入口，而是更在意它的边界问题。对我来说，它首先应该是一个定位清晰的咨询型 AI 教练智能体，核心职责就是生成个性化训练方案、调整训练计划，并解答健身和健康类问题。这样设计的重点不是让它看起来功能很多，而是让用户一开始就知道它到底负责什么，也让 AI 的角色更贴近真实教练的工作方式。</p>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">02</span>
+                        <h3>日程首页展示什么</h3>
+                      </div>
+                      <span class="design-elements-label">核心设计元素</span>
+                      <div class="design-elements-grid">
+                        <div class="design-element">训练时长</div>
+                        <div class="design-element">体重</div>
+                        <div class="design-element">PR</div>
+                        <div class="design-element">营养表</div>
+                        <div class="design-element">训练日程</div>
+                      </div>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">03</span>
+                        <h3>我为什么这样设计</h3>
+                      </div>
+                      <p>Keep 给我的最大感受是功能太多、界面太复杂，所以我想先把首页主线收清楚。对我来说，这应该是用户最先看到的界面，一进入页面就能看到今天还需要补充多少营养，以及今天的训练日程安排了什么内容。训练时长、体重、PR、营养表和训练日程这些数据本身也能给用户很直接的反馈，让用户知道自己的进展。更重要的是，我希望它不仅是一个首页，也是一个承接页，前面承接训练计划的展示，后面承接营养补充和执行环节，把训练过程真正收成一个闭环。这样一来，健身这种长期目标就能被拆成今天要完成的具体行动，用户的目标感会更强，也不需要在多个页面之间来回切换，让整个首页更像教练安排任务的工作台，而不是让用户重新理解系统。</p>
+                    </article>
+                  </div>
+                </div>
+
+                <div class="tab-panel" data-panel="prototype-schedule">
+                  <div class="design-story">
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">01</span>
+                        <h3>训练时长、体重、PR 的数据设计</h3>
+                      </div>
+                      <p>这一块我更想做成用户的数据反馈区。训练时长用来记录用户的训练投入，体重可以持续更新，并通过折线图看到变化趋势；PR 也可以更新，让用户直观看到自己力量上的进步。对我来说，这些数据不只是展示结果，后面也会和训练计划调整、推荐重量这些能力衔接，在数据模块里我会继续展开。</p>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">02</span>
+                        <h3>营养表</h3>
+                      </div>
+                      <p>营养表这一块我做成了更直观的进度条形式，把用户今天需要补充的蛋白质、碳水、脂肪和纤维写清楚，也会提示今天还差多少。因为健身不是只靠练，营养补充本身就是很重要的执行环节，所以我希望用户一进入首页就能看到自己的饮食进度。</p>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">03</span>
+                        <h3>训练日程</h3>
+                      </div>
+                      <p>训练日程这一块负责把今天要做的训练内容直接展示出来，让用户不用再回到别的页面找计划。对我来说，日程首页最重要的不是堆很多入口，而是把训练和饮食两个最关键的执行环节放在一个界面里，把健身这种长期目标收成今天要完成的具体任务，让用户目标感更强，也减少来回切换。</p>
+                    </article>
+                  </div>
+                </div>
+
+                <div class="tab-panel" data-panel="prototype-coach">
+                  <div class="design-story">
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">01</span>
+                        <h3>它不是聊天机器人</h3>
+                      </div>
+                      <p>我不想把 AI Coach 做成什么都接一点的智能体入口，而是更在意它的边界问题。它首先应该是一个定位清晰的咨询型 AI 教练智能体，而不是一个泛化聊天机器人。</p>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">02</span>
+                        <h3>AI Coach 的核心职责</h3>
+                      </div>
+                      <p>我给它定义的核心职责是三件事：生成个性化训练方案、调整训练计划、解答健身和健康类问题。这样用户一开始就能知道它到底负责什么，不会像竞品那样功能很多但定位模糊。</p>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">03</span>
+                        <h3>为什么放在导航中间</h3>
+                      </div>
+                      <p>我把 AI Coach 放在导航栏中间，是希望它从视觉上就是产品核心。对我来说，这一块才是真正的 AI 落地，因为用户关于训练、营养和身体状态的问题都可以在这里被承接和转化成后续动作。</p>
+                    </article>
+                  </div>
+                </div>
+
+                <div class="tab-panel" data-panel="prototype-nutrition">
+                  <div class="design-story">
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">01</span>
+                        <h3>为什么要有营养表</h3>
+                      </div>
+                      <p>对我来说，营养补充不是附属功能，而是训练效果的一部分。很多用户练了，但吃得不够或者吃得不对，最后训练效果和状态都会打折扣，所以首页必须把这一环节承接住。</p>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">02</span>
+                        <h3>我怎么设计这一块</h3>
+                      </div>
+                      <p>我把它做成了动态进度条的形式，把用户今天需要摄入的营养物质、已经补充了多少、还差多少都写清楚。这样用户不需要先理解复杂规则，而是直接看到今天的饮食执行情况。</p>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">03</span>
+                        <h3>不是固定食谱，而是决策支持</h3>
+                      </div>
+                      <p>我不想把它设计成死板的固定食谱，而是提供一个清晰的营养目标和补充标准，让用户先知道今天还差多少、该补什么，至于具体吃什么，可以由用户自己选择。我补了高营养食物推荐，是希望先把营养模块做成一个有标准、能辅助决策、但不过度控制用户选择的执行支持工具。</p>
+                    </article>
+                    <article class="design-story-card">
+                      <div class="design-story-head">
+                        <span class="design-story-num">04</span>
+                        <h3>核心功能稳定后的新玩法</h3>
+                      </div>
+                      <p>这些延展玩法不应该一开始就和核心功能一起堆上去，而是要等用户生成训练计划、调整计划、查看日程首页和执行营养表这些核心流程先形成稳定闭环，再继续往后迭代。对我来说，只有核心内容先跑顺了，后面的新玩法才有意义。到那个阶段，可以再做健康餐菜单、CV 食材识别、基于现有食材的一餐搭配建议，把营养模块从基础记录和提醒，升级成更主动、更贴近真实生活场景的辅助能力。</p>
+                    </article>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="subsection-head" style="margin-top:20px;">
+            <p class="card-kicker">第三部分</p>
+            <strong>我为什么觉得这套界面更像 AI 教练的工作方式</strong>
+            <p>这一部分是对前面界面设计的总结。我想说明的不是功能多不多，而是为什么这套界面结构能够更贴近真实教练的工作逻辑。</p>
+          </div>
+
+          <div class="design-proof">
+            <strong>真实教练的工作，不只是给一张训练计划</strong>
+            <p>对我来说，真实教练会根据用户情况生成训练计划，也会根据状态调整计划；在训练过程中提供指导和监督；在训练之外还要计算营养需求、提醒饮食执行。只有训练和饮食一起被承接住，学员的训练效果才更稳定。健身里常说“3 分靠练，7 分靠吃”，如果吃不到位，训练效果也会大打折扣。</p>
+          </div>
+
+          <div class="three-grid" style="margin-top:16px;">
+            <article class="design-story-card">
+              <div class="design-story-head">
+                <span class="design-story-num">01</span>
+                <h3>训练计划与调整</h3>
+              </div>
+              <p>我把 AI Coach 定义成咨询型智能教练，就是希望它先把生成个性化训练计划和调整计划这两件事做好。对真实教练来说，计划不是一次性给完就结束，而是会随着用户状态、器材和训练表现继续调整。</p>
+            </article>
+            <article class="design-story-card">
+              <div class="design-story-head">
+                <span class="design-story-num">02</span>
+                <h3>训练执行与监督</h3>
+              </div>
+              <p>日程首页承接的是今天的训练执行。用户一进入页面就能看到训练时长、体重、PR 和当天训练内容，这些信息既能提供反馈，也能把长期目标收成今天的任务，让首页更像教练每天安排和监督训练的工作台。</p>
+            </article>
+            <article class="design-story-card">
+              <div class="design-story-head">
+                <span class="design-story-num">03</span>
+                <h3>饮食补充与执行</h3>
+              </div>
+              <p>营养补充是健身教练非常重要的工作环节。教练会计算学员需要补充多少营养物质，也会监督饮食执行。我把营养表放进首页，就是希望这部分不被割裂，让训练和饮食一起形成更完整的执行闭环。</p>
+            </article>
+          </div>
+
+          <div class="workflow-band">
+            <strong>我的总结</strong>
+            <p>所以我这样设计，不是为了把功能摆得更多，而是想让 AI 教练真正承担起教练的工作方式：前面承接训练计划，中间承接训练执行，后面承接饮食补充和反馈，让产品更像一个会陪用户完成目标的智能教练，而不是一个只会堆功能的健身 App。</p>
+          </div>
+        </section>
+
+        <section class="section" id="interaction-module" data-reveal>
+          <div class="section-head">
+            <div>
+              <div class="section-tag">03 / Interaction Module</div>
+              <h2>交互逻辑模块</h2>
+            </div>
+          </div>
+
+          <div class="subsection-head">
+            <p class="card-kicker">第一部分</p>
+            <strong>用户痛点问题与我的思考</strong>
+          </div>
+
+          <div class="module-top">
+            <div class="card">
+              <p class="card-kicker">用户痛点问题</p>
+              <h3>我在交互逻辑里看到的用户痛点</h3>
+              <ul class="list">
+                <li>Keep 虽然可以根据用户情况生成个性化训练计划，但用户还能继续重复创建计划，最后日程里同时出现多套训练内容，执行方向会变得很乱。</li>
+                <li>竞品里的 AI 功能很多，但定位不够清晰，既做计划、又做记录、又做运动，结果是什么都沾一点，却没有一个能力真正做得很扎实。</li>
+                <li>AI 语音训练的流程不够贴近真实训练场景，动作切换没有暂停时间，用户还没找到器材就开始计数；有些指导时机也不合理，甚至会带来受伤风险。</li>
+                <li>训练计划和课程的调整能力也不够好，Keep 制定好的计划几乎不能调整，Freeletics 虽然能调整，但经常出现难度忽高忽低、替换不自然的问题。</li>
+              </ul>
+            </div>
+            <div class="card">
+              <p class="card-kicker">我的思考</p>
+              <h3>我怎么理解这个问题</h3>
+              <ul class="list">
+                <li>对真实教练来说，制定好训练计划之后，要么取消重做，要么根据情况调整强度，而不是让用户同时跟着很多套方向去练，所以产品也应该先给用户一个明确的训练路径。</li>
+                <li>我更在意 AI 教练的边界问题。它应该先成为一个定位清晰的咨询型智能体，把生成计划、调整计划和解答健身健康问题这些核心能力做实，而不是把很多功能分散堆进去。</li>
+                <li>训练流程的设计也要尊重真实场景，考虑器材、场地、动作准备时间和安全边界。对我来说，好的交互不是让 AI 一直计数，而是让整个训练过程更像真实教练在带用户训练。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="subsection-head">
+            <p class="card-kicker">第二部分</p>
+            <strong>我针对交互逻辑问题的产品思考与可落地方案</strong>
+            <p>这一部分我不只是停留在指出竞品问题，而是进一步把这些问题推进成更符合真实训练场景、也更容易落地的交互方案。</p>
+          </div>
+
+          <div class="tabs prototype-tabs interaction-tabs" data-tabs="interaction">
+            <div class="tab-buttons">
+              <button class="tab-button active" type="button" data-tab="interaction-voice">AI语音教练</button>
+              <button class="tab-button" type="button" data-tab="interaction-course">课程、训练计划调整</button>
+            </div>
+
+            <div class="tab-panel active" data-panel="interaction-voice">
+              <div class="voice-layout">
+                <div class="voice-media-shell">
+                  <div class="voice-media-head">
+                    <p>第一部分 / 竞品训练录屏</p>
+                    <span class="voice-media-badge" data-voice-badge>当前播放 · Freeletics</span>
+                  </div>
+                  <div class="voice-media-stage">
+                    <video
+                      class="voice-media-video"
+                      data-voice-player
+                      controls
+                      preload="metadata"
+                      playsinline
+                      src="assets/videos/freeletics-training.mp4"
+                    ></video>
+                  </div>
+                  <div class="voice-source-grid">
+                    <button
+                      class="voice-source-button active"
+                      type="button"
+                      data-voice-src="assets/videos/freeletics-training.mp4"
+                      data-voice-label="Freeletics"
+                    >
+                      <strong>Freeletics 训练界面</strong>
+                      <span>动作切换后直接开始，没有给用户时间准备。</span>
+                    </button>
+                    <button
+                      class="voice-source-button"
+                      type="button"
+                      data-voice-src="assets/videos/keep-training.mp4"
+                      data-voice-label="Keep"
+                    >
+                      <strong>Keep 训练界面</strong>
+                      <span>休息一结束就开始播报，没有给用户时间准备。</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="voice-side">
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">02</span>
+                      <h3>这一部分逻辑的错误描述</h3>
+                    </div>
+                    <ul class="list">
+                      <li>Keep 在动作切换时没有给用户留出准备时间，休息一结束就直接开始下一个动作，用户可能还没找到器材，也没把动作准备好。</li>
+                      <li>Keep 的暂停阶段也没有先告诉用户下一个动作是什么，用户对接下来要练什么缺少预期，训练节奏更像被系统往前推，而不是在被教练带着练。</li>
+                      <li>更危险的一点是，Keep 会在用户已经开始做动作之后再去纠正动作细节。对我来说，这个指导时机并不合理，一方面容易带来受伤风险，另一方面也会影响这一组动作本身的训练质量。</li>
+                      <li>Freeletics 也存在动作切换没有暂停时间的问题，虽然会提醒用户下一个动作是什么，但 AI 语音更多只是计数，缺少真正的指导内容，所以整体交互感和陪练感还是不够强。</li>
+                    </ul>
+                  </article>
+
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">03</span>
+                      <h3>我梳理的流程导图</h3>
+                    </div>
+                    <div class="voice-flow-overview">
+                      <span class="voice-flow-pill">切换动作</span>
+                      <span class="voice-flow-pill">用户准备</span>
+                      <span class="voice-flow-pill">开始训练</span>
+                      <span class="voice-flow-pill">训练过程</span>
+                      <span class="voice-flow-pill">休息讲解</span>
+                    </div>
+                    <div class="voice-flow-map">
+                      <div class="voice-flow-step">
+                        <span class="voice-flow-index">01</span>
+                        <div>
+                          <strong>切换动作先暂停</strong>
+                          <p>切换到下一个动作时先停留在当前界面，给用户时间找器材、找场地、调整状态。</p>
+                        </div>
+                      </div>
+                      <div class="voice-flow-step">
+                        <span class="voice-flow-index">02</span>
+                        <div>
+                          <strong>用户准备好后点击开始训练按钮</strong>
+                          <p>不是系统自动开始训练，而是等用户准备好之后点击开始训练按钮再进入训练界面，这样也能给健身房里等待器材、等别人练完的情况留出空间。</p>
+                        </div>
+                      </div>
+                      <div class="voice-flow-step">
+                        <span class="voice-flow-index">03</span>
+                        <div>
+                          <strong>先播报组数和动作要点</strong>
+                          <p>开始前用 6 到 10 秒讲清楚当前组数、训练进度和动作注意点，再进入 3、2、1 的训练节奏。</p>
+                        </div>
+                      </div>
+                      <div class="voice-flow-step">
+                        <span class="voice-flow-index">04</span>
+                        <div>
+                          <strong>训练中只做节奏和发力提醒</strong>
+                          <p>训练过程中更适合提醒节奏、核心紧绷和发力感受，而不是实时细纠动作。</p>
+                        </div>
+                      </div>
+                      <div class="voice-flow-step">
+                        <span class="voice-flow-index">05</span>
+                        <div>
+                          <strong>休息阶段再做讲解</strong>
+                          <p>动作结束后的休息阶段，AI 教练再讲练到了哪块肌肉、对运动表现有什么帮助，让体验更像真实教练在陪练。</p>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </div>
+              <div class="voice-summary">
+                <div class="voice-summary-head">
+                  <p class="card-kicker">Summary</p>
+                  <h3>我对 AI 语音教练这一块的总结</h3>
+                  <p>对我来说，AI 语音教练不应该只是一个会计数、会播报的功能，而应该更接近真实教练的带练方式。它要理解训练场景里的器材、准备、安全和节奏，也要让用户在训练过程中感受到被引导、被陪伴和被监督。</p>
+                </div>
+                <div class="voice-summary-grid">
+                  <article class="voice-summary-card">
+                    <strong>为什么我要这样设计</strong>
+                    <p>真实的教练不会在动作切换时立刻逼着用户开始训练，也不会在用户动作已经做起来之后才突然纠正细节。更合理的方式是先给用户时间准备器材和状态，再在开始前讲清楚组数、进度和动作要点，训练中只做节奏与发力提醒，休息阶段再讲解动作和肌群。这样整个过程才更像真实教学，而不是机械播报。</p>
+                    <div class="voice-summary-note">
+                      <strong>落地上的判断</strong>
+                      <p>如果进入真实落地，前期我会先做三件事：动作切换时暂停、播报当前组数和训练进度、在训练过程中做节奏提醒。这三个点已经能体现产品亮点，也能明显改善用户体验。但一开始不适合做得太复杂，否则实现难度会太高。更完整的开始前讲解、休息阶段陪伴和更强的语音互动，我会放到后续版本继续迭代。</p>
+                    </div>
+                  </article>
+                  <div class="voice-summary-list">
+                    <div class="voice-summary-item">
+                      <strong>用户体验更自然</strong>
+                      <span>用户先准备，再进入训练界面，训练节奏会更顺，不会被系统硬推着往下走。</span>
+                    </div>
+                    <div class="voice-summary-item">
+                      <strong>安全边界更清楚</strong>
+                      <span>把高风险的实时细纠动作拿掉，改成训练前提示和训练中提醒，整体更稳也更安全。</span>
+                    </div>
+                    <div class="voice-summary-item">
+                      <strong>更像教练在陪练</strong>
+                      <span>休息阶段再做讲解和陪伴，既能增强交互感，也能让用户更容易理解自己刚刚训练到了什么。</span>
+                    </div>
+                    <div class="voice-summary-item">
+                      <strong>更符合健身产品定位</strong>
+                      <span>这套设计不是为了让 AI 看起来更花哨，而是为了让它真正承担训练指导、监督和陪伴的角色。</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="interaction-course">
+              <div class="priority-stack">
+                <div class="summary-block">
+                  <div class="design-proof">
+                    <strong>用户痛点问题</strong>
+                    <p>Keep 的问题是训练计划一旦生成后几乎就固定死了。用户如果因为状态不好、受伤、器材受限，或者当天无法正常训练，就很难根据真实情况去调整训练内容和难度。这样不仅容易让用户产生挫败感，也会影响训练效果，严重时甚至可能带来受伤风险。Freeletics 虽然支持调整，但调整出来的结果并不稳定。有用户反馈原本练胸、肩、背的训练，在调整难度之后却变成了练核心和腿部，这更像是在换训练部位，而不是在合理调整难度；同时也会出现调整后要嘛太难、要嘛太简单的问题。我会怀疑这背后和课程难度细分不够、课程数量不足、可替换方案太少有关。</p>
+                  </div>
+                </div>
+
+                <div class="two-grid">
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">01</span>
+                      <h3>课程内容怎么设计</h3>
+                    </div>
+                    <p>对我来说，课程设计首先要把难度分层做细，比如纯小白、初阶、中阶、进阶这些层级都要被清楚地区分开，这样不同阶段的用户在进入计划或调整难度时，才会有自然的承接关系。第二点是课程种类一定要足够丰富。每一个训练部位都应该有很多不同的训练方式，既要有横向的广度，去承接不同器材、不同场景和不同限制条件；也要有纵向的深度，去承接同一目标下不同强度和不同阶段的训练需求。只有课程内容本身足够丰富、足够细，后面的训练计划生成和调整功能才会更稳定，用户体验也会明显更好。</p>
+                  </article>
+
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">02</span>
+                      <h3>课程 ID + 属性标签</h3>
+                    </div>
+                    <p>我的想法是用课程 ID 和属性标签去做绑定。属性标签会按优先级去定义，比如力量训练、上半身、胸部、器材、推、难度等。这样用户在训练计划里提出替换需求时，系统不是整套推翻，而是可以按照属性去找更合适的课程内容。</p>
+                    <div class="attr-label-strip">
+                      <span class="attr-label">力量训练</span>
+                      <span class="attr-label">上半身</span>
+                      <span class="attr-label">胸部</span>
+                      <span class="attr-label">器材</span>
+                      <span class="attr-label">推</span>
+                      <span class="attr-label">难度</span>
+                    </div>
+                  </article>
+                </div>
+
+                <div class="two-grid">
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">03</span>
+                      <h3>这样设计的好处</h3>
+                    </div>
+                    <p>这样设计的好处是，训练目标可以保持稳定，但执行路径可以根据真实情况灵活调整。比如同样练胸、同样的难度下，可以从杠铃换成哑铃，再换成斯密斯，而不是直接把整个训练方向打乱。这样用户会感觉计划被优化了，而不是被推翻了。另一方面，Freeletics 也有用户反馈训练计划会越来越单调，动作来来回回就是那几个。用这种设计方式，就可以在保持目标和难度不变的前提下，切换不同器材和不同训练方式，让内容更丰富，也更不容易让用户觉得无聊。再往前一步，这套属性体系也能让 AI 教练把计划调整做得更自然。它不是凭感觉改计划，而是可以根据用户的状态、器材条件和训练目标，按属性去做动态调整，这样会更符合真实教练的教学方式。</p>
+                    <div class="design-proof">
+                      <strong>我最看重的价值</strong>
+                      <p>这套方法不是简单替换动作，而是在不打乱训练目标的前提下，让计划像真实教练一样被优化。用户看到的不是“今天这套练不了就算了”，而是“系统会根据我的情况给出更合适的执行方案”。</p>
+                    </div>
+                  </article>
+
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">04</span>
+                      <h3>哪些人群可以被这套方法承接</h3>
+                    </div>
+                    <div class="course-persona-grid">
+                      <div class="course-persona">
+                        <div class="course-persona-head">
+                          <span class="course-persona-badge">01</span>
+                          <strong>大体重人群</strong>
+                        </div>
+                        <p>这类用户膝盖承压更大，不太适合跳跃类动作。可以优先替换掉带跳跃属性的训练计划，换成不跳也能达到目标的方案。</p>
+                      </div>
+                      <div class="course-persona">
+                        <div class="course-persona-head">
+                          <span class="course-persona-badge">02</span>
+                          <strong>比较害羞的人群</strong>
+                        </div>
+                        <p>有些用户对特定动作不太习惯，比如跪地做腹部动作，就可以替换成同目标但更容易接受的动作，减少心理负担。</p>
+                      </div>
+                      <div class="course-persona">
+                        <div class="course-persona-head">
+                          <span class="course-persona-badge">03</span>
+                          <strong>难度调整人群</strong>
+                        </div>
+                        <p>这类用户可以直接按难度属性去升降级，同时尽量保持其他属性不变，让训练计划的调整更流畅、更自然。</p>
+                      </div>
+                      <div class="course-persona">
+                        <div class="course-persona-head">
+                          <span class="course-persona-badge">04</span>
+                          <strong>特定部位不舒服的人群</strong>
+                        </div>
+                        <p>比如今天原本练肩，但肩部不舒服，就可以临时换成腹部或腿部训练。Agent 也可以优先提醒用户先休息、放松肌肉或做拉伸。</p>
+                      </div>
+                      <div class="course-persona">
+                        <div class="course-persona-head">
+                          <span class="course-persona-badge">05</span>
+                          <strong>上班族与突发事件人群</strong>
+                        </div>
+                        <p>加班、临时有事、去不了健身房时，系统可以切到更短或更适合当下条件的训练内容，也能承接住用户的情绪。</p>
+                      </div>
+                      <div class="course-persona">
+                        <div class="course-persona-head">
+                          <span class="course-persona-badge">06</span>
+                          <strong>错过训练想顺延的人群</strong>
+                        </div>
+                        <p>我会优先展示两周训练计划，用户如果有调整需求，就把这两周里的动作后移调整，而不是把整个大计划表全部打乱。</p>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+                <div class="footer-grid">
+                  <div class="footer-card">
+                    <p class="card-kicker">我的总结思考</p>
+                    <h3>我最看重的不是“能调”，而是“调整后仍然合理”</h3>
+                    <p>对我来说，课程这一块真正的价值，不是让系统看起来可以替换很多内容，而是让训练计划在用户状态变化时，依然能服务原来的训练目标。只要课程难度分层、课程种类和属性标签足够细，AI Coach 就能像真实教练一样去优化方案，而不是简单把整套计划打散。</p>
+                  </div>
+                  <div class="footer-card">
+                    <p class="card-kicker">智能体框架</p>
+                    <h3>我会怎么设计这块智能体逻辑</h3>
+                    <p>对我来说，这一块的智能体设计和我之前做的电商智能体在基础框架上是相通的。系统先拿到用户的基本信息、当前训练目标和这次提出的调整需求，再通过规则层去判断是否满足替换课程的条件，比如是不是器材受限、是不是某个部位不舒服、是不是需要调整难度。符合条件之后，再由 AI 教练按照课程 ID 和属性标签去执行对应路径，给出更合适的替换课程或调整方案。这样做的重点不是让智能体自己随意改计划，而是让它在有规则约束的前提下，更像真实教练一样完成判断和执行。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="section" id="data-module" data-reveal>
+          <div class="section-head">
+            <div>
+              <div class="section-tag">04 / Data Module</div>
+              <h2>数据模块</h2>
+            </div>
+          </div>
+
+          <div class="module-top">
+            <div class="card">
+              <p class="card-kicker">User pain points</p>
+              <h3>我看到的数据层核心痛点</h3>
+              <ul class="list">
+                <li>Keep 有用户反馈定位不准、里程数不准确，比如明明跑了 1000m，结果却只显示 800m。用户在运动时本来应该专注训练，一旦还要分心怀疑数据到底准不准，就会很烦躁，也会直接怀疑今天的结果到底算不算数。</li>
+                <li>如果训练结果不能被稳定存储、持续累计和顺畅回看，用户就很难感受到自己的成果被真正沉淀下来，数据也就失去了反馈和激励的价值。</li>
+              </ul>
+            </div>
+            <div class="card">
+              <p class="card-kicker">My understanding</p>
+              <h3>我怎么理解数据对产品的意义</h3>
+              <ul class="list">
+                <li>数据首先要给用户即时反馈，让用户知道今天练了多少、体重和力量怎么变、营养还差多少。</li>
+                <li>对运动产品来说，数据精准是最基础的需求。所以我们不只是把数据记录下来，还要把展示格式、存储方式和累计逻辑设计清楚，让用户能稳定回看、理解和相信自己的进展。</li>
+                <li>数据基础越好，越容易沉淀出用户画像。这样 AI Coach 才能基于真实训练、体重、PR 和营养记录去分析问题、处理用户需求、做提醒和推荐重量；后续年度总结、训练海报和更多玩法，也都要依赖这层数据基础。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tabs" data-tabs="data">
+            <div class="tab-buttons">
+              <button class="tab-button active" type="button" data-tab="data-training">训练数据</button>
+              <button class="tab-button" type="button" data-tab="data-nutrition">饮食数据</button>
+            </div>
+
+            <div class="tab-panel active" data-panel="data-training">
+              <div class="priority-stack">
+                <div class="summary-block">
+                  <p class="card-kicker">Training data</p>
+                  <h3>我会怎么设计训练结束后的数据展示</h3>
+                  <p>对我来说，训练数据最重要的不是把页面做得很花，而是让用户在训练结束后立刻看到一组同步完成的数据反馈。用户一眼就能知道今天练了多久、完成到了哪一步、身体和力量有没有变化，这样今天的训练成果才会被真正感知到。</p>
+                </div>
+                <div class="two-grid">
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">01</span>
+                      <h3>训练结束后的核心数据</h3>
+                    </div>
+                    <ul class="list">
+                      <li>训练时长和完成情况要及时同步，让用户训练结束后立刻知道今天做了多久、完成到了哪一步。</li>
+                      <li>体重数据支持持续更新，并通过趋势图看到身体变化。</li>
+                      <li>PR 和训练重量既能看力量变化，也能为后面的训练计划调整和推荐重量提供依据。</li>
+                    </ul>
+                  </article>
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">02</span>
+                      <h3>为什么训练数据重要</h3>
+                    </div>
+                    <p>训练数据对用户来说，最重要的是结束训练后有反馈。用户不是只想看到一串数字，而是想确认今天的努力有没有被认真记录。训练时长、完成进度、体重和 PR 能被清楚同步和展示出来，用户才会更容易感受到自己的进展，也更愿意继续练下去。</p>
+                  </article>
+                </div>
+                <div class="module-highlight">
+                  <strong>基于训练数据的玩法扩展</strong>
+                  <p>等训练数据稳定之后，我会继续做更有记录感和分享感的设计。比如训练结束时，用户的肌肉状态往往最好，这时候上传一张训练后的状态照片作为数据背景板，会很适合用来记录当天状态，也方便分享。这样数据页就不只是统计页，还会更有纪念感和传播感。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="data-nutrition">
+              <div class="priority-stack">
+                <div class="summary-block">
+                  <p class="card-kicker">Nutrition data</p>
+                  <h3>我会怎么设计饮食数据</h3>
+                  <ul class="list">
+                    <li>先按照更专业的计算逻辑，结合用户的体重、训练数据和目标，去计算当天需要补充的营养摄入量，比如蛋白质、碳水、脂肪和纤维。</li>
+                    <li>再把已摄入和还需补充的量做成清晰进度，让用户一眼看到今天还差多少，而不是靠感觉判断自己有没有吃够。</li>
+                    <li>对我来说，这一块不是给用户一份固定死的食谱，而是提供一个动态的计算和补充标准，让用户自己去选择怎么吃。后面我也会继续补营养学相关知识，让这套营养计算功能更稳定，数据估算更精准。</li>
+                  </ul>
+                </div>
+                <div class="two-grid">
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">01</span>
+                      <h3>为什么饮食数据重要</h3>
+                    </div>
+                    <p>对健身产品来说，饮食是很重要的执行环节。训练之外，用户最需要知道的就是今天还差多少营养没补上。饮食数据越直观，用户就越容易安心执行，AI 教练的监督感也会更强。</p>
+                  </article>
+                  <article class="design-story-card">
+                    <div class="design-story-head">
+                      <span class="design-story-num">02</span>
+                      <h3>基于饮食数据的玩法扩展</h3>
+                    </div>
+                    <p>饮食数据打稳之后，后面就可以继续扩展高营养食物推荐、健康餐菜单、基于现有食材的一餐搭配建议，甚至是 CV 食材识别。这样饮食模块就不只是记录，还能慢慢升级成更主动的辅助能力。</p>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="priority-module" data-reveal>
+          <div class="section-head">
+            <div>
+              <div class="section-tag">05 / Feature Priority</div>
+              <h2>功能优先级：我有很多想法，但我不会把它们同时推给 0 到 1</h2>
+            </div>
+          </div>
+
+          <div class="footer-note" style="margin-bottom:18px;">
+            Freeletics 在客服这一块的用户反应很强，我觉得不能只简单理解成“客服不作为”。站在产品经理的视角看，这背后其实叠加了几个问题：第一，它支持多个平台订阅，用户有时会忘记自己是在哪个平台订阅的，自动扣款之后才发现问题；第二，自动续费本身对很多产品来说都是很常见的商业模式，但当价格偏高、用户没有感受到足够好的功能价值和使用体验时，情绪就会更容易集中爆发；第三，Freeletics 在营销上做了不少工作，但功能和用户体验没有被同步打磨好，结果就会让用户觉得“花了很多钱，却没有得到对应的产品价值”。所以对我来说，客服问题不能只看客服本身，还要放回订阅透明度、价格感知和产品体验一起看，这也是为什么我会把 FAQ 和后续 AI 客服放到分阶段推进里去考虑。
+          </div>
+
+          <div class="priority-grid">
+            <div class="priority-band">
+              <div class="priority-label">P0 Core Loop</div>
+              <strong>优先落地核心功能，把闭环先跑通</strong>
+              <ul class="list">
+                <li>AI Coach 先完成对话能力，承接健身、健康等咨询问题；接着做个性化训练计划生成，再逐步迭代训练计划调整功能，因为“能不能合理调整计划”是竞品最核心的痛点之一。</li>
+                <li>日程界面优先落地。它是用户最先看到的界面，也是产品闭环的承接页，需要把训练计划和饮食执行承接住，把“长期目标”转成“今日行动”。</li>
+                <li>课程设计要先按照课程 ID + 属性标签的形式绑定好，这一块是后面训练计划调整能不能成立的关键步骤。</li>
+                <li>课程内容本身也要持续结合 AI 去覆盖大部分训练场景，因为它既影响训练计划调整，也影响课程是否真的能承接用户的真实训练需求。</li>
+              </ul>
+            </div>
+
+            <div class="priority-band p1">
+              <div class="priority-label">P1 Stability &amp; Experience</div>
+              <strong>核心流程稳定后，再增强体验和稳定性</strong>
+              <ul class="list">
+                <li>先继续提升核心功能的稳定性，把训练计划、调整流程和课程覆盖场景继续补扎实，让整个闭环更顺。</li>
+                <li>AI 语音教练在这一阶段先做基础版本，比如切换动作时暂停等待、组数播报、节奏提醒和倒计时，不需要一开始就做到前面完整流程图里的全部形态，否则复杂度和风险都会很高。</li>
+                <li>客服先做 FAQ 形式，把高频问题先承接住。这一块设计成本低、好维护，也能先减轻客服压力。</li>
+                <li>同时结合用户反馈和埋点数据继续优化流程，让后面的 AI 体验迭代有更明确的依据。</li>
+              </ul>
+            </div>
+
+            <div class="priority-band p2">
+              <div class="priority-label">P2 AI Extensions</div>
+              <strong>核心功能稳定后，再思考 AI 新玩法</strong>
+              <ul class="list">
+                <li>AI 客服可以在产品稳定后升级成客服智能体，去承接更完整的用户疑问和问题处理流程。</li>
+                <li>CV 视觉识别食物和智能搭配，是很适合用 AI 去放大的新玩法，可以帮助用户更自然地完成营养补充。</li>
+                <li>年度报告、训练海报和分享玩法，可以从基础数据继续延展成更完整的新玩法。</li>
+                <li>AI 语音教练也可以在这个阶段继续打磨，把交互感、沉浸感和完整流程慢慢补起来。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer-grid" style="margin-top:18px;">
+            <div class="footer-card">
+              <p class="card-kicker">Why this order</p>
+              <h3>我为什么这样排优先级</h3>
+              <p>因为对我来说，这款产品最先要证明的不是功能多，而是它能不能作为一个 AI 智能教练，把训练计划、日程承接、课程调整和饮食执行真正串成闭环。只要这个核心流程先跑通，后面的体验优化和 AI 新玩法才有意义。</p>
+            </div>
+            <div class="footer-card">
+              <p class="card-kicker">Iteration direction</p>
+              <h3>我怎么理解后续迭代的顺序</h3>
+              <p>我的思路不是先把所有 AI 玩法都堆上去，而是先把最关键的训练闭环做稳，再慢慢把 AI 语音教练、AI 客服、CV 食物识别和年度报告这些能力往后延展。这样每一步都是建立在前面稳定产品能力的基础上，而不是为了显得功能很多。</p>
+            </div>
+          </div>
+
+          <div class="footer-note" style="margin-top:18px;">
+            客服这条线我会分阶段推进。前期先用 FAQ 承接高频问题，一方面降低客服压力，另一方面也能先拿到用户真实反馈；等产品和流程稳定之后，再升级成 AI 客服，把能自动处理的问题交给智能体，不能处理的及时转人工。
+          </div>
+        </section>
+      </main>
+
+      <aside class="side-nav">
+        <p class="nav-label">Portfolio Map</p>
+        <nav class="nav-list" aria-label="页面章节导航">
+          <a class="nav-link active" href="#analysis"><span class="nav-dot"></span><span>分析方法</span></a>
+          <a class="nav-link" href="#layout-module"><span class="nav-dot"></span><span>界面布局</span></a>
+          <a class="nav-link" href="#interaction-module"><span class="nav-dot"></span><span>交互逻辑</span></a>
+          <a class="nav-link" href="#data-module"><span class="nav-dot"></span><span>数据</span></a>
+          <a class="nav-link" href="#priority-module"><span class="nav-dot"></span><span>功能优先级</span></a>
+        </nav>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('[data-reveal]').forEach((node) => revealObserver.observe(node));
+
+    const sections = [...document.querySelectorAll('#analysis, #layout-module, #interaction-module, #data-module, #priority-module')];
+    const navLinks = [...document.querySelectorAll('.nav-link')];
+    const updateActiveNav = () => {
+      let current = sections[0]?.id;
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 180 && rect.bottom >= 180) current = section.id;
+      });
+      navLinks.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === '#' + current));
+    };
+    updateActiveNav();
+    window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+    document.querySelectorAll('[data-tabs]').forEach((group) => {
+      const buttons = [...group.querySelectorAll('[data-tab]')];
+      const panels = [...group.querySelectorAll('[data-panel]')];
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = button.dataset.tab;
+          buttons.forEach((item) => item.classList.toggle('active', item === button));
+          panels.forEach((panel) => panel.classList.toggle('active', panel.dataset.panel === target));
+        });
+      });
+    });
+
+    document.querySelectorAll('.voice-media-shell').forEach((shell) => {
+      const player = shell.querySelector('[data-voice-player]');
+      const badge = shell.querySelector('[data-voice-badge]');
+      const buttons = [...shell.querySelectorAll('[data-voice-src]')];
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const nextSrc = button.dataset.voiceSrc;
+          const nextLabel = button.dataset.voiceLabel;
+          const shouldResume = !player.paused && !player.ended;
+
+          if (player.getAttribute('src') !== nextSrc) {
+            player.pause();
+            player.setAttribute('src', nextSrc);
+            player.load();
+            if (shouldResume) player.play().catch(() => {});
+          }
+
+          if (badge && nextLabel) badge.textContent = `当前播放 · ${nextLabel}`;
+          buttons.forEach((item) => item.classList.toggle('active', item === button));
+        });
+      });
+    });
+
+    document.querySelectorAll('.layout-media-shell').forEach((shell) => {
+      const badge = shell.parentElement.querySelector('[data-layout-badge]');
+      const buttons = [...shell.querySelectorAll('[data-layout-target]')];
+      const media = [...shell.querySelectorAll('[data-layout-media]')];
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = button.dataset.layoutTarget;
+          const label = button.dataset.layoutLabel;
+
+          media.forEach((item) => {
+            const isActive = item.dataset.layoutMedia === target;
+            item.classList.toggle('active', isActive);
+            if (item.tagName === 'VIDEO' && !isActive) {
+              item.pause();
+              item.currentTime = 0;
+            }
+          });
+
+          if (badge && label) badge.textContent = `当前播放 · ${label}`;
+          buttons.forEach((item) => item.classList.toggle('active', item === button));
+        });
+      });
+    });
+  </script>
+</body>
+</html>
