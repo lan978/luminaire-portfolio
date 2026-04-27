@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实时人体动作识别系统 | 毕业设计答辩作品集</title>
+  <style>
+    :root {
+      --paper: #fbfcf8;
+      --panel: #ffffff;
+      --ink: #142019;
+      --muted: #5c6760;
+      --line: #dfe6df;
+      --green: #113f2b;
+      --green-soft: #dcefe5;
+      --gold: #b78d3d;
+      --red: #a84238;
+      --blue: #2f6297;
+      --blue-soft: #e4edf7;
+      --shadow: 0 18px 48px rgba(20, 32, 25, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Inter", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.65;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(20, 32, 25, 0.08);
+      background: rgba(251, 252, 248, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .brand img {
+      width: 92px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .nav-links a {
+      padding: 7px 10px;
+      border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .hero {
+      position: relative;
+      min-height: 86vh;
+      padding: 114px 24px 54px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("assets/graduation-action/system-architecture.png");
+      background-repeat: no-repeat;
+      background-size: min(720px, 62vw) auto;
+      background-position: right 7vw center;
+      opacity: 0.18;
+      filter: saturate(0.92);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(251, 252, 248, 0.76);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      background: var(--red);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 860px;
+      margin-bottom: 22px;
+      font-size: clamp(42px, 8vw, 92px);
+      line-height: 1.02;
+      letter-spacing: 0;
+      font-family: Georgia, "Times New Roman", "Songti SC", serif;
+      font-weight: 700;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin-bottom: 26px;
+      color: var(--muted);
+      font-size: clamp(17px, 2.2vw, 23px);
+      line-height: 1.75;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid rgba(20, 32, 25, 0.16);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.74);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 14px 28px rgba(17, 63, 43, 0.18);
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--green);
+      box-shadow: none;
+    }
+
+    .metric-row {
+      max-width: 920px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      min-height: 118px;
+      padding: 18px;
+      border: 1px solid rgba(20, 32, 25, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .metric strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--green);
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    section {
+      scroll-margin-top: 82px;
+      padding: 82px 24px;
+    }
+
+    .band {
+      background: #fff;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .section-head {
+      max-width: 780px;
+      margin-bottom: 34px;
+    }
+
+    .kicker {
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: clamp(30px, 4.2vw, 52px);
+      line-height: 1.16;
+      font-family: Georgia, "Times New Roman", "Songti SC", serif;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .project-brief {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.95fr) minmax(0, 1.35fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .brief-panel {
+      border: 1px solid rgba(20, 32, 25, 0.12);
+      border-radius: 8px;
+      background: #fff;
+      padding: 24px;
+      box-shadow: 0 10px 28px rgba(20, 32, 25, 0.05);
+    }
+
+    .brief-panel.dark {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .brief-panel.dark p,
+    .brief-panel.dark .brief-item {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .brief-panel h3 {
+      margin-bottom: 12px;
+      font-size: 22px;
+      line-height: 1.3;
+    }
+
+    .brief-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .brief-item {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .brief-panel:not(.dark) .brief-item {
+      border-top-color: var(--line);
+    }
+
+    .brief-label {
+      color: var(--gold);
+      font-weight: 900;
+    }
+
+    .logic-note {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--gold);
+      background: #fffaf0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid rgba(20, 32, 25, 0.12);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 10px 28px rgba(20, 32, 25, 0.05);
+      padding: 22px;
+    }
+
+    .card.accent {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .card.accent p,
+    .card.accent li {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .card.blue {
+      background: var(--blue-soft);
+      border-color: rgba(47, 98, 151, 0.22);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    ul {
+      padding-left: 18px;
+      margin: 0;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .step {
+      position: relative;
+      padding: 20px;
+      min-height: 162px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .step-num {
+      display: inline-flex;
+      width: 30px;
+      height: 30px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      background: var(--green);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .data-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f2f6f2;
+      color: var(--green);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 13px;
+    }
+
+    .bar-item {
+      display: grid;
+      gap: 7px;
+    }
+
+    .bar-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .bar-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #e9eee9;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      background: var(--green);
+    }
+
+    .bar-fill.red {
+      background: var(--red);
+    }
+
+    .bar-fill.blue {
+      background: var(--blue);
+    }
+
+    .diagram-card {
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .diagram-card img {
+      width: 100%;
+      background: #f4f6f6;
+    }
+
+    .innovation-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(520px, 1.5fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .innovation-diagram {
+      max-width: none;
+      margin: 0;
+    }
+
+    .innovation-diagram img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      max-height: 520px;
+      margin: 0 auto;
+      object-fit: contain;
+    }
+
+    .innovation-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .innovation-cards .card {
+      min-height: 148px;
+      padding: 18px;
+    }
+
+    .innovation-cards .card h3 {
+      font-size: 18px;
+    }
+
+    .diagram-caption {
+      padding: 16px 18px 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .flow-node {
+      min-height: 132px;
+      padding: 16px;
+      border: 1px solid rgba(20, 32, 25, 0.12);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow-node strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--green);
+    }
+
+    .flow-node span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mockup {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+      gap: 14px;
+      min-height: 380px;
+      padding: 16px;
+      border: 1px solid rgba(20, 32, 25, 0.12);
+      border-radius: 8px;
+      background: #101b16;
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .camera-pane {
+      position: relative;
+      overflow: hidden;
+      min-height: 340px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        #17251f;
+      background-size: 34px 34px;
+    }
+
+    .skeleton {
+      position: absolute;
+      inset: 44px 26% 42px 26%;
+    }
+
+    .joint {
+      position: absolute;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #f3c05d;
+      box-shadow: 0 0 0 5px rgba(243, 192, 93, 0.12);
+    }
+
+    .bone {
+      position: absolute;
+      height: 3px;
+      background: #f3c05d;
+      transform-origin: left center;
+    }
+
+    .head { left: 47%; top: 2%; }
+    .neck { left: 48%; top: 18%; }
+    .lhand { left: 8%; top: 12%; }
+    .rhand { right: 8%; top: 29%; }
+    .hip { left: 48%; top: 52%; }
+    .lknee { left: 31%; top: 76%; }
+    .rknee { right: 31%; top: 76%; }
+    .lfoot { left: 18%; bottom: 0; }
+    .rfoot { right: 18%; bottom: 0; }
+
+    .bone.b1 { left: 50%; top: 9%; width: 50px; transform: rotate(92deg); }
+    .bone.b2 { left: 50%; top: 21%; width: 128px; transform: rotate(166deg); }
+    .bone.b3 { left: 50%; top: 21%; width: 100px; transform: rotate(24deg); }
+    .bone.b4 { left: 50%; top: 22%; width: 124px; transform: rotate(89deg); }
+    .bone.b5 { left: 50%; top: 55%; width: 96px; transform: rotate(126deg); }
+    .bone.b6 { left: 50%; top: 55%; width: 94px; transform: rotate(54deg); }
+    .bone.b7 { left: 33%; top: 78%; width: 72px; transform: rotate(120deg); }
+    .bone.b8 { right: 33%; top: 78%; width: 72px; transform: rotate(60deg); }
+
+    .prediction {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      background: rgba(17, 63, 43, 0.82);
+      backdrop-filter: blur(8px);
+    }
+
+    .prediction strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .prediction span {
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 12px;
+    }
+
+    .side-pane {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .status-box {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .status-box span {
+      display: block;
+      margin-bottom: 5px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-box strong {
+      font-size: 20px;
+    }
+
+    .slide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .slide-card {
+      min-height: 160px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 18px;
+    }
+
+    .slide-card strong {
+      display: inline-flex;
+      margin-bottom: 10px;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .slide-card h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .qa-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .qa {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .qa strong {
+      color: var(--red);
+    }
+
+    .footer {
+      padding: 36px 24px;
+      background: var(--green);
+      color: rgba(255, 255, 255, 0.72);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .thanks-section {
+      min-height: 76vh;
+      padding: 120px 24px 96px;
+      display: grid;
+      place-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--green);
+      color: #fff;
+      text-align: center;
+    }
+
+    .thanks-content {
+      width: min(860px, 100%);
+    }
+
+    .thanks-kicker {
+      margin-bottom: 18px;
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+    }
+
+    .thanks-title {
+      margin: 0;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(58px, 10vw, 118px);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .thanks-text {
+      margin: 26px auto 0;
+      max-width: 620px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 20px;
+    }
+
+    .thanks-meta {
+      margin-top: 38px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 14px;
+    }
+
+    @media (max-width: 980px) {
+      .metric-row,
+      .grid.four,
+      .grid.three,
+      .timeline,
+      .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .data-layout,
+      .project-brief,
+      .mockup {
+        grid-template-columns: 1fr;
+      }
+
+      .hero::before {
+        background-size: 680px auto;
+        background-position: center bottom 20px;
+        opacity: 0.12;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .innovation-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .innovation-diagram {
+        max-width: 560px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .nav-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .brand img {
+        width: 76px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 150px;
+      }
+
+      .metric-row,
+      .grid.four,
+      .grid.three,
+      .grid.two,
+      .timeline,
+      .flow,
+      .innovation-cards,
+      .slide-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .qa {
+        grid-template-columns: 1fr;
+      }
+
+      .camera-pane {
+        min-height: 300px;
+      }
+    }
+
+    @media print {
+      .nav,
+      .hero-actions {
+        display: none;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      section,
+      .hero {
+        page-break-inside: avoid;
+      }
+
+      .slide-card {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#top">
+        <img src="assets/graduation-action/xmit-logo.png" alt="厦门工学院">
+        <span>毕业设计答辩作品集</span>
+      </a>
+      <div class="nav-links" aria-label="页面导航">
+        <a href="#main-work">主要工作</a>
+        <a href="#reason">选题原因</a>
+        <a href="#significance">选题意义</a>
+        <a href="#innovation">论文创新点</a>
+        <a href="#thanks">致谢</a>
+      </div>
+    </div>
+  </nav>
+
+  <header id="top" class="hero">
+    <div class="hero-content">
+      <p class="eyebrow">Real-Time Human Action Recognition</p>
+      <h1>实时人体动作识别系统的设计与实现</h1>
+      <p class="hero-copy">
+        面向普通笔记本与普通 RGB 摄像头场景，构建一套从视频采集、三模态特征构建、动作识别、结果显示到样本回流训练的完整实时视觉系统。
+      </p>
+      <div class="hero-meta">
+        <span class="pill">作者姓名：蓝哲琦</span>
+        <span class="pill">指导老师：王元斌</span>
+        <span class="pill">学院专业班级：人工智能学院 · 软件工程 2022 级 3 班</span>
+      </div>
+    </div>
+  </header>
+
+  <section id="main-work">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Main Work</p>
+        <h2>主要工作</h2>
+        <p class="lead">
+          本课题不是只完成一次模型训练，而是围绕“普通摄像头实时动作识别”完成从需求分析、数据准备、模型构建到部署测试的完整过程。
+        </p>
+      </div>
+      <div class="timeline">
+        <div class="card">
+          <span class="step-num">1</span>
+          <h3>明确目标与技术路线</h3>
+          <p>先完成文献调研和需求分析，明确系统要支持普通摄像头实时输入，识别六类常见动作，并具备结果显示、延迟统计和日志记录能力。</p>
+        </div>
+        <div class="card blue">
+          <span class="step-num">2</span>
+          <h3>搭建视频数据管道</h3>
+          <p>使用 OpenCV 完成摄像头取流、帧裁剪、resize 和归一化处理；围绕 walking、running、standing、waving、clapping、sitting 整理与采集视频样本，并按类别保存。</p>
+        </div>
+        <div class="card">
+          <span class="step-num">3</span>
+          <h3>构建多模态识别模型</h3>
+          <p>对比动作识别路线后，采用 RGB、光流和姿态关键点三类输入；基于 PyTorch 构建多分支模型，使系统同时学习外观、运动和人体结构特征。</p>
+        </div>
+        <div class="card accent">
+          <span class="step-num">4</span>
+          <h3>完成训练、部署与测试</h3>
+          <p>设计训练流程并保存模型结果，再接入 OpenVINO 推理后端降低延迟；最后通过准确率、实时性和功能测试分析系统效果，并针对错误类别提出优化方向。</p>
+        </div>
+      </div>
+      <div class="logic-note">
+        从 0 到 1 的核心链路是：调研与需求分析 -> 视频样本采集和预处理 -> RGB/光流/姿态三模态建模 -> PyTorch 训练 -> OpenVINO 部署 -> 摄像头实时演示与测试分析。
+      </div>
+    </div>
+  </section>
+
+  <section id="reason" class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Topic Reason</p>
+        <h2>选题原因</h2>
+        <p class="lead">
+          选择这个题目，一方面来自个人对计算机视觉和智能交互的兴趣，另一方面也来自实际研究和系统实现中暴露出的现实问题。
+        </p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <h3>个人兴趣</h3>
+          <p>在课程学习和项目实践中，我对计算机视觉、深度学习和人机交互方向比较感兴趣。人体动作识别能够把摄像头输入、模型训练和实时界面结合起来，适合作为毕业设计进行完整实现。</p>
+          <p>相比只做静态图像分类，这个课题更贴近真实系统开发，需要同时考虑算法效果和工程运行。</p>
+        </div>
+        <div class="card blue">
+          <h3>理论研究中的问题</h3>
+          <p>现有动作识别研究已经证明 RGB、光流和骨架特征都具有价值，但很多方法更偏向公开数据集或离线实验。</p>
+          <p>在普通摄像头近景场景中，人体可能局部入镜、姿态会抖动、背景和光照会变化，这些问题会让模型在实际运行时不够稳定。</p>
+        </div>
+        <div class="card accent">
+          <h3>实际场景中的痛点</h3>
+          <p>真实应用不只关心模型是否能分类，还关心摄像头能否稳定取流、推理能否及时返回、结果能否直观显示。</p>
+          <p>例如 walking 和 running 在近景画面中容易因为下肢信息不足而混淆，这类问题越来越明显，也说明普通设备场景仍有进一步研究价值。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="significance">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Topic Significance</p>
+        <h2>选题意义</h2>
+        <p class="lead">
+          对这个选题进行研究，主要具有理论意义和实际意义两方面价值。
+        </p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <h3>理论意义</h3>
+          <p>从理论意义来看，本文对普通摄像头近景场景下的多模态动作识别进行了补充和细化。</p>
+          <p>通过 RGB、光流和姿态关键点三类特征融合，说明动作识别不仅要看人体外观，也要看运动变化和人体结构变化。</p>
+        </div>
+        <div class="card blue">
+          <h3>实际意义</h3>
+          <p>从实际意义来看，本文解决了普通设备条件下动作识别系统如何完整运行的问题。</p>
+          <p>系统能够完成摄像头取流、动作分类、置信度显示、延迟统计、日志记录和样本采集，为类似低成本视觉应用提供参考。</p>
+        </div>
+        <div class="card accent">
+          <h3>核心结论</h3>
+          <p>本文得出的核心结论是：多模态特征融合结合 OpenVINO 部署优化，可以在普通摄像头和普通 CPU 条件下实现可用的实时人体动作识别。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="innovation" class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Innovation Highlights</p>
+        <h2>论文创新点</h2>
+        <p class="lead">
+          本部分围绕系统相较于单一离线分类实验的创新展开，重点说明完整系统闭环、多模态特征融合、普通设备部署和样本回流优化。
+        </p>
+      </div>
+      <div class="innovation-layout">
+        <div class="card diagram-card innovation-diagram">
+          <img src="assets/graduation-action/system-architecture.png" alt="实时人体动作识别系统总体架构图">
+          <div class="diagram-caption">
+            本文围绕“视频输入 -> 三模态特征 -> 模型推理 -> 结果显示 -> 样本回流”形成完整系统链路，这是本文创新点的总体结构说明。
+          </div>
+        </div>
+        <div class="innovation-cards">
+          <div class="card">
+            <h3>创新点 1：完整系统闭环</h3>
+            <p>系统不是只做离线分类，而是把摄像头取流、预处理、特征构建、模型推理、结果显示、日志记录和样本回流连成完整流程。</p>
+          </div>
+          <div class="card blue">
+            <h3>创新点 2：多模态融合</h3>
+            <p>系统不是只依赖单帧图像，而是将 RGB、光流和姿态关键点三类特征结合起来，从外观、动态和人体结构三个角度判断动作。</p>
+          </div>
+          <div class="card">
+            <h3>创新点 3：普通设备部署</h3>
+            <p>模型训练完成后接入 OpenVINO 推理后端，在普通 CPU 环境下平衡准确率和推理速度，使系统不只停留在离线测试。</p>
+          </div>
+          <div class="card accent">
+            <h3>创新点 4：样本回流优化</h3>
+            <p>系统加入样本采集、日志记录和后续训练更新入口，使识别效果可以根据真实场景中的错误案例继续优化。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results-old-hidden" class="band" hidden>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Research Results</p>
+        <h2>研究结果：完成一套从数据、模型到部署验证的实时识别系统</h2>
+        <p class="lead">
+          系统已经实现六类动作识别、三模态特征融合、OpenVINO 推理部署、实时结果显示、日志记录和样本回流训练。实验结果表明，当前方案在普通设备条件下具备可运行性和较好的实时性。
+        </p>
+      </div>
+      <div class="grid four">
+        <div class="metric">
+          <strong>6</strong>
+          <span>识别 walking、running、standing、waving、clapping、sitting 六类动作</span>
+        </div>
+        <div class="metric">
+          <strong>3</strong>
+          <span>构建 RGB 图像、光流、人体姿态关键点三类输入</span>
+        </div>
+        <div class="metric">
+          <strong>86.26%</strong>
+          <span>OpenVINO clip12 验证集总体准确率</span>
+        </div>
+        <div class="metric">
+          <strong>23.64ms</strong>
+          <span>OpenVINO FP 平均推理延迟</span>
+        </div>
+      </div>
+      <div class="data-layout" style="margin-top: 22px;">
+        <div class="card diagram-card">
+          <img src="assets/graduation-action/system-architecture.png" alt="实时人体动作识别系统总体架构图">
+          <div class="diagram-caption">
+            系统总体架构：左侧是实时识别主链路，右侧是样本采集与模型更新链路，两者通过数据补充和模型更新形成闭环。
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h3>数据来源说明</h3>
+            <p>原始输入来自普通 RGB 摄像头或已整理的视频动作片段。系统提供样本采集工具，可按动作类别录制现场视频，并回流到训练数据中。论文表 6-1 中的 7702 是 OpenVINO clip12 验证集统计样本量。</p>
+          </div>
+          <div class="flow" aria-label="数据与模型流程">
+            <div class="flow-node">
+              <strong>视频输入</strong>
+              <span>摄像头取流或整理后的视频片段</span>
+            </div>
+            <div class="flow-node">
+              <strong>三模态特征</strong>
+              <span>RGB 帧、光流图、姿态关键点序列</span>
+            </div>
+            <div class="flow-node">
+              <strong>模型训练</strong>
+              <span>PyTorch 训练多模态分类模型</span>
+            </div>
+            <div class="flow-node">
+              <strong>部署优化</strong>
+              <span>OpenVINO 降低 CPU 推理延迟</span>
+            </div>
+            <div class="flow-node">
+              <strong>样本回流</strong>
+              <span>补充真实场景样本并重新训练</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid two" style="margin-top: 22px;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>动作类别</th>
+                <th>中文说明</th>
+                <th>验证样本数</th>
+                <th>识别准确率</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>walking</td><td>走路</td><td>1939</td><td>85.04%</td></tr>
+              <tr><td>running</td><td>跑步</td><td>1364</td><td>64.66%</td></tr>
+              <tr><td>standing</td><td>站立</td><td>897</td><td>97.44%</td></tr>
+              <tr><td>waving</td><td>挥手</td><td>1337</td><td>86.84%</td></tr>
+              <tr><td>clapping</td><td>鼓掌</td><td>1246</td><td>93.50%</td></tr>
+              <tr><td>sitting</td><td>坐下</td><td>919</td><td>99.35%</td></tr>
+              <tr><td><strong>overall</strong></td><td>总体表现</td><td><strong>7702</strong></td><td><strong>86.26%</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>测试后端</th>
+                <th>平均延迟</th>
+                <th>P95 延迟</th>
+                <th>准确率</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>PyTorch</td><td>37.46 ms</td><td>45.25 ms</td><td>81.64%</td></tr>
+              <tr><td><strong>OpenVINO FP</strong></td><td><strong>23.64 ms</strong></td><td><strong>25.42 ms</strong></td><td><strong>86.26%</strong></td></tr>
+              <tr><td>OpenVINO INT8</td><td>14.34 ms</td><td>18.53 ms</td><td>80.56%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="conclusion" hidden>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Conclusion</p>
+        <h2>论文结论：系统可运行、实时性满足需求，但步态区分仍需加强</h2>
+        <p class="lead">
+          这是答辩最后需要重点讲清楚的部分：本文完成了完整系统闭环，验证了多模态融合和 OpenVINO 部署的可行性，同时也明确了当前系统的主要不足和后续方向。
+        </p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <h3>结论 1：系统链路完整</h3>
+          <p>系统完成视频输入、预处理、三模态特征构建、模型推理、结果显示、日志记录和样本采集，具备完整应用流程。</p>
+        </div>
+        <div class="card blue">
+          <h3>结论 2：实时性较好</h3>
+          <p>OpenVINO FP 平均推理延迟约 23.64 ms，能够支撑普通 CPU 条件下的实时识别演示。</p>
+        </div>
+        <div class="card">
+          <h3>结论 3：总体效果可用</h3>
+          <p>OpenVINO clip12 验证集总体准确率为 86.26%，standing、clapping 和 sitting 等类别识别较稳定。</p>
+        </div>
+        <div class="card accent">
+          <h3>不足 1：步态类动作易混淆</h3>
+          <p>running 与 walking 主要依赖下肢节奏和位移变化，近景画面下下肢信息不完整时仍容易混淆。</p>
+        </div>
+        <div class="card">
+          <h3>不足 2：真实样本还需扩充</h3>
+          <p>不同光照、拍摄距离、入镜比例和人物差异仍需继续补充，以提升复杂场景下的泛化能力。</p>
+        </div>
+        <div class="card">
+          <h3>后续方向</h3>
+          <p>继续补充真实场景数据，优化时序建模和融合策略，并扩展更多动作类别。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results-detail-hidden" class="band" hidden>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Evaluation</p>
+        <h2>实验结果：OpenVINO FP 是当前演示版本的平衡点</h2>
+        <p class="lead">
+          从验证集准确率看，standing、sitting 和 clapping 表现稳定；从实时性看，OpenVINO 相比原始 PyTorch 推理明显降低延迟。INT8 更快，但准确率下降，因此当前答辩演示更适合使用 OpenVINO FP 版本。
+        </p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>各动作类别准确率</h3>
+          <div class="bar-list">
+            <div class="bar-item">
+              <div class="bar-top"><span>sitting</span><span>99.35%</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 99.35%;"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-top"><span>standing</span><span>97.44%</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 97.44%;"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-top"><span>clapping</span><span>93.50%</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 93.5%;"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-top"><span>waving</span><span>86.84%</span></div>
+              <div class="bar-track"><div class="bar-fill blue" style="width: 86.84%;"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-top"><span>walking</span><span>85.04%</span></div>
+              <div class="bar-track"><div class="bar-fill blue" style="width: 85.04%;"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-top"><span>running</span><span>64.66%</span></div>
+              <div class="bar-track"><div class="bar-fill red" style="width: 64.66%;"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>推理后端对比</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>后端</th>
+                  <th>平均延迟</th>
+                  <th>P95 延迟</th>
+                  <th>准确率</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PyTorch</td>
+                  <td>37.46 ms</td>
+                  <td>45.25 ms</td>
+                  <td>81.64%</td>
+                </tr>
+                <tr>
+                  <td><strong>OpenVINO FP</strong></td>
+                  <td><strong>23.64 ms</strong></td>
+                  <td><strong>25.42 ms</strong></td>
+                  <td><strong>86.26%</strong></td>
+                </tr>
+                <tr>
+                  <td>OpenVINO INT8</td>
+                  <td>14.34 ms</td>
+                  <td>18.53 ms</td>
+                  <td>80.56%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="height: 18px;"></div>
+          <div class="bar-list">
+            <div class="bar-item">
+              <div class="bar-top"><span>PyTorch 平均延迟</span><span>37.46 ms</span></div>
+              <div class="bar-track"><div class="bar-fill red" style="width: 100%;"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-top"><span>OpenVINO FP 平均延迟</span><span>23.64 ms</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 63.1%;"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-top"><span>OpenVINO INT8 平均延迟</span><span>14.34 ms</span></div>
+              <div class="bar-track"><div class="bar-fill blue" style="width: 38.3%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid three" style="margin-top: 18px;">
+        <div class="card">
+          <h3>已经验证的能力</h3>
+          <p>摄像头取流、预处理、多模态输入构建、动作识别输出、结果显示、日志记录和样本采集回流均能连续工作。</p>
+        </div>
+        <div class="card blue">
+          <h3>主要问题</h3>
+          <p>running 与 walking 最容易混淆，原因是近景场景下下肢信息不完整，且两类动作的局部姿态和节奏边界接近。</p>
+        </div>
+        <div class="card">
+          <h3>改进方向</h3>
+          <p>继续补充真实场景样本，优化时序建模与融合策略，并扩展更多动作类别，提高复杂环境下的鲁棒性。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="deck" hidden>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">PPT Structure</p>
+        <h2>毕业答辩 PPT 建议做 10 页，重点回答老师最可能追问的问题</h2>
+        <p class="lead">
+          下面的结构可以直接作为 PPT 页纲。每页控制在一个核心问题，避免把论文整段搬进幻灯片。
+        </p>
+      </div>
+      <div class="slide-grid">
+        <div class="slide-card">
+          <strong>01 / Cover</strong>
+          <h3>题目与基本信息</h3>
+          <p>实时人体动作识别系统的设计与实现；作者姓名、指导老师、学院专业班级。</p>
+        </div>
+        <div class="slide-card">
+          <strong>02 / Background</strong>
+          <h3>研究背景与意义</h3>
+          <p>人体动作识别在智能监控、运动辅助、人机交互、康复评估等场景中的价值，以及普通设备落地难点。</p>
+        </div>
+        <div class="slide-card">
+          <strong>03 / Goal</strong>
+          <h3>研究目标与需求分析</h3>
+          <p>支持实时摄像头输入、六类动作识别、结果显示、延迟统计、日志记录和样本回流训练。</p>
+        </div>
+        <div class="slide-card">
+          <strong>04 / Data</strong>
+          <h3>数据来源与动作类别</h3>
+          <p>说明六类动作、样本整理方式、验证集 7702 条统计，以及现场样本采集如何补充真实场景数据。</p>
+        </div>
+        <div class="slide-card">
+          <strong>05 / Architecture</strong>
+          <h3>系统总体架构</h3>
+          <p>放论文架构图，讲清实时识别主链路和样本采集模型更新链路。</p>
+        </div>
+        <div class="slide-card">
+          <strong>06 / Features</strong>
+          <h3>多模态特征构建</h3>
+          <p>RGB 负责外观，光流负责动态，姿态关键点负责人体结构；三者互补以提升普通摄像头下的稳定性。</p>
+        </div>
+        <div class="slide-card">
+          <strong>07 / Model</strong>
+          <h3>模型训练与部署优化</h3>
+          <p>PyTorch 训练三分支融合模型，OpenVINO 作为部署后端，统一推理接口降低上层逻辑改动成本。</p>
+        </div>
+        <div class="slide-card">
+          <strong>08 / System</strong>
+          <h3>系统实现与功能展示</h3>
+          <p>展示实时识别界面、置信度与延迟显示、姿态骨架、日志记录和样本采集工具。</p>
+        </div>
+        <div class="slide-card">
+          <strong>09 / Test</strong>
+          <h3>测试结果与分析</h3>
+          <p>讲总体准确率 86.26%、OpenVINO 平均延迟 23.64ms，并解释 running 与 walking 的混淆原因。</p>
+        </div>
+        <div class="slide-card">
+          <strong>10 / Summary</strong>
+          <h3>总结与展望</h3>
+          <p>总结完整闭环和可运行性，展望样本扩充、动作类别扩展、复杂环境鲁棒性提升。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" hidden>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Defense Q&A</p>
+        <h2>答辩可能被问到的问题，可以提前准备这几句</h2>
+      </div>
+      <div class="qa-list">
+        <div class="qa">
+          <strong>数据是怎么来的？</strong>
+          <p>围绕六类动作整理视频片段作为训练与验证基础，系统还提供样本采集模块，可通过普通摄像头录制真实场景动作视频并按类别保存，用于后续回流训练。论文中的 7702 是 OpenVINO clip12 验证集统计样本量。</p>
+        </div>
+        <div class="qa">
+          <strong>为什么用多模态？</strong>
+          <p>单帧 RGB 容易受光照、背景和入镜范围影响；光流能补充动作节奏和运动变化；姿态关键点能突出人体结构。三类信息融合后更适合普通摄像头近景场景。</p>
+        </div>
+        <div class="qa">
+          <strong>为什么最终选 OpenVINO FP？</strong>
+          <p>PyTorch 平均延迟较高，INT8 虽然最快但准确率下降明显。OpenVINO FP 在 23.64ms 平均延迟和 86.26% 准确率之间取得了更适合演示和实际运行的平衡。</p>
+        </div>
+        <div class="qa">
+          <strong>为什么 running 准确率低？</strong>
+          <p>近景摄像头下下肢经常不完整入镜，而 running 与 walking 的差异高度依赖下肢节奏和位移变化；样本分布有限时，两者边界会更接近，因此后续需要补充真实场景样本并优化时序建模。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="thanks" class="thanks-section">
+    <div class="thanks-content">
+      <div class="thanks-kicker">Thank You</div>
+      <h2 class="thanks-title">感谢聆听</h2>
+      <p class="thanks-text">以上是我的毕业设计汇报内容，恳请各位老师批评指正。</p>
+      <div class="thanks-meta">蓝哲琦 · 实时人体动作识别系统的设计与实现</div>
+    </div>
+  </footer>
+</body>
+</html>
