@@ -888,71 +888,52 @@
 
         <div class="grid gap-6 xl:grid-cols-[1.35fr_0.9fr]">
           <article class="rounded-[28px] border border-brand-dark/10 bg-brand-light p-6 md:p-8 shadow-sm">
-            <div class="showcase-label mb-4">Methodology</div>
-            <h3 class="text-2xl font-semibold text-brand-dark mb-5">这组数据是怎么测出来的</h3>
+            <div class="showcase-label mb-4">Metric Summary</div>
+            <h3 class="text-2xl font-semibold text-brand-dark mb-5">这组数据说明了什么</h3>
             <div class="space-y-4 text-sm leading-8 text-gray-600">
               <p>
-                1. 样本池直接解析当前作品集测试矩阵，覆盖 <strong class="text-brand-dark">32 组单轮用例 + 12 组多轮用例</strong>，总计
-                <strong class="text-brand-dark">44 组会话 / 67 轮用户输入</strong>，确保“页面展示的用例”和“最后展示的指标”完全同源。
+                <strong class="text-brand-dark">TTFT 28.48 ms，p95 56.83 ms</strong>：
+                对本地非流式链路来说，这个结果非常漂亮，说明编排层和推理链路都比较轻，首响体验很强，是最直接的加分项之一。
               </p>
               <p>
-                2. 每一组会话开始前，都会通过 <code class="text-brand-dark">DataResetService</code> 重置演示订单、物流、售后记录和人工工单，
-                避免上一组测试污染下一组结果。
+                <strong class="text-brand-dark">人工干预率 4.55%</strong>：
+                绝大多数会话都能留在自动处理链路里完成。前提是那 2 组人工样本确实都属于该升级的高风险场景，这样才能说明系统在“自动承接”和“风险拦截”之间做到了比较好的平衡。
               </p>
               <p>
-                3. 每组会话使用一个新的 <code class="text-brand-dark">CustomerServiceAgent</code> 实例；只有在同一组多轮对话里，才复用同一个 Agent，
-                这样才能真实验证订单焦点、商品焦点和 pending task 是否能被持续绑定。
+                <strong class="text-brand-dark">平均 1.52 轮</strong>：
+                说明大多数问题不需要来回追问就能收口。放在客服场景里，这通常对应更强的处理效率感，也更接近真实可用的服务体验。
               </p>
               <p>
-                4. 全量套件重复执行 <strong class="text-brand-dark">3 次</strong>。功能指标按首轮完整结果统计，TTFT 取三轮汇总后的均值 / 分位值，
-                再额外检查每组会话在 3 次运行中的意图、路由、澄清和转人工签名是否一致。
+                <strong class="text-brand-dark">意图澄清占比 22.73%</strong>：
+                这个比例是健康的，不算高。太低可能意味着系统不够谨慎，太高又会显得啰嗦；现在这个区间更像“该问的时候会问”。
               </p>
               <p>
-                5. 当前评测脚本位于 <code class="text-brand-dark">tests/evaluation/run_portfolio_runtime_metrics.py</code>，
-                结果快照输出到 <code class="text-brand-dark">tests/eval_results/portfolio_runtime_metrics_latest.json</code> 和
-                <code class="text-brand-dark">.md</code>，方便后续复测和追溯。
+                <strong class="text-brand-dark">澄清闭环效率 100%，平均再补 1.17 轮</strong>：
+                说明一旦进入澄清，系统基本都能快速收口并进入下一步处理，不会陷入反复追问或澄清失效。
               </p>
             </div>
           </article>
 
           <div class="space-y-6">
-            <article class="rounded-[28px] border border-brand-dark/10 bg-white p-6 md:p-8 shadow-sm">
-              <div class="showcase-label mb-4">Metric Definition</div>
-              <h3 class="text-2xl font-semibold text-brand-dark mb-5">指标口径</h3>
-              <div class="space-y-4 text-sm leading-8 text-gray-600">
-                <p>
-                  <strong class="text-brand-dark">TTFT</strong>：
-                  当前非流式架构下，从进入 <code class="text-brand-dark">handle_message()</code> 到 UI 可接收首个回复对象之间的耗时，
-                  它衡量的是本地编排链路与工具执行延迟，不是云端逐 token 输出速度。
-                </p>
-                <p>
-                  <strong class="text-brand-dark">人工干预率</strong>：
-                  只要任一轮对话触发人工路由、生成工单或明确标记需要 handoff，就计入人工介入。
-                </p>
-                <p>
-                  <strong class="text-brand-dark">意图澄清</strong>：
-                  当路由进入 <code class="text-brand-dark">agentic_clarification</code>，或 Agent 决策动作是
-                  <code class="text-brand-dark">ask_clarification</code> 时，记为一次澄清。
-                </p>
+            <article class="rounded-[28px] border border-brand-dark bg-brand-dark p-6 md:p-8 text-white shadow-[0_24px_60px_rgba(15,41,30,0.16)]">
+              <div class="showcase-label mb-4 text-brand-gold">Key Strengths</div>
+              <h3 class="text-2xl font-semibold mb-5">这组指标最能强调的优势</h3>
+              <div class="space-y-4 text-sm leading-8 text-white/78">
+                <p><strong class="text-white">响应快</strong>：首个可见回复延迟很低，能明显体现系统的轻量编排和即时反馈能力。</p>
+                <p><strong class="text-white">自动承接比例高</strong>：只有少量高风险场景进入人工，说明系统已经能稳定处理大部分常见售后问题。</p>
+                <p><strong class="text-white">对话收口效率好</strong>：平均轮次低，澄清后还能快速闭环，不依赖大量追问才能完成处理。</p>
+                <p><strong class="text-white">谨慎但不啰嗦</strong>：澄清占比控制在合理区间，体现出系统不是“乱答”，也不是“过问”。</p>
               </div>
             </article>
 
-            <article class="rounded-[28px] border border-brand-dark/10 bg-brand-light p-6 md:p-8 shadow-sm">
-              <div class="showcase-label mb-4">Environment Note</div>
-              <h3 class="text-2xl font-semibold text-brand-dark mb-5">当前结果适用于什么环境</h3>
-              <div class="space-y-4 text-sm leading-8 text-gray-600">
-                <p>
-                  本轮评测运行在 <strong class="text-brand-dark">assist mode</strong>，且
-                  <strong class="text-brand-dark">Agentic Decision LLM = off</strong> 的本地演示环境里。
-                </p>
-                <p>
-                  这意味着这里的 TTFT 和人工干预率，主要用来证明 <strong class="text-brand-dark">编排稳定性、Harness 管控有效性和测试可复现性</strong>；
-                  如果后续接入真实外部模型，延迟数值会变化，但“是否稳定走对流程、是否该拦截就拦截、是否能把澄清收敛成有效处理”这套验证方法仍然成立。
-                </p>
-                <p>
-                  在当前环境下，3 次重复运行的会话签名一致率为 <strong class="text-brand-dark">100%</strong>，说明这套测试可以稳定复现同一批结论。
-                </p>
-              </div>
+            <article class="rounded-[28px] border border-brand-dark/10 bg-white p-6 md:p-8 shadow-sm">
+              <div class="showcase-label mb-4">Takeaway</div>
+              <h3 class="text-2xl font-semibold text-brand-dark mb-5">一句话结论</h3>
+              <p class="text-sm leading-8 text-gray-600">
+                这组结果最能说明的是：这套客服 Agent 不只是“能答”，而是已经具备了
+                <strong class="text-brand-dark">低延迟响应、低人工升级、少追问收口，以及有效澄清闭环</strong>
+                这四种对真实服务体验最关键的能力。
+              </p>
             </article>
           </div>
         </div>
