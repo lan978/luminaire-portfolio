@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 客服 Agent 系统迭代作品集 | Multi-Agent 升级案例</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          },
+          colors: {
+            brand: {
+              bg: "#FDFCF9",
+              dark: "#0F291E",
+              gold: "#C5A059",
+              gray: "#8C8C8C",
+              light: "#F5F2EA"
+            }
+          },
+          boxShadow: {
+            card: "0 24px 60px rgba(15, 41, 30, 0.08)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background: #FDFCF9;
+      color: #1A1A1A;
+      scroll-behavior: smooth;
+    }
+
+    .glass-nav {
+      background: rgba(253, 252, 249, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+    }
+
+    .showcase-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #C5A059;
+      font-weight: 700;
+    }
+
+    .hover-card {
+      transition: all 0.28s ease;
+    }
+
+    .hover-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 38px rgba(15, 41, 30, 0.08);
+      border-color: rgba(197, 160, 89, 0.58);
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.8s ease-out forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .soft-grid {
+      background-image:
+        linear-gradient(rgba(15, 41, 30, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 41, 30, 0.03) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .tab-active {
+      background: #0F291E;
+      color: #FDFCF9;
+      border-color: #0F291E;
+      box-shadow: 0 12px 28px rgba(15, 41, 30, 0.16);
+    }
+
+    .tab-default {
+      background: transparent;
+      color: #8C8C8C;
+      border-color: #EAE6DC;
+    }
+
+    .trace-json {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .pill {
+      border-radius: 9999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .pill-low {
+      background: #DCE8DD;
+      color: #3E664F;
+    }
+
+    .pill-medium {
+      background: #EBD9A8;
+      color: #745A1E;
+    }
+
+    .pill-high {
+      background: rgba(140, 65, 51, 0.12);
+      color: #8C4133;
+    }
+
+    .compare-card {
+      min-height: 100%;
+    }
+
+    .section-anchor {
+      scroll-margin-top: 100px;
+    }
+
+    .case-table-wrap {
+      overflow: visible;
+    }
+
+    .case-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+    }
+
+    .case-table th,
+    .case-table td {
+      vertical-align: top;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .case-table td {
+      line-height: 1.7;
+    }
+
+    .case-table button {
+      white-space: nowrap;
+    }
+
+    .case-table--single col:nth-child(1) { width: 6%; }
+    .case-table--single col:nth-child(2) { width: 12%; }
+    .case-table--single col:nth-child(3) { width: 24%; }
+    .case-table--single col:nth-child(4) { width: 7%; }
+    .case-table--single col:nth-child(5) { width: 17%; }
+    .case-table--single col:nth-child(6) { width: 24%; }
+    .case-table--single col:nth-child(7) { width: 10%; }
+
+    .case-table--multi col:nth-child(1) { width: 6%; }
+    .case-table--multi col:nth-child(2) { width: 14%; }
+    .case-table--multi col:nth-child(3) { width: 28%; }
+    .case-table--multi col:nth-child(4) { width: 18%; }
+    .case-table--multi col:nth-child(5) { width: 24%; }
+    .case-table--multi col:nth-child(6) { width: 10%; }
+
+    @media (max-width: 1100px) {
+      .case-table-wrap {
+        overflow-x: auto;
+      }
+
+      .case-table {
+        min-width: 1120px;
+      }
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-brand-dark">
+  <nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-6">
+      <a href="#top" class="font-serif font-bold text-xl tracking-tight text-brand-dark">Luminaire Portfolio</a>
+      <div class="hidden lg:flex items-center gap-6 text-sm text-brand-gray">
+        <a href="#overview" class="hover:text-brand-dark transition">智能体设计</a>
+        <a href="#compare" class="hover:text-brand-dark transition">前后对比</a>
+        <a href="#agents" class="hover:text-brand-dark transition">多智能体链路</a>
+        <a href="#showcase" class="hover:text-brand-dark transition">真实界面</a>
+        <a href="#tests" class="hover:text-brand-dark transition">测试验证</a>
+        <a href="#iterations" class="hover:text-brand-dark transition">版本迭代</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top" class="pt-28">
+    <section class="pb-20">
+      <div class="max-w-7xl mx-auto px-6 grid gap-10 items-start">
+        <div class="fade-in-up max-w-5xl">
+          <div class="showcase-label mb-5">Multi-Agent Customer Service Portfolio Case</div>
+          <h1 class="font-serif text-5xl md:text-7xl leading-[0.92] tracking-[-0.06em] text-brand-dark">
+            Multi-Agent 智能客服<br>迭代作品集
+          </h1>
+          <p class="mt-8 max-w-4xl text-2xl leading-relaxed text-slate-500">
+            这份作品集主要展示我在本次迭代中完成的三件事：把原有 FAQ / RAG / Workflow 客服链路升级成由 Intent、Risk、Planning、Reply 协同决策的 Multi-Agent 处理链，补上 Trace、Judge 与 Bad Case 驱动的可观测修复机制，并通过单轮、多轮、投诉升级等真实测试用例逐条验证系统效果。
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+    <section id="overview" class="section-anchor py-24 border-t border-brand-dark/5 soft-grid">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="mb-16">
+          <p class="showcase-label mb-4">Multi-Agent Design</p>
+          <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">多智能体协同设计</h2>
+        </div>
+
+        <div class="space-y-8">
+          <div class="grid gap-5 lg:grid-cols-4">
+            <article class="bg-brand-light rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+              <div class="showcase-label mb-3">Agent 01</div>
+              <h3 class="text-xl font-semibold text-brand-dark mb-3">IntentUnderstanding Agent</h3>
+              <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                负责识别用户当前想做什么，并结合商品焦点、订单号、当前任务状态判断这是不是追问、换话题还是进入新的售后阶段。
+              </p>
+              <div class="space-y-2 text-sm text-gray-600">
+                <div><strong class="text-brand-dark">能力边界：</strong>只负责理解，不直接决定调用哪个工具。</div>
+                <div><strong class="text-brand-dark">处理任务：</strong>商品咨询、物流查询、退款意图、模糊售后、投诉表达识别。</div>
+              </div>
+            </article>
+
+            <article class="bg-brand-light rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+              <div class="showcase-label mb-3">Agent 02</div>
+              <h3 class="text-xl font-semibold text-brand-dark mb-3">RiskCompliance Agent</h3>
+              <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                负责识别用户情绪、投诉风险、补偿争议和是否应该优先人工接管，让风险判断不再混在普通回复逻辑里。
+              </p>
+              <div class="space-y-2 text-sm text-gray-600">
+                <div><strong class="text-brand-dark">能力边界：</strong>只负责判断风险，不直接执行工单创建或业务动作。</div>
+                <div><strong class="text-brand-dark">处理任务：</strong>物流抱怨、服务不满、投诉升级、赔偿争议、人工兜底建议。</div>
+              </div>
+            </article>
+
+            <article class="bg-brand-light rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+              <div class="showcase-label mb-3">Agent 03</div>
+              <h3 class="text-xl font-semibold text-brand-dark mb-3">Planning Agent</h3>
+              <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                负责决定下一步应该怎么处理：继续追问、查订单、调用 RAG、判断售后条件，还是直接进入人工接管。
+              </p>
+              <div class="space-y-2 text-sm text-gray-600">
+                <div><strong class="text-brand-dark">能力边界：</strong>负责决策路径，不直接生成最终客服话术。</div>
+                <div><strong class="text-brand-dark">处理任务：</strong>调用 order_tool、rag_tool、after_sale_tool、create_handoff_ticket 等稳定工具。</div>
+              </div>
+            </article>
+
+            <article class="bg-brand-light rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+              <div class="showcase-label mb-3">Agent 04</div>
+              <h3 class="text-xl font-semibold text-brand-dark mb-3">Reply Agent</h3>
+              <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                负责把前面几层的判断结果转成用户真正看到的话术，保证回复内容和用户问题焦点一致，语气和风险等级匹配。
+              </p>
+              <div class="space-y-2 text-sm text-gray-600">
+                <div><strong class="text-brand-dark">能力边界：</strong>不重新做业务判断，而是基于已有结论生成合适回复。</div>
+                <div><strong class="text-brand-dark">处理任务：</strong>商品问答聚焦、物流安抚、售后说明、人工接管提示。</div>
+              </div>
+            </article>
+
+          </div>
+
+          <div class="grid gap-5 lg:grid-cols-2">
+            <article class="bg-brand-light rounded-2xl border border-brand-dark/10 p-6 shadow-sm hover-card">
+              <div class="showcase-label mb-3">Support Layer 01</div>
+              <h3 class="text-xl font-semibold text-brand-dark mb-3">Trace 与评测模块</h3>
+              <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                这部分不参与前台决策，而是放在链路后方记录每一轮对话的意图、风险、规划、工具调用和最终动作，并把失败样本沉淀成可复盘的 Bad Case。
+              </p>
+              <div class="space-y-2 text-sm text-gray-600">
+                <div><strong class="text-brand-dark">能力边界：</strong>不直接处理用户问题，专注于记录、归因、评测和回归验证。</div>
+                <div><strong class="text-brand-dark">处理任务：</strong>Trace 记录、Judge 评测、Bad Case 收集、OptimizationAdvisor 建议。</div>
+              </div>
+            </article>
+
+            <article class="bg-brand-dark text-white rounded-2xl border border-brand-dark p-6 shadow-xl hover-card">
+              <div class="showcase-label mb-3 text-brand-gold">Support Layer 02</div>
+              <h3 class="text-xl font-semibold mb-3">稳定工具层</h3>
+              <p class="text-sm text-white/80 leading-relaxed mb-4">
+                下面这些是 PlanningAgent 在白名单内可以调用、并由稳定工具层执行的确定性工具。
+              </p>
+              <div class="space-y-3 text-sm leading-7 text-white/82">
+                <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <strong class="text-white">商品知识：</strong>FAQ 工具、商品 RAG 检索工具
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <strong class="text-white">订单履约：</strong>订单查询工具、物流查询工具
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <strong class="text-white">售后处理：</strong>售后判断工具、售后建议工具、退款 / 退货 / 换货处理工具
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <strong class="text-white">人工协同：</strong>转人工工单创建工具、人工工单复用工具
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="rounded-[28px] border border-brand-dark/10 bg-white p-8 shadow-sm">
+            <div class="showcase-label mb-4">Execution Loop</div>
+            <h3 class="text-2xl font-serif text-brand-dark mb-4">一轮用户请求，如何进入 Multi-Agent + Harness 的执行闭环</h3>
+            <p class="text-sm leading-7 text-gray-600 mb-6 max-w-5xl">
+              这次迭代不是“多加几个 Agent”，而是把原来“命中分支后执行”的固定 Workflow，
+              升级成“先理解情况，再判断风险，再决定怎么处理”的智能执行链路。
+              面向电商客服场景，真正关键的不是 AI 会不会答，而是它能不能在复杂诉求下既保持灵活，又不越过合规红线。
+            </p>
+
+            <div class="rounded-[24px] border border-dashed border-brand-gold/50 bg-brand-light p-5 md:p-6">
+              <div class="flex items-center justify-between gap-4 mb-5">
+                <div>
+                  <div class="showcase-label mb-2">Harness Full Chain Control</div>
+                  <div class="text-lg font-semibold text-brand-dark">Harness 不是另一个智能体，而是包裹整条链路的确定性管控外壳</div>
+                </div>
+                <div class="rounded-full border border-brand-dark/10 bg-white px-4 py-2 text-xs font-semibold text-brand-dark">
+                  高风险命中即中断并转人工
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2 text-sm leading-6 text-brand-dark">
+                <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1">用户请求</span>
+                <span class="text-brand-gold">-></span>
+                <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1">Risk Agent + 状态机</span>
+                <span class="text-brand-gold">-></span>
+                <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1">Intent Agent</span>
+                <span class="text-brand-gold">-></span>
+                <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1">Planning Agent</span>
+                <span class="text-brand-gold">-></span>
+                <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1">稳定工具层</span>
+                <span class="text-brand-gold">-></span>
+                <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1">Reply Agent</span>
+                <span class="text-brand-gold">-></span>
+                <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1">Reply Guard</span>
+                <span class="text-brand-gold">-></span>
+                <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1">Trace / Harness 审计</span>
+                <span class="text-brand-gold">-></span>
+                <span class="rounded-full border border-brand-dark/10 bg-brand-dark px-3 py-1 text-brand-bg">系统输出 / 转人工</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[28px] border border-brand-dark/10 bg-brand-light p-8 shadow-sm">
+            <div class="showcase-label mb-4">Control Layer</div>
+            <h3 class="text-2xl font-serif text-brand-dark mb-3">Harness 管控层：不是再加一个总控 Agent，而是把 AI 的灵活性锁进合规边界里</h3>
+            <p class="text-sm leading-7 text-gray-600 mb-8 max-w-5xl">
+              电商客服场景里，AI 的灵活性与合规确定性天然冲突。没有 Harness，系统要么像老式 Workflow 一样死板，
+              要么像“自由发挥”的智能体一样容易越权承诺、误判状态、放大客诉。
+              我把 Harness 设计成全链路之外的确定性管控内核，用代码规则而不是额外的智能体去守住红线，同时保留 Multi-Agent 对复杂诉求的理解和规划能力。
+            </p>
+
+            <div class="grid gap-5 lg:grid-cols-3 mb-8">
+              <article class="rounded-2xl border border-brand-dark/10 bg-white p-5">
+                <div class="showcase-label mb-3">Business Conflict</div>
+                <h4 class="text-lg font-semibold text-brand-dark mb-3">为什么必须做 Harness</h4>
+                <p class="text-sm leading-7 text-gray-600">
+                  传统 FAQ / Workflow 路由太早，用户一旦表达模糊、跨状态、带情绪，系统就容易走错分支。
+                  但如果完全放开给智能体自由决策，又会在退款、赔付、投诉升级这类高风险场景里踩线。
+                </p>
+              </article>
+
+              <article class="rounded-2xl border border-brand-dark/10 bg-white p-5">
+                <div class="showcase-label mb-3">Product Answer</div>
+                <h4 class="text-lg font-semibold text-brand-dark mb-3">Harness 解决的不是技术炫技，而是业务矛盾</h4>
+                <p class="text-sm leading-7 text-gray-600">
+                  我没有推翻原有 FAQ、RAG、订单查询、售后判断这些稳定工具，而是只升级调度权。
+                  系统从“命中分支后执行”变成“先理解情况，再判断风险，再决定怎么处理”。
+                </p>
+              </article>
+
+              <article class="rounded-2xl border border-brand-dark/10 bg-white p-5">
+                <div class="showcase-label mb-3">Core Value</div>
+                <h4 class="text-lg font-semibold text-brand-dark mb-3">核心价值</h4>
+                <p class="text-sm leading-7 text-gray-600">
+                  这个方案的核心价值，不是“多做了几个 Agent”，而是在保留原有稳定工具能力的前提下，
+                  把客服系统从固定路由升级成可理解上下文、可判断风险、可规划动作的智能决策系统，
+                  同时用 Harness 守住合规底线，让它真正具备上线、审计和持续迭代的条件。
+                </p>
+              </article>
+            </div>
+
+            <div class="rounded-2xl border border-brand-dark/10 bg-white p-5 mb-8">
+              <div class="showcase-label mb-4">4 Layers</div>
+              <div class="grid gap-5 lg:grid-cols-2">
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-5">
+                  <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="showcase-label">Layer 01</span>
+                    <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">对应 ST18</span>
+                    <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">高风险投诉 100% 拦截</span>
+                  </div>
+                  <h4 class="text-lg font-semibold text-brand-dark mb-3">全局状态机：固定执行顺序，不允许越级跳步</h4>
+                  <p class="text-sm leading-7 text-gray-600">
+                    所有请求必须先过风险初筛，再进入意图识别、任务规划、工具执行和回复生成。
+                    一旦命中 12315 投诉、赔付争议、高风险客诉，状态机立即中断链路并转人工。
+                    它解决的是“AI 还没看清风险就已经开始执行”的问题。
+                  </p>
+                </article>
+
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-5">
+                  <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="showcase-label">Layer 02</span>
+                    <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">对应 ST12 / ST19</span>
+                    <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">禁止越权 / 禁止状态乱跳</span>
+                  </div>
+                  <h4 class="text-lg font-semibold text-brand-dark mb-3">分布式权责锁：把软提示词边界变成硬代码约束</h4>
+                  <p class="text-sm leading-7 text-gray-600">
+                    Intent Agent 只能输出预设枚举意图，Risk Agent 只负责风险判断，Planning Agent 只决定路径与工具，
+                    Reply Agent 不能直接越权承诺退款、赔付或平台责任。它解决的是“谁都能做一点，最后没人能解释为什么这么做”的黑盒问题。
+                  </p>
+                </article>
+
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-5">
+                  <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="showcase-label">Layer 03</span>
+                    <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">对应 ST17</span>
+                    <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">只拦截，不调度</span>
+                  </div>
+                  <h4 class="text-lg font-semibold text-brand-dark mb-3">轻量 Reply Guard：只做最终质检，不参与流程调度</h4>
+                  <p class="text-sm leading-7 text-gray-600">
+                    Reply Guard 没有调度权，只负责最终兜底：空回复自动改写、违规承诺直接拦截、高风险话术自动补齐。
+                    它解决的是“前面流程没问题，但最后一句话把系统带进合规事故”的尾部风险。
+                  </p>
+                </article>
+
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-5">
+                  <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="showcase-label">Layer 04</span>
+                    <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">对应 MT04 / MT09 / MT10 / MT11 / MT12</span>
+                    <span class="rounded-full border border-brand-dark/10 bg-white px-3 py-1 text-xs font-semibold text-brand-dark">Bad Case 秒级定位</span>
+                  </div>
+                  <h4 class="text-lg font-semibold text-brand-dark mb-3">统一 Trace / Harness 审计：让每次决策都可追溯、可复盘、可回归</h4>
+                  <p class="text-sm leading-7 text-gray-600">
+                    每轮请求共用一条 Trace ID，统一记录风险判断、意图识别、规划结果、工具调用、状态迁移、锁拦截和 Reply Guard 质检结论。
+                    所以下面的测试截图不只是证明“答对了”，而是能精准定位“错在哪一层”，形成测试 - 定位 - 优化 - 复测的闭环。
+                  </p>
+                </article>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-brand-dark/10 bg-brand-dark p-5 text-brand-bg">
+              <div class="showcase-label mb-3 text-brand-gold">One Sentence</div>
+              <p class="text-sm leading-7 text-brand-bg/85">
+                一句话总结这套 Harness：它不是“再造一个会思考的总控大脑”，而是给整套 Multi-Agent 系统加上
+                固定路权、权限闸门、最终质检和全程记录，让 AI 能解决复杂业务问题，但绝不以牺牲合规为代价。
+              </p>
+            </div>
+          </div>
+
+          <div class="hidden rounded-[28px] border border-brand-dark/10 bg-white p-8 shadow-sm">
+            <div class="showcase-label mb-4">Execution Loop</div>
+            <h3 class="text-2xl font-serif text-brand-dark mb-4">一轮用户请求如何进入多智能体闭环</h3>
+            <p class="text-sm leading-7 text-gray-600 mb-6 max-w-4xl">
+              从用户问题进入系统开始，请求会先经过风险判断，再进入意图识别、任务规划、工具执行和回复生成。
+              其中 Reply Agent 负责生成最终客服话术，Reply Guard 负责做最后质检；如果命中高风险，状态机会直接打断链路并转人工，
+              如果正常通过，则由系统执行“返回用户”这个最终输出动作。
+            </p>
+            <div class="flex flex-wrap items-center gap-2 text-sm leading-6 text-brand-dark">
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">用户问题</span>
+              <span class="text-brand-gold">→</span>
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">RiskCompliance Agent</span>
+              <span class="text-brand-gold">→</span>
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">IntentUnderstanding Agent</span>
+              <span class="text-brand-gold">→</span>
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">Planning Agent</span>
+              <span class="text-brand-gold">→</span>
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">稳定工具层</span>
+              <span class="text-brand-gold">→</span>
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">Reply Agent（生成回复）</span>
+              <span class="text-brand-gold">→</span>
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">Reply Guard（最终质检）</span>
+              <span class="text-brand-gold">→</span>
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">Trace / Harness 审计</span>
+              <span class="text-brand-gold">→</span>
+              <span class="rounded-full border border-brand-dark/10 bg-brand-light px-3 py-1">系统输出：返回用户 / 转人工</span>
+            </div>
+          </div>
+
+          <div class="hidden rounded-[28px] border border-brand-dark/10 bg-brand-light p-8 shadow-sm">
+            <div class="showcase-label mb-4">Control Layer</div>
+            <h3 class="text-2xl font-serif text-brand-dark mb-4">Harness 管控层：让多智能体系统可控、可审计、可回归</h3>
+            <div class="rounded-2xl border border-brand-dark/10 bg-white p-5 mb-8">
+              <div class="showcase-label mb-4">Full Flow</div>
+              <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-4">
+                  <div class="showcase-label mb-2">Step 01</div>
+                  <h4 class="font-semibold text-brand-dark mb-2">风险分析智能体 + 状态机</h4>
+                  <p class="text-sm leading-6 text-gray-600">先做高风险初筛；命中 12315 投诉、辱骂、赔偿争议时，状态机直接中断并转人工。</p>
+                </article>
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-4">
+                  <div class="showcase-label mb-2">Step 02</div>
+                  <h4 class="font-semibold text-brand-dark mb-2">意图识别智能体</h4>
+                  <p class="text-sm leading-6 text-gray-600">结合商品焦点、订单号、当前任务状态识别用户意图；输出必须落在预设枚举范围内。</p>
+                </article>
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-4">
+                  <div class="showcase-label mb-2">Step 03</div>
+                  <h4 class="font-semibold text-brand-dark mb-2">计划制定智能体</h4>
+                  <p class="text-sm leading-6 text-gray-600">决定下一步是继续追问、查订单、调 RAG、走售后判断还是直接转人工。</p>
+                </article>
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-4">
+                  <div class="showcase-label mb-2">Step 04</div>
+                  <h4 class="font-semibold text-brand-dark mb-2">分布式权责锁</h4>
+                  <p class="text-sm leading-6 text-gray-600">把软提示词边界变成硬代码约束：意图必须合法，工具必须在白名单内，不能越权调用。</p>
+                </article>
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-4">
+                  <div class="showcase-label mb-2">Step 05</div>
+                  <h4 class="font-semibold text-brand-dark mb-2">稳定工具层</h4>
+                  <p class="text-sm leading-6 text-gray-600">执行 FAQ、商品 RAG、订单查询、物流查询、售后判断、工单创建等具体动作。</p>
+                </article>
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-4">
+                  <div class="showcase-label mb-2">Step 06</div>
+                  <h4 class="font-semibold text-brand-dark mb-2">Reply Agent：生成回复</h4>
+                  <p class="text-sm leading-6 text-gray-600">把前面各层的判断结果组织成最终客服话术，保证内容、语气和风险等级匹配。</p>
+                </article>
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-4">
+                  <div class="showcase-label mb-2">Step 07</div>
+                  <h4 class="font-semibold text-brand-dark mb-2">Reply Guard：最终质检</h4>
+                  <p class="text-sm leading-6 text-gray-600">只做最终质检：空回复自动改写，违规承诺直接拦截，高风险场景补全标准转人工话术。</p>
+                </article>
+                <article class="rounded-2xl border border-brand-dark/10 bg-brand-light p-4">
+                  <div class="showcase-label mb-2">Step 08</div>
+                  <h4 class="font-semibold text-brand-dark mb-2">系统输出 + Trace / Harness 审计</h4>
+                  <p class="text-sm leading-6 text-gray-600">系统执行“返回用户 / 转人工”动作，同时统一记录意图、风险、规划、工具、状态迁移、锁拦截和异常兜底。</p>
+                </article>
+              </div>
+            </div>
+
+            <div class="grid gap-5 lg:grid-cols-2">
+              <article class="rounded-2xl border border-brand-dark/10 bg-white p-5">
+                <div class="showcase-label mb-3">Layer 01</div>
+                <h4 class="text-lg font-semibold text-brand-dark mb-3">全局状态机：固定执行顺序，不允许越级跳步</h4>
+                <p class="text-sm leading-7 text-gray-600">
+                  对应链路位置：用户输入 → 风险初筛 → 意图识别 → 任务规划 → 工具执行 → 回复生成。
+                  所有用户输入都必须先过风险初筛，再进入意图识别、任务规划、工具执行和回复生成。
+                  一旦命中 12315 投诉、赔偿争议或高风险标签，状态机直接强制转人工，不允许进入后续智能体环节。
+                </p>
+              </article>
+
+              <article class="rounded-2xl border border-brand-dark/10 bg-white p-5">
+                <div class="showcase-label mb-3">Layer 02</div>
+                <h4 class="text-lg font-semibold text-brand-dark mb-3">分布式权责锁：把软提示词边界变成硬代码约束</h4>
+                <p class="text-sm leading-7 text-gray-600">
+                  对应链路位置：意图识别、任务规划、回复生成三层。
+                  意图输出必须是预设枚举值；风险标签拥有系统最高优先级；PlanningAgent 只能调用白名单内工具；
+                  Reply 层禁止输出“全额赔偿、平台负责、保证退款”等违规承诺，触发后直接拦截。
+                </p>
+              </article>
+
+              <article class="rounded-2xl border border-brand-dark/10 bg-white p-5">
+                <div class="showcase-label mb-3">Layer 03</div>
+                <h4 class="text-lg font-semibold text-brand-dark mb-3">轻量 Reply Guard：只做最终质检，不参与流程调度</h4>
+                <p class="text-sm leading-7 text-gray-600">
+                  对应链路位置：回复生成之后、返回用户之前。
+                  这层只负责最终回复兜底：空回复自动改写，高风险转人工话术缺失时自动补全，出现违规承诺时直接转人工。
+                  它只有拦截权，没有调度权，不会反过来影响上游智能体的执行顺序。
+                </p>
+              </article>
+
+              <article class="rounded-2xl border border-brand-dark/10 bg-white p-5">
+                <div class="showcase-label mb-3">Layer 04</div>
+                <h4 class="text-lg font-semibold text-brand-dark mb-3">统一 Trace / Harness 审计：决策与管控共用同一条 Trace ID</h4>
+                <p class="text-sm leading-7 text-gray-600">
+                  对应链路位置：覆盖整条执行路径，从风险初筛一直记录到最终输出。
+                  Trace 记录意图、风险、规划、工具和最终回复；Harness 额外记录状态迁移、锁拦截和 Reply Guard 质检结果。
+                  所以后面的测试用例不只看“答得对不对”，还可以直接定位失败发生在哪一层。
+                </p>
+              </article>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="compare" class="section-anchor py-24 bg-white border-t border-brand-dark/5">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="mb-16">
+          <p class="showcase-label mb-4">Before / After</p>
+          <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">前后版本对比</h2>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 mb-8">
+          <article class="compare-card rounded-[28px] border border-brand-dark/10 bg-brand-light p-8 shadow-sm">
+            <div class="showcase-label mb-3">Before</div>
+            <h3 class="font-serif text-3xl text-brand-dark mb-5">V1 · FAQ / RAG / Workflow</h3>
+            <div class="space-y-4 text-sm text-gray-600 leading-relaxed">
+              <div class="rounded-2xl border border-brand-dark/10 bg-white p-4">
+                <div class="font-semibold text-brand-dark mb-2">链路与识别过程</div>
+                <div>用户问题进入系统后，会先做 rewrite / intent 识别，再由 router 按预设规则决定走 FAQ、RAG、订单流程、售后流程或人工转接。也就是说，链路大多是提前设计好的，真正交给智能体临场决策的空间比较少。</div>
+              </div>
+              <div class="rounded-2xl border border-brand-dark/10 bg-white p-4">
+                <div class="font-semibold text-brand-dark mb-2">保留下来的优点</div>
+                <div>标准化问题稳定，FAQ / RAG / Workflow 边界清楚，订单、物流、售后这些业务工具执行路径明确。</div>
+              </div>
+              <div class="rounded-2xl border border-brand-dark/10 bg-white p-4">
+                <div class="font-semibold text-brand-dark mb-2">核心短板</div>
+                <div>路由被决定得太早。遇到模糊售后、多轮追问、情绪升级或订单上下文承接时，系统更像“命中分支后执行”，而不是“先理解情况、再判断风险、再决定怎么处理”。</div>
+              </div>
+            </div>
+          </article>
+
+          <article class="compare-card rounded-[28px] border border-brand-dark bg-brand-dark p-8 text-white shadow-[0_24px_60px_rgba(15,41,30,0.16)]">
+            <div class="showcase-label mb-3 text-brand-gold">After</div>
+            <h3 class="font-serif text-3xl mb-5">V2 · Multi-Agent 协同决策</h3>
+            <div class="space-y-4 text-sm text-white/78 leading-relaxed">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="font-semibold text-white mb-2">链路升级</div>
+                <div>相对上一版“先命中路由、再进入分支执行”，这一版把关键判断前置成一条多智能体链路：先由 RiskCompliance Agent 判断风险边界，再由 IntentUnderstanding Agent 理解用户诉求和上下文，最后交给 Planning Agent 决定下一步该追问、查订单、调 RAG、走售后还是转人工。</div>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="font-semibold text-white mb-2">保留与重构</div>
+                <div>FAQ、RAG、订单 / 售后 Workflow 没有被推翻，而是从“直接决定回复的链路”重构成“被 Planning Agent 调度的稳定工具包”。也就是说，上一版积累下来的工具能力被保留下来，但调度权从固定路由升级成了智能规划。</div>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="font-semibold text-white mb-2">这次真正新增的能力</div>
+                <div>新增的不只是几个 Agent 名字，而是整套决策能力：上下文复用、投诉升级策略、人工工单复用、Harness 状态机与权责锁、Reply Guard、统一 Trace / Harness 审计，以及 Bad Case 回归验证闭环。系统开始具备“先理解情况，再决定怎么处理”的能力。</div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+      </div>
+    </section>
+    <section id="tests" class="section-anchor py-24 border-t border-brand-dark/5 soft-grid">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="mb-16">
+          <p class="showcase-label mb-4">Testing & Validation</p>
+          <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-4">测试区不是附属页，它是这次迭代最有说服力的证据。</h2>
+          <p class="text-brand-gray max-w-4xl leading-relaxed">
+            这一部分直接按真实测试矩阵展示。单轮场景看意图识别、工具调用和回答焦点是否稳定；多轮场景看上下文、售后流程和投诉升级是否能够闭环处理。
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+          <article class="rounded-2xl border border-brand-dark/10 bg-white p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Group 01</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">单轮基础场景</h3>
+            <p class="text-sm leading-6 text-gray-600">覆盖商品咨询、订单查询、物流、退款、地址修改、模糊售后与投诉识别。</p>
+          </article>
+          <article class="rounded-2xl border border-brand-dark/10 bg-white p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Group 02</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">单轮高频补全</h3>
+            <p class="text-sm leading-6 text-gray-600">补齐发货时效、搭配咨询、7 天无理由、退货运费、色差、漏发、发票等真实高频问题。</p>
+          </article>
+          <article class="rounded-2xl border border-brand-dark/10 bg-white p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Group 03</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">多轮链路验证</h3>
+            <p class="text-sm leading-6 text-gray-600">同时覆盖多轮商品追问、订单上下文承接、售后推进和投诉升级，验证系统能否连续稳定处理。</p>
+          </article>
+          <article class="rounded-2xl border border-brand-dark bg-brand-dark p-6 text-white shadow-[0_18px_42px_rgba(15,41,30,0.18)] hover-card">
+            <div class="showcase-label mb-3 text-brand-gold">Evidence</div>
+            <h3 class="text-lg font-semibold mb-3">真实截图回放</h3>
+            <p class="text-sm leading-6 text-white/76">每条用例最后都可以点击“查看真实截图”，回看当时的用户问题、智能客服真实回答和界面状态。</p>
+          </article>
+        </div>
+
+        <div class="space-y-8">
+          <div class="rounded-[28px] border border-brand-dark/10 bg-white p-6 md:p-8 shadow-sm">
+            <div class="showcase-label mb-4">Single Turn · Base Set</div>
+            <h3 class="text-2xl font-semibold text-brand-dark mb-5">单轮对话测试用例（基础场景）</h3>
+            <div class="case-table-wrap">
+              <table class="case-table case-table--single">
+                <colgroup>
+                  <col><col><col><col><col><col><col>
+                </colgroup>
+                <thead>
+                  <tr class="text-left text-xs uppercase tracking-[0.18em] text-brand-gold">
+                    <th class="pb-3">ID</th>
+                    <th class="pb-3">场景</th>
+                    <th class="pb-3">用户问题</th>
+                    <th class="pb-3">关联对象</th>
+                    <th class="pb-3">预期意图 / 路由</th>
+                    <th class="pb-3">核心检查点</th>
+                    <th class="pb-3">真实截图</th>
+                  </tr>
+                </thead>
+                <tbody class="text-sm text-gray-600">
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST01</td><td class="px-4 py-4">售前材质咨询</td><td class="px-4 py-4">基础纯棉圆领短袖T恤是什么材质？</td><td class="px-4 py-4">商品 A</td><td class="px-4 py-4">product_consult / rag</td><td class="px-4 py-4">要回答 100%棉，不能答成价格或洗护</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST01')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST02</td><td class="px-4 py-4">售前洗护咨询</td><td class="px-4 py-4">SKU001 这件可以机洗吗？会不会缩水？</td><td class="px-4 py-4">商品 A</td><td class="px-4 py-4">product_consult / rag</td><td class="px-4 py-4">要回答 支持机洗 / 建议冷水机洗 / 深浅色分开洗，并覆盖缩水风险</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST02')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST03</td><td class="px-4 py-4">售前价格咨询</td><td class="px-4 py-4">这件短袖现在多少钱？</td><td class="px-4 py-4">商品 A</td><td class="px-4 py-4">product_consult / rag</td><td class="px-4 py-4">要回答 59.9元，不能答成材质</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST03')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST04</td><td class="px-4 py-4">售前场景咨询</td><td class="px-4 py-4">基础纯棉圆领短袖T恤适合日常通勤穿吗？</td><td class="px-4 py-4">商品 A</td><td class="px-4 py-4">product_consult / rag</td><td class="px-4 py-4">要回答 适合日常穿搭</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST04')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST05</td><td class="px-4 py-4">售前模糊商品咨询</td><td class="px-4 py-4">这件短袖怎么样？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">chat or clarification</td><td class="px-4 py-4">不能乱答具体商品；应追问商品名或链接</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST05')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST06</td><td class="px-4 py-4">商品洗护咨询</td><td class="px-4 py-4">加厚连帽卫衣怎么洗比较好？</td><td class="px-4 py-4">商品 B</td><td class="px-4 py-4">product_consult / rag</td><td class="px-4 py-4">要回答 建议反面轻柔洗涤</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST06')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST07</td><td class="px-4 py-4">商品季节咨询</td><td class="px-4 py-4">这件卫衣适合秋冬穿吗？</td><td class="px-4 py-4">商品 B</td><td class="px-4 py-4">product_consult / rag</td><td class="px-4 py-4">要回答 更适合秋冬</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST07')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST08</td><td class="px-4 py-4">商品保暖咨询</td><td class="px-4 py-4">加厚连帽卫衣保暖性怎么样？</td><td class="px-4 py-4">商品 B</td><td class="px-4 py-4">product_consult / rag</td><td class="px-4 py-4">要回答 加厚磨毛内里 / 保暖</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST08')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST09</td><td class="px-4 py-4">售前库存咨询</td><td class="px-4 py-4">基础纯棉圆领短袖T恤黑色M码有货吗？</td><td class="px-4 py-4">商品 A</td><td class="px-4 py-4">product_consult / inventory_query</td><td class="px-4 py-4">要回答对应库存状态，不能瞎编无货 / 有货，不偏离商品本身</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST09')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST10</td><td class="px-4 py-4">订单状态查询</td><td class="px-4 py-4">O001 发货了吗？</td><td class="px-4 py-4">订单 A</td><td class="px-4 py-4">logistics_query or order_query / order</td><td class="px-4 py-4">要返回 待发货，不能误判成退款</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST10')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST11</td><td class="px-4 py-4">地址修改</td><td class="px-4 py-4">订单 O001 地址填错了，还能改吗？</td><td class="px-4 py-4">订单 A</td><td class="px-4 py-4">address_modify / order</td><td class="px-4 py-4">因为未发货，应允许继续处理或让用户补充新地址</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST11')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST12</td><td class="px-4 py-4">未发货退款</td><td class="px-4 py-4">O001 我不想要了，想退款</td><td class="px-4 py-4">订单 A</td><td class="px-4 py-4">refund_only / after_sale</td><td class="px-4 py-4">应建议 仅退款，不能答成退货退款</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST12')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST13</td><td class="px-4 py-4">物流查询</td><td class="px-4 py-4">PDD_ORDER_002 物流到哪了？</td><td class="px-4 py-4">订单 B</td><td class="px-4 py-4">logistics_query / order</td><td class="px-4 py-4">要识别平台单号并返回 运输中</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST13')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST14</td><td class="px-4 py-4">已发货退款</td><td class="px-4 py-4">O002 不想要了，现在能退款吗？</td><td class="px-4 py-4">订单 B</td><td class="px-4 py-4">refund_only or return_refund / after_sale</td><td class="px-4 py-4">应说明 优先看是否可拦截；否则签收后退货退款</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST14')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST15</td><td class="px-4 py-4">已发货换货</td><td class="px-4 py-4">O002 尺码小了，想换货</td><td class="px-4 py-4">订单 B</td><td class="px-4 py-4">exchange / after_sale</td><td class="px-4 py-4">应说明 已发货未签收，通常建议签收后再换货</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST15')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST16</td><td class="px-4 py-4">模糊售后</td><td class="px-4 py-4">收到的衣服有点问题，怎么处理？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">after_sale_policy_consult / agentic_clarification</td><td class="px-4 py-4">要追问 订单号 + 问题细节 + 希望怎么处理</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST16')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST17</td><td class="px-4 py-4">情绪投诉</td><td class="px-4 py-4">O002 物流一直不动，服务太差了</td><td class="px-4 py-4">订单 B</td><td class="px-4 py-4">logistics_query / order 或 complaint / medium risk</td><td class="px-4 py-4">不应直接转人工；先查物流，再保持安抚</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST17')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST18</td><td class="px-4 py-4">高风险投诉</td><td class="px-4 py-4">不给我处理我就去 12315 投诉</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">complaint / human / handoff</td><td class="px-4 py-4">必须触发高风险转人工</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST18')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST19</td><td class="px-4 py-4">状态矛盾售后</td><td class="px-4 py-4">O001 收到后发现抽丝了，怎么处理？</td><td class="px-4 py-4">订单 A</td><td class="px-4 py-4">after_sale_policy_consult / agentic_tool</td><td class="px-4 py-4">应识别 订单未发货 与 “已收到” 矛盾，提示确认订单号</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST19')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST20</td><td class="px-4 py-4">意图不清</td><td class="px-4 py-4">我这个怎么弄？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">chat / clarification</td><td class="px-4 py-4">不能瞎猜；应追问商品、订单或需求</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST20')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="rounded-[28px] border border-brand-dark/10 bg-white p-6 md:p-8 shadow-sm">
+            <div class="showcase-label mb-4">Single Turn · Extended Set</div>
+            <h3 class="text-2xl font-semibold text-brand-dark mb-5">新增单轮对话测试用例（高频真实场景补全）</h3>
+            <div class="case-table-wrap">
+              <table class="case-table case-table--single">
+                <colgroup>
+                  <col><col><col><col><col><col><col>
+                </colgroup>
+                <thead>
+                  <tr class="text-left text-xs uppercase tracking-[0.18em] text-brand-gold">
+                    <th class="pb-3">ID</th><th class="pb-3">场景</th><th class="pb-3">用户问题</th><th class="pb-3">关联对象</th><th class="pb-3">预期意图 / 路由</th><th class="pb-3">核心检查点</th><th class="pb-3">真实截图</th>
+                  </tr>
+                </thead>
+                <tbody class="text-sm text-gray-600">
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST21</td><td class="px-4 py-4">售前发货时效咨询</td><td class="px-4 py-4">拍下这件短袖多久能发货？</td><td class="px-4 py-4">商品 A</td><td class="px-4 py-4">product_consult / order_consult</td><td class="px-4 py-4">要回答发货时效规则，不能瞎编具体到货时间</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST21')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST22</td><td class="px-4 py-4">售前搭配咨询</td><td class="px-4 py-4">加厚连帽卫衣里面搭什么衣服比较好？</td><td class="px-4 py-4">商品 B</td><td class="px-4 py-4">product_consult / rag</td><td class="px-4 py-4">要围绕商品给出搭配建议，不能偏离商品本身</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST22')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST23</td><td class="px-4 py-4">售后 7 天无理由咨询</td><td class="px-4 py-4">这件衣服收到不喜欢可以无理由退货吗？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">after_sale_policy_consult / clarification</td><td class="px-4 py-4">要说明无理由规则，同时追问订单号确认是否在时效内</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST23')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST24</td><td class="px-4 py-4">售后运费咨询</td><td class="px-4 py-4">退货的运费谁来承担？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">after_sale_policy_consult / clarification</td><td class="px-4 py-4">要区分质量问题 / 个人原因的运费规则，不能一刀切</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST24')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST25</td><td class="px-4 py-4">售后质量问题（掉色）</td><td class="px-4 py-4">O002 这件卫衣洗了一次严重掉色，怎么处理？</td><td class="px-4 py-4">订单 B</td><td class="px-4 py-4">after_sale / complaint / medium risk</td><td class="px-4 py-4">先安抚，再确认售后时效，给出合规解决方案，不能直接转人工</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST25')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST26</td><td class="px-4 py-4">售后质量问题（起球）</td><td class="px-4 py-4">买的短袖穿了两次就起球了，能退吗？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">after_sale_policy_consult / clarification</td><td class="px-4 py-4">要追问订单号 + 商品信息，不能直接承诺可退</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST26')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST27</td><td class="px-4 py-4">售后漏发咨询</td><td class="px-4 py-4">O002 我收到的包裹里少了一件衣服，怎么办？</td><td class="px-4 py-4">订单 B</td><td class="px-4 py-4">after_sale / resend / medium risk</td><td class="px-4 py-4">先安抚，再引导用户提供包裹照片，说明核实流程，不能直接承诺补发</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST27')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST28</td><td class="px-4 py-4">订单改规格咨询</td><td class="px-4 py-4">O001 我拍错尺码了，还能改吗？</td><td class="px-4 py-4">订单 A</td><td class="px-4 py-4">order_modify / order</td><td class="px-4 py-4">因订单未发货，应引导用户补充正确尺码，说明修改规则</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST28')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST29</td><td class="px-4 py-4">发票咨询</td><td class="px-4 py-4">买的衣服可以开发票吗？怎么开？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">invoice_consult / clarification</td><td class="px-4 py-4">要说明开票规则，同时追问订单号确认开票信息</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST29')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST30</td><td class="px-4 py-4">取消订单咨询</td><td class="px-4 py-4">O001 我不想要了，可以取消订单吗？</td><td class="px-4 py-4">订单 A</td><td class="px-4 py-4">order_cancel / after_sale</td><td class="px-4 py-4">因订单未发货，应说明取消规则，引导用户操作，不能直接拒绝</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST30')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST31</td><td class="px-4 py-4">售后色差咨询</td><td class="px-4 py-4">收到的T恤和图片颜色不一样，有色差，怎么处理？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">after_sale_policy_consult / clarification</td><td class="px-4 py-4">要追问订单号 + 色差细节，说明色差售后规则，不能直接承诺退货</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST31')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">ST32</td><td class="px-4 py-4">售后换货时效咨询</td><td class="px-4 py-4">换货一般多久能收到新的？</td><td class="px-4 py-4">未明确</td><td class="px-4 py-4">exchange_consult / clarification</td><td class="px-4 py-4">要说明换货流程与时效规则，不能瞎编具体时间</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('ST32')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="rounded-[28px] border border-brand-dark/10 bg-white p-6 md:p-8 shadow-sm">
+            <div class="showcase-label mb-4">Multi Turn · Base Flow</div>
+            <h3 class="text-2xl font-semibold text-brand-dark mb-5">多轮对话测试用例（基础链路）</h3>
+            <div class="case-table-wrap">
+              <table class="case-table case-table--multi">
+                <colgroup>
+                  <col><col><col><col><col><col>
+                </colgroup>
+                <thead>
+                  <tr class="text-left text-xs uppercase tracking-[0.18em] text-brand-gold">
+                    <th class="pb-3">ID</th><th class="pb-3">场景</th><th class="pb-3">对话脚本</th><th class="pb-3">预期链路</th><th class="pb-3">核心检查点</th><th class="pb-3">真实截图</th>
+                  </tr>
+                </thead>
+                <tbody class="text-sm text-gray-600">
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT01</td><td class="px-4 py-4">商品连续追问不跑偏</td><td class="px-4 py-4 whitespace-pre-line">Q1: 基础纯棉圆领短袖T恤是什么材质？&#10;Q2: 可以机洗吗？&#10;Q3: 适合日常通勤穿吗？</td><td class="px-4 py-4">product_consult -> product_consult -> product_consult</td><td class="px-4 py-4">三轮都要锁定商品 A，不能第二轮掉回 chat。</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT01')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT02</td><td class="px-4 py-4">商品焦点切换</td><td class="px-4 py-4 whitespace-pre-line">Q1: 基础纯棉圆领短袖T恤多少钱？&#10;Q2: 那加厚连帽卫衣适合秋冬吗？&#10;Q3: 这件怎么洗？</td><td class="px-4 py-4">A 商品 -> B 商品 -> B 商品</td><td class="px-4 py-4">第二轮切到商品 B 后，第三轮“这件”必须继续指向商品 B。</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT02')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT03</td><td class="px-4 py-4">模糊售后到订单确认</td><td class="px-4 py-4 whitespace-pre-line">Q1: 收到的衣服有轻微抽丝瑕疵，怎么处理？&#10;Q2: O001</td><td class="px-4 py-4">clarification -> after_sale_advice_tool</td><td class="px-4 py-4">第二轮不能掉成 chat；要先查订单状态，再判断是否矛盾。</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT03')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT04</td><td class="px-4 py-4">矛盾状态处理</td><td class="px-4 py-4 whitespace-pre-line">Q1: 收到的衣服有轻微抽丝瑕疵，怎么处理？&#10;Q2: O001&#10;Q3: 是这个订单</td><td class="px-4 py-4">clarification -> agentic_tool -> agentic_tool</td><td class="px-4 py-4">因 O001 未发货，应持续提示“状态与描述不一致”，不能直接给退款方案。</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT04')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT05</td><td class="px-4 py-4">已发货订单售后推进</td><td class="px-4 py-4 whitespace-pre-line">Q1: 衣服尺码小了怎么处理？&#10;Q2: O002&#10;Q3: 想换货</td><td class="px-4 py-4">clarification -> agentic_tool -> exchange context</td><td class="px-4 py-4">第二轮拿到 O002 后，应结合“已发货 / 运输中”说明通常签收后换货。</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT05')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT06</td><td class="px-4 py-4">订单上下文连续处理</td><td class="px-4 py-4 whitespace-pre-line">Q1: PDD_ORDER_002 发货了吗？&#10;Q2: 那物流到哪了？&#10;Q3: 不想要了还能退吗？</td><td class="px-4 py-4">order -> order -> after_sale</td><td class="px-4 py-4">三轮都应围绕同一订单 B，不应丢失订单焦点。</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT06')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT07</td><td class="px-4 py-4">未发货订单连续处理</td><td class="px-4 py-4 whitespace-pre-line">Q1: O001 我不想要了&#10;Q2: 可以直接退款吗？&#10;Q3: 地址还能改吗？</td><td class="px-4 py-4">refund_only -> refund_only -> address_modify</td><td class="px-4 py-4">要一直绑定 O001，且第三轮不能忘记还是同一订单。</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT07')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT08</td><td class="px-4 py-4">投诉升级链路</td><td class="px-4 py-4 whitespace-pre-line">Q1: O002 物流一直不动&#10;Q2: 服务太差了&#10;Q3: 再不处理我就投诉平台</td><td class="px-4 py-4">order -> medium risk -> handoff</td><td class="px-4 py-4">风险应逐步升级，最后一轮必须转人工。</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT08')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="rounded-[28px] border border-brand-dark/10 bg-white p-6 md:p-8 shadow-sm">
+            <div class="showcase-label mb-4">Multi Turn · Full Flow</div>
+            <h3 class="text-2xl font-semibold text-brand-dark mb-5">新增多轮对话测试用例（全流程场景补全）</h3>
+            <div class="case-table-wrap">
+              <table class="case-table case-table--multi">
+                <colgroup>
+                  <col><col><col><col><col><col>
+                </colgroup>
+                <thead>
+                  <tr class="text-left text-xs uppercase tracking-[0.18em] text-brand-gold">
+                    <th class="pb-3">ID</th><th class="pb-3">场景</th><th class="pb-3">对话脚本</th><th class="pb-3">预期链路</th><th class="pb-3">核心检查点</th><th class="pb-3">真实截图</th>
+                  </tr>
+                </thead>
+                <tbody class="text-sm text-gray-600">
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT09</td><td class="px-4 py-4">质量问题售后全流程</td><td class="px-4 py-4 whitespace-pre-line">Q1: 收到的卫衣洗了一次严重掉色，怎么处理？&#10;Q2: O002&#10;Q3: 我想退货退款</td><td class="px-4 py-4">clarification -> after_sale_tool -> return_refund context</td><td class="px-4 py-4">第二轮拿到 O002 后，需结合“已发货 / 运输中”说明签收后可走退货退款，第三轮需给出退货退款的合规指引</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT09')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT10</td><td class="px-4 py-4">7 天无理由退货全流程</td><td class="px-4 py-4 whitespace-pre-line">Q1: 衣服收到不喜欢可以退吗？&#10;Q2: O002&#10;Q3: 退货运费谁出？</td><td class="px-4 py-4">clarification -> after_sale_tool -> after_sale_policy_consult</td><td class="px-4 py-4">三轮需持续绑定订单 B，第三轮需明确“个人原因无理由退货，运费需用户自行承担”，不能错误承诺包邮</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT10')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-brand-light"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT11</td><td class="px-4 py-4">发票咨询全流程</td><td class="px-4 py-4 whitespace-pre-line">Q1: 买的衣服可以开发票吗？&#10;Q2: O001&#10;Q3: 我要开个人抬头的电子发票</td><td class="px-4 py-4">clarification -> order_tool -> invoice_consult</td><td class="px-4 py-4">三轮需持续绑定订单 A，第三轮需给出开票指引，不能瞎编开票入口 / 时效</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT11')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                  <tr class="bg-white"><td class="rounded-l-2xl px-4 py-4 font-semibold text-brand-dark">MT12</td><td class="px-4 py-4">未发货订单改规格全流程</td><td class="px-4 py-4 whitespace-pre-line">Q1: O001 我拍错尺码了，能改吗？&#10;Q2: 我想换成L码&#10;Q3: 改了之后什么时候能发货？</td><td class="px-4 py-4">order_modify -> order_modify -> order_consult</td><td class="px-4 py-4">三轮需持续绑定订单 A，第二轮需确认尺码修改规则，第三轮需回答发货时效，不能丢失订单焦点</td><td class="rounded-r-2xl px-4 py-4"><button type="button" onclick="openCaseShot('MT12')" class="rounded-full border border-brand-dark/15 px-4 py-2 text-xs font-semibold text-brand-dark hover:bg-brand-light">查看真实截图</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="metrics" class="section-anchor py-24 border-t border-brand-dark/5 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-5xl mb-12">
+          <p class="showcase-label mb-4">Measured Metrics</p>
+          <h2 class="font-serif text-3xl md:text-4xl text-brand-dark mb-5">运行数据与测试方法</h2>
+          <p class="text-lg leading-8 text-gray-600">
+            这部分不是主观描述，而是基于当前作品集测试矩阵全量跑出来的结果。指标的目标不是证明“模型有多聪明”，而是证明这套
+            Multi-Agent + Harness 客服系统在当前演示环境里，是否足够稳定、可控、可复现，能不能把澄清、转人工和多轮上下文都收敛到确定的处理路径。
+          </p>
+        </div>
+
+        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-5 mb-10">
+          <article class="rounded-[28px] border border-brand-dark/10 bg-brand-light p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Metric 01</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">TTFT</h3>
+            <div class="font-serif text-4xl text-brand-dark mb-2">28.48 ms</div>
+            <p class="text-sm leading-7 text-gray-600 mb-3">当前非流式本地链路下，首个可见回复的平均返回时延。</p>
+            <div class="text-xs leading-6 text-gray-500">
+              p50 = 27.97 ms<br>
+              p95 = 56.83 ms
+            </div>
+          </article>
+
+          <article class="rounded-[28px] border border-brand-dark/10 bg-white p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Metric 02</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">人工干预率</h3>
+            <div class="font-serif text-4xl text-brand-dark mb-2">4.55%</div>
+            <p class="text-sm leading-7 text-gray-600 mb-3">44 组会话中，只有命中高风险升级链路的 2 组进入人工。</p>
+            <div class="text-xs leading-6 text-gray-500">
+              session = 2 / 44<br>
+              turn = 3 / 67
+            </div>
+          </article>
+
+          <article class="rounded-[28px] border border-brand-dark/10 bg-brand-light p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Metric 03</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">对话轮次</h3>
+            <div class="font-serif text-4xl text-brand-dark mb-2">1.52 轮</div>
+            <p class="text-sm leading-7 text-gray-600 mb-3">全量样本平均每组会话轮次，用来观察系统是否需要大量追问才能落地处理。</p>
+            <div class="text-xs leading-6 text-gray-500">
+              44 组会话 / 67 轮用户输入<br>
+              多轮样本均值 = 2.92 轮
+            </div>
+          </article>
+
+          <article class="rounded-[28px] border border-brand-dark/10 bg-white p-6 shadow-sm hover-card">
+            <div class="showcase-label mb-3">Metric 04</div>
+            <h3 class="text-lg font-semibold text-brand-dark mb-3">意图澄清占比</h3>
+            <div class="font-serif text-4xl text-brand-dark mb-2">22.73%</div>
+            <p class="text-sm leading-7 text-gray-600 mb-3">44 组会话里有 10 组需要先澄清订单号、规则适用条件或售后处理意图。</p>
+            <div class="text-xs leading-6 text-gray-500">
+              session = 10 / 44<br>
+              turn = 11 / 67
+            </div>
+          </article>
+
+          <article class="rounded-[28px] border border-brand-dark/10 bg-brand-dark p-6 text-white shadow-card hover-card">
+            <div class="showcase-label mb-3 text-brand-gold">Metric 05</div>
+            <h3 class="text-lg font-semibold mb-3">澄清闭环效率</h3>
+            <div class="font-serif text-4xl mb-2">100%</div>
+            <p class="text-sm leading-7 text-white/80 mb-3">脚本中继续给出后续输入的澄清会话，全部都能进入非澄清处理路径。</p>
+            <div class="text-xs leading-6 text-white/65">
+              closure = 6 / 6<br>
+              首次澄清后平均再补 1.17 轮
+            </div>
+          </article>
+        </div>
+
+        <div class="grid gap-6 xl:grid-cols-[1.35fr_0.9fr]">
+          <article class="rounded-[28px] border border-brand-dark/10 bg-brand-light p-6 md:p-8 shadow-sm">
+            <div class="showcase-label mb-4">Methodology</div>
+            <h3 class="text-2xl font-semibold text-brand-dark mb-5">这组数据是怎么测出来的</h3>
+            <div class="space-y-4 text-sm leading-8 text-gray-600">
+              <p>
+                1. 样本池直接解析当前作品集测试矩阵，覆盖 <strong class="text-brand-dark">32 组单轮用例 + 12 组多轮用例</strong>，总计
+                <strong class="text-brand-dark">44 组会话 / 67 轮用户输入</strong>，确保“页面展示的用例”和“最后展示的指标”完全同源。
+              </p>
+              <p>
+                2. 每一组会话开始前，都会通过 <code class="text-brand-dark">DataResetService</code> 重置演示订单、物流、售后记录和人工工单，
+                避免上一组测试污染下一组结果。
+              </p>
+              <p>
+                3. 每组会话使用一个新的 <code class="text-brand-dark">CustomerServiceAgent</code> 实例；只有在同一组多轮对话里，才复用同一个 Agent，
+                这样才能真实验证订单焦点、商品焦点和 pending task 是否能被持续绑定。
+              </p>
+              <p>
+                4. 全量套件重复执行 <strong class="text-brand-dark">3 次</strong>。功能指标按首轮完整结果统计，TTFT 取三轮汇总后的均值 / 分位值，
+                再额外检查每组会话在 3 次运行中的意图、路由、澄清和转人工签名是否一致。
+              </p>
+              <p>
+                5. 当前评测脚本位于 <code class="text-brand-dark">tests/evaluation/run_portfolio_runtime_metrics.py</code>，
+                结果快照输出到 <code class="text-brand-dark">tests/eval_results/portfolio_runtime_metrics_latest.json</code> 和
+                <code class="text-brand-dark">.md</code>，方便后续复测和追溯。
+              </p>
+            </div>
+          </article>
+
+          <div class="space-y-6">
+            <article class="rounded-[28px] border border-brand-dark/10 bg-white p-6 md:p-8 shadow-sm">
+              <div class="showcase-label mb-4">Metric Definition</div>
+              <h3 class="text-2xl font-semibold text-brand-dark mb-5">指标口径</h3>
+              <div class="space-y-4 text-sm leading-8 text-gray-600">
+                <p>
+                  <strong class="text-brand-dark">TTFT</strong>：
+                  当前非流式架构下，从进入 <code class="text-brand-dark">handle_message()</code> 到 UI 可接收首个回复对象之间的耗时，
+                  它衡量的是本地编排链路与工具执行延迟，不是云端逐 token 输出速度。
+                </p>
+                <p>
+                  <strong class="text-brand-dark">人工干预率</strong>：
+                  只要任一轮对话触发人工路由、生成工单或明确标记需要 handoff，就计入人工介入。
+                </p>
+                <p>
+                  <strong class="text-brand-dark">意图澄清</strong>：
+                  当路由进入 <code class="text-brand-dark">agentic_clarification</code>，或 Agent 决策动作是
+                  <code class="text-brand-dark">ask_clarification</code> 时，记为一次澄清。
+                </p>
+              </div>
+            </article>
+
+            <article class="rounded-[28px] border border-brand-dark/10 bg-brand-light p-6 md:p-8 shadow-sm">
+              <div class="showcase-label mb-4">Environment Note</div>
+              <h3 class="text-2xl font-semibold text-brand-dark mb-5">当前结果适用于什么环境</h3>
+              <div class="space-y-4 text-sm leading-8 text-gray-600">
+                <p>
+                  本轮评测运行在 <strong class="text-brand-dark">assist mode</strong>，且
+                  <strong class="text-brand-dark">Agentic Decision LLM = off</strong> 的本地演示环境里。
+                </p>
+                <p>
+                  这意味着这里的 TTFT 和人工干预率，主要用来证明 <strong class="text-brand-dark">编排稳定性、Harness 管控有效性和测试可复现性</strong>；
+                  如果后续接入真实外部模型，延迟数值会变化，但“是否稳定走对流程、是否该拦截就拦截、是否能把澄清收敛成有效处理”这套验证方法仍然成立。
+                </p>
+                <p>
+                  在当前环境下，3 次重复运行的会话签名一致率为 <strong class="text-brand-dark">100%</strong>，说明这套测试可以稳定复现同一批结论。
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-brand-dark text-center py-12">
+    <p class="text-xs text-white/50 uppercase tracking-widest font-bold mb-2">AI Customer Service Agent Iteration Portfolio</p>
+    <p class="text-sm text-white/70 max-w-3xl mx-auto px-6 leading-7">
+      这份页面是基于原作品集首页版式衍生出的“智能客服迭代专题页”。后续继续补充真实测试问题、真实系统回答和截图后，会成为你这次项目升级最完整的一份案例展示。
+    </p>
+  </footer>
+
+  <div id="caseShotModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-6">
+    <div class="w-full max-w-6xl rounded-[28px] bg-white shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between border-b border-brand-dark/10 px-6 py-4">
+        <div>
+          <div class="showcase-label mb-2">Real Screenshot</div>
+          <h3 id="caseShotTitle" class="text-xl font-semibold text-brand-dark">测试截图</h3>
+        </div>
+        <button type="button" onclick="closeCaseShot()" class="rounded-full border border-brand-dark/10 px-4 py-2 text-sm font-semibold text-brand-dark hover:bg-brand-light">关闭</button>
+      </div>
+      <div class="bg-brand-light/40 p-6">
+        <div id="caseShotGallery" class="space-y-4"></div>
+        <div id="caseShotFallback" class="hidden rounded-2xl border border-dashed border-brand-dark/20 bg-brand-light/60 p-6">
+          <div class="showcase-label mb-2">截图未找到</div>
+          <p class="text-sm leading-7 text-gray-600">
+            当前用例还没有对应截图。后续把截图继续放进 <code class="text-brand-dark">assets/test-cases/</code> 后，这里会自动完成预览。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getCaseShotPath(caseId) {
+      let baseName = "";
+      if (/^ST\d+$/.test(caseId)) {
+        baseName = caseId.slice(2).padStart(2, "0");
+      } else if (/^MT\d+$/.test(caseId)) {
+        baseName = caseId.slice(2).padStart(3, "0");
+      } else {
+        return "";
+      }
+      return `assets/test-cases/${baseName}.png`;
+    }
+
+    function syncCaseShotFallback() {
+      const gallery = document.getElementById("caseShotGallery");
+      const fallback = document.getElementById("caseShotFallback");
+      if (!gallery || !fallback) return;
+      const visibleItems = gallery.querySelectorAll("[data-shot-item]:not(.hidden)");
+      if (visibleItems.length > 0) {
+        fallback.classList.add("hidden");
+      } else {
+        fallback.classList.remove("hidden");
+      }
+    }
+
+    function markCaseShotMissing(img) {
+      const item = img.closest("[data-shot-item]");
+      if (item) item.classList.add("hidden");
+      syncCaseShotFallback();
+    }
+
+    function openCaseShot(caseId) {
+      const modal = document.getElementById("caseShotModal");
+      const gallery = document.getElementById("caseShotGallery");
+      const title = document.getElementById("caseShotTitle");
+      const fallback = document.getElementById("caseShotFallback");
+      if (!modal || !gallery || !title || !fallback) return;
+
+      title.textContent = `${caseId} 真实测试截图`;
+      gallery.innerHTML = "";
+      fallback.classList.add("hidden");
+
+      const path = getCaseShotPath(caseId);
+
+      if (!path) {
+        fallback.classList.remove("hidden");
+      } else {
+        const item = document.createElement("div");
+        item.dataset.shotItem = "true";
+        item.className = "rounded-2xl border border-brand-dark/10 bg-white p-3";
+
+        const label = document.createElement("div");
+        label.className = "mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-brand-gold";
+        label.textContent = "截图预览";
+
+        const image = document.createElement("img");
+        image.src = path;
+        image.alt = `${caseId} 测试截图`;
+        image.className = "w-full rounded-2xl border border-brand-dark/10 bg-white object-contain max-h-[70vh]";
+        image.onerror = function () { markCaseShotMissing(this); };
+
+        item.appendChild(label);
+        item.appendChild(image);
+        gallery.appendChild(item);
+        syncCaseShotFallback();
+      }
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeCaseShot() {
+      const modal = document.getElementById("caseShotModal");
+      if (!modal) return;
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+  </script>
+</body>
+</html>
