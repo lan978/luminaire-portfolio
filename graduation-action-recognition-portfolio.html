@@ -577,6 +577,18 @@
       font-size: 18px;
     }
 
+    .route-layout {
+      margin-bottom: 18px;
+    }
+
+    .route-diagram img {
+      max-height: 470px;
+    }
+
+    .route-cards .card {
+      min-height: 166px;
+    }
+
     .diagram-caption {
       padding: 16px 18px 18px;
       border-top: 1px solid var(--line);
@@ -946,7 +958,7 @@
     <div class="wrap">
       <div class="section-head">
         <p class="kicker">Project Functions</p>
-        <h2>项目功能：系统最终要完成什么</h2>
+        <h2>项目功能</h2>
         <p class="lead">
           本系统不是单独训练一个动作分类模型，而是围绕摄像头输入、动作识别、结果展示、日志记录和样本回流构建的一套完整实时识别系统。
         </p>
@@ -985,43 +997,55 @@
         <p class="kicker">Implementation Route</p>
         <h2>实现方法与技术路线</h2>
         <p class="lead">
-          系统主流程从视频输入开始，依次经过预处理、三模态特征构建、模型推理和结果反馈，形成完整的实时识别链路。
+          这一部分按系统真实运行顺序说明：先用 OpenCV 获取视频流，再构建 RGB、光流和姿态三类输入，随后通过 PyTorch 训练的三分支融合模型完成分类，最后接入 OpenVINO 后端输出实时结果。
         </p>
+      </div>
+      <div class="innovation-layout route-layout">
+        <div class="card diagram-card innovation-diagram route-diagram">
+          <img src="assets/graduation-action/system-architecture.png" alt="实时人体动作识别系统总体架构图">
+          <div class="diagram-caption">
+            系统主链路为：视频输入 -> 预处理 -> 三模态特征 -> 模型推理 -> 结果显示与日志 -> 样本回流。右侧样本采集与模型更新用于补充真实场景数据。
+          </div>
+        </div>
+        <div class="innovation-cards route-cards">
+          <div class="card">
+            <h3>1. 视频采集与预处理</h3>
+            <p>实时入口由 <strong>realtime_multimodal_action_rec.py</strong> 调度，摄像头管理使用 <strong>OpenCV</strong> 和 <strong>camera_utils.py</strong> 完成打开、预热、读取重试。输入帧会统一进行 resize、BGR 转 RGB、归一化和缓存。</p>
+          </div>
+          <div class="card blue">
+            <h3>2. 三模态特征构建</h3>
+            <p>系统同步构建三类输入：RGB 帧保留外观信息，光流帧描述相邻帧运动变化，<strong>MediaPipe Pose</strong> 提取人体关键点序列。三类特征按同一时间窗口对齐后送入模型。</p>
+          </div>
+          <div class="card">
+            <h3>3. 三分支融合模型</h3>
+            <p>核心模型为 <strong>MultiModalActionNet</strong>。RGB 分支和 Flow 分支使用 <strong>MobileNetFeatureExtractor</strong> 提取视觉特征，Pose 分支使用 <strong>PoseTemporalEncoder</strong> 编码姿态时序，融合后输出六类动作概率。</p>
+          </div>
+          <div class="card accent">
+            <h3>4. 推理部署与结果反馈</h3>
+            <p><strong>multimodal_inference_backend.py</strong> 将 PyTorch 与 OpenVINO 封装为统一的 <strong>predict_proba()</strong> 接口。训练后模型接入 OpenVINO，在不改变界面逻辑的情况下完成 CPU 推理加速，并把类别、置信度和延迟写入界面与日志。</p>
+          </div>
+        </div>
       </div>
       <div class="flow" aria-label="实时动作识别技术路线">
         <div class="flow-node">
           <strong>视频输入</strong>
-          <span>摄像头取流或读取已整理视频片段</span>
+          <span>OpenCV VideoCapture 取流，支持摄像头预热和读取重试</span>
         </div>
         <div class="flow-node">
           <strong>图像预处理</strong>
-          <span>裁剪、resize、颜色转换和归一化</span>
+          <span>尺寸调整、BGR 转 RGB、像素归一化和输入维度整理</span>
         </div>
         <div class="flow-node">
           <strong>三模态特征</strong>
-          <span>RGB 图像、光流图、姿态关键点序列</span>
+          <span>RGB clip、光流 clip、MediaPipe 姿态关键点序列保持时间对齐</span>
         </div>
         <div class="flow-node">
           <strong>模型推理</strong>
-          <span>多分支模型融合三类特征并输出类别</span>
+          <span>MobileNet 视觉分支 + 姿态时序分支融合，输出六类动作概率</span>
         </div>
         <div class="flow-node">
           <strong>结果反馈</strong>
-          <span>界面显示、日志记录、样本回流</span>
-        </div>
-      </div>
-      <div class="grid three">
-        <div class="card">
-          <h3>输入层：OpenCV 取流</h3>
-          <p>使用 OpenCV 读取摄像头画面，并按固定帧间隔构建识别窗口，使模型看到连续动作而不是孤立的一张图片。</p>
-        </div>
-        <div class="card blue">
-          <h3>模型层：PyTorch 训练</h3>
-          <p>使用 PyTorch 构建和训练多模态动作识别模型，训练阶段统计验证准确率并保存表现较好的模型版本。</p>
-        </div>
-        <div class="card accent">
-          <h3>部署层：OpenVINO 推理</h3>
-          <p>训练完成后接入 OpenVINO 后端，在普通 CPU 环境下降低推理延迟，让实时识别界面能连续输出结果。</p>
+          <span>OpenVINO 后端返回类别、置信度、延迟，并同步界面和日志</span>
         </div>
       </div>
     </div>
@@ -1070,30 +1094,22 @@
           测试环节围绕准确率、推理延迟和功能完整性展开，用于比较不同后端方案并确定最终部署版本。
         </p>
       </div>
-      <div class="innovation-layout">
-        <div class="card diagram-card innovation-diagram">
-          <img src="assets/graduation-action/system-architecture.png" alt="实时人体动作识别系统总体架构图">
-          <div class="diagram-caption">
-            系统主链路为：视频输入 -> 预处理 -> 三模态特征 -> 模型推理 -> 结果显示与日志 -> 样本回流。
-          </div>
+      <div class="grid four">
+        <div class="card">
+          <h3>准确率测试</h3>
+          <p>OpenVINO clip12 验证集共 7702 个样本，总体准确率为 86.26%；sitting、standing、clapping 表现更稳定，running 与 walking 是主要混淆对。</p>
         </div>
-        <div class="innovation-cards">
-          <div class="card">
-            <h3>准确率测试</h3>
-            <p>OpenVINO clip12 验证集共 7702 个样本，总体准确率为 86.26%；sitting、standing、clapping 表现更稳定。</p>
-          </div>
-          <div class="card blue">
-            <h3>实时性测试</h3>
-            <p>OpenVINO FP 平均推理延迟为 23.64 ms，P95 延迟为 25.42 ms，相比 PyTorch 具有更低的推理延迟，更适合普通 CPU 条件下的实时运行。</p>
-          </div>
-          <div class="card">
-            <h3>后端选择</h3>
-            <p>INT8 平均延迟降到 14.34 ms，但准确率下降到 0.8056，因此最终选择准确率和速度更均衡的 OpenVINO FP。</p>
-          </div>
-          <div class="card accent">
-            <h3>功能测试</h3>
-            <p>摄像头取流、图像预处理、多模态构建、动作输出、结果显示、日志记录和样本采集均按测试项验证通过。</p>
-          </div>
+        <div class="card blue">
+          <h3>实时性测试</h3>
+          <p>OpenVINO FP 平均推理延迟为 23.64 ms，P95 延迟为 25.42 ms，相比 PyTorch 推理延迟更低，更适合普通 CPU 条件下连续运行。</p>
+        </div>
+        <div class="card">
+          <h3>后端选择</h3>
+          <p>PyTorch 用于训练和调试，OpenVINO FP 用于最终部署；INT8 虽然平均延迟降到 14.34 ms，但准确率下降到 0.8056，因此没有作为主版本。</p>
+        </div>
+        <div class="card accent">
+          <h3>功能测试</h3>
+          <p>摄像头取流、图像预处理、三模态缓存、模型推理、结果显示、日志记录和样本采集均按功能项验证通过。</p>
         </div>
       </div>
     </div>
