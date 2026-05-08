@@ -929,10 +929,11 @@
         <span>毕业设计答辩作品集</span>
       </a>
       <div class="nav-links" aria-label="页面导航">
-        <a href="#main-work">主要工作</a>
-        <a href="#reason">选题原因</a>
-        <a href="#significance">选题意义</a>
-        <a href="#innovation">论文创新点</a>
+        <a href="#main-work">项目功能</a>
+        <a href="#route">技术路线</a>
+        <a href="#data-model">数据模型</a>
+        <a href="#deploy-test">部署测试</a>
+        <a href="#deck">PPT结构</a>
         <a href="#thanks">致谢</a>
       </div>
     </div>
@@ -940,15 +941,16 @@
 
   <header id="top" class="hero">
     <div class="hero-content">
-      <p class="eyebrow">Real-Time Human Action Recognition</p>
+      <p class="eyebrow">Defense PPT Version</p>
       <h1>实时人体动作识别系统的设计与实现</h1>
       <p class="hero-copy">
-        面向普通笔记本与普通 RGB 摄像头场景，构建一套从视频采集、三模态特征构建、动作识别、结果显示到样本回流训练的完整实时视觉系统。
+        按答辩 PPT 要求，本页面重点展示项目功能、实现方法、技术路线和测试结果，并整理为 10 页以内的答辩页纲。
       </p>
       <div class="hero-meta">
         <span class="pill">作者姓名：蓝哲琦</span>
         <span class="pill">指导老师：王元斌</span>
         <span class="pill">学院专业班级：人工智能学院 · 软件工程 2022 级 3 班</span>
+        <span class="pill">PPT 控制在 10 页以内</span>
       </div>
     </div>
   </header>
@@ -956,129 +958,154 @@
   <section id="main-work">
     <div class="wrap">
       <div class="section-head">
-        <p class="kicker">Main Work</p>
-        <h2>主要工作</h2>
+        <p class="kicker">Project Functions</p>
+        <h2>项目功能：系统最终要完成什么</h2>
         <p class="lead">
-          本课题不是只完成一次模型训练，而是围绕“普通摄像头实时动作识别”完成从需求分析、数据准备、模型构建到部署测试的完整过程。
+          答辩先讲清楚系统能做什么：它不是单独训练一个模型，而是一套可以从摄像头输入到动作识别、结果显示、日志记录和样本回流的实时识别系统。
         </p>
       </div>
       <div class="timeline">
         <div class="card">
           <span class="step-num">1</span>
-          <h3>明确目标与技术路线</h3>
-          <p>先完成文献调研和需求分析，明确系统要支持普通摄像头实时输入，识别六类常见动作，并具备结果显示、延迟统计和日志记录能力。</p>
+          <h3>实时动作识别</h3>
+          <p>系统接入普通 RGB 摄像头或视频片段，连续构建输入窗口，识别 walking、running、standing、waving、clapping、sitting 六类动作。</p>
         </div>
         <div class="card blue">
           <span class="step-num">2</span>
-          <h3>搭建视频数据管道</h3>
-          <p>使用 OpenCV 完成摄像头取流、帧裁剪、resize 和归一化处理；围绕 walking、running、standing、waving、clapping、sitting 整理与采集视频样本，并按类别保存。</p>
+          <h3>多模态输入构建</h3>
+          <p>每段动作输入不只看单帧画面，而是同步构建 RGB 图像、光流信息和人体姿态关键点序列，用三类特征描述动作。</p>
         </div>
         <div class="card">
           <span class="step-num">3</span>
-          <h3>构建多模态识别模型</h3>
-          <p>对比动作识别路线后，采用 RGB、光流和姿态关键点三类输入；基于 PyTorch 构建多分支模型，使系统同时学习外观、运动和人体结构特征。</p>
+          <h3>结果显示与日志记录</h3>
+          <p>界面实时显示动作类别、置信度、推理延迟、缓存状态和姿态状态，并把动作变化、延迟和异常信息写入日志，便于复盘。</p>
         </div>
         <div class="card accent">
           <span class="step-num">4</span>
-          <h3>完成训练、部署与测试</h3>
-          <p>设计训练流程并保存模型结果，再接入 OpenVINO 推理后端降低延迟；最后通过准确率、实时性和功能测试分析系统效果，并针对错误类别提出优化方向。</p>
+          <h3>样本采集与回流</h3>
+          <p>当某类动作识别不稳定时，可以通过样本采集模块录制真实场景视频，按类别保存后补充到后续训练流程中。</p>
         </div>
       </div>
       <div class="logic-note">
-        从 0 到 1 的核心链路是：调研与需求分析 -> 视频样本采集和预处理 -> RGB/光流/姿态三模态建模 -> PyTorch 训练 -> OpenVINO 部署 -> 摄像头实时演示与测试分析。
+        这一页对应 PPT 第 2 页：先让老师知道系统已经做成了哪些功能，再进入具体实现路线。
       </div>
     </div>
   </section>
 
-  <section id="reason" class="band">
+  <section id="route" class="band">
     <div class="wrap">
       <div class="section-head">
-        <p class="kicker">Topic Reason</p>
-        <h2>选题原因</h2>
+        <p class="kicker">Implementation Route</p>
+        <h2>实现方法与技术路线</h2>
         <p class="lead">
-          选择这个题目，一方面来自个人对计算机视觉和智能交互的兴趣，另一方面也来自实际研究和系统实现中暴露出的现实问题。
+          这一部分重点讲“系统怎么跑起来”：从视频输入开始，经过预处理、三模态特征构建、模型推理，最后输出动作结果并记录运行状态。
         </p>
+      </div>
+      <div class="flow" aria-label="实时动作识别技术路线">
+        <div class="flow-node">
+          <strong>视频输入</strong>
+          <span>摄像头取流或读取已整理视频片段</span>
+        </div>
+        <div class="flow-node">
+          <strong>图像预处理</strong>
+          <span>裁剪、resize、颜色转换和归一化</span>
+        </div>
+        <div class="flow-node">
+          <strong>三模态特征</strong>
+          <span>RGB 图像、光流图、姿态关键点序列</span>
+        </div>
+        <div class="flow-node">
+          <strong>模型推理</strong>
+          <span>多分支模型融合三类特征并输出类别</span>
+        </div>
+        <div class="flow-node">
+          <strong>结果反馈</strong>
+          <span>界面显示、日志记录、样本回流</span>
+        </div>
       </div>
       <div class="grid three">
         <div class="card">
-          <h3>个人兴趣</h3>
-          <p>在课程学习和项目实践中，我对计算机视觉、深度学习和人机交互方向比较感兴趣。人体动作识别能够把摄像头输入、模型训练和实时界面结合起来，适合作为毕业设计进行完整实现。</p>
-          <p>相比只做静态图像分类，这个课题更贴近真实系统开发，需要同时考虑算法效果和工程运行。</p>
+          <h3>输入层：OpenCV 取流</h3>
+          <p>使用 OpenCV 读取摄像头画面，并按固定帧间隔构建识别窗口，使模型看到连续动作而不是孤立的一张图片。</p>
         </div>
         <div class="card blue">
-          <h3>理论研究中的问题</h3>
-          <p>现有动作识别研究已经证明 RGB、光流和骨架特征都具有价值，但很多方法更偏向公开数据集或离线实验。</p>
-          <p>在普通摄像头近景场景中，人体可能局部入镜、姿态会抖动、背景和光照会变化，这些问题会让模型在实际运行时不够稳定。</p>
+          <h3>模型层：PyTorch 训练</h3>
+          <p>使用 PyTorch 构建和训练多模态动作识别模型，训练阶段统计验证准确率并保存表现较好的模型版本。</p>
         </div>
         <div class="card accent">
-          <h3>实际场景中的痛点</h3>
-          <p>真实应用不只关心模型是否能分类，还关心摄像头能否稳定取流、推理能否及时返回、结果能否直观显示。</p>
-          <p>例如 walking 和 running 在近景画面中容易因为下肢信息不足而混淆，这类问题越来越明显，也说明普通设备场景仍有进一步研究价值。</p>
+          <h3>部署层：OpenVINO 推理</h3>
+          <p>训练完成后接入 OpenVINO 后端，在普通 CPU 环境下降低推理延迟，让实时识别界面能连续输出结果。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="significance">
+  <section id="data-model">
     <div class="wrap">
       <div class="section-head">
-        <p class="kicker">Topic Significance</p>
-        <h2>选题意义</h2>
+        <p class="kicker">Data & Model</p>
+        <h2>数据处理与模型训练</h2>
         <p class="lead">
-          对这个选题进行研究，主要具有理论意义和实际意义两方面价值。
+          PPT 中这一部分不要泛泛讲数据来源，而是说明样本如何进入模型：先整理动作类别，再生成三类输入，最后用 PyTorch 完成训练和验证。
         </p>
       </div>
-      <div class="grid three">
+      <div class="grid four">
         <div class="card">
-          <h3>理论意义</h3>
-          <p>从理论意义来看，本文对普通摄像头近景场景下的多模态动作识别进行了补充和细化。</p>
-          <p>通过 RGB、光流和姿态关键点三类特征融合，说明动作识别不仅要看人体外观，也要看运动变化和人体结构变化。</p>
+          <span class="step-num">1</span>
+          <h3>样本整理</h3>
+          <p>围绕 walking、running、standing、waving、clapping、sitting 六类动作整理视频片段，并按类别保存。</p>
         </div>
         <div class="card blue">
-          <h3>实际意义</h3>
-          <p>从实际意义来看，本文解决了普通设备条件下动作识别系统如何完整运行的问题。</p>
-          <p>系统能够完成摄像头取流、动作分类、置信度显示、延迟统计、日志记录和样本采集，为类似低成本视觉应用提供参考。</p>
+          <span class="step-num">2</span>
+          <h3>预处理</h3>
+          <p>对视频帧进行尺寸调整、颜色空间转换和归一化，使不同来源的视频可以进入统一输入格式。</p>
+        </div>
+        <div class="card">
+          <span class="step-num">3</span>
+          <h3>特征构建</h3>
+          <p>RGB 负责外观信息，光流负责动作变化，姿态关键点负责人体结构，三类输入共同参与识别。</p>
         </div>
         <div class="card accent">
-          <h3>核心结论</h3>
-          <p>本文得出的核心结论是：多模态特征融合结合 OpenVINO 部署优化，可以在普通摄像头和普通 CPU 条件下实现可用的实时人体动作识别。</p>
+          <span class="step-num">4</span>
+          <h3>训练验证</h3>
+          <p>用 PyTorch 训练多分支模型，验证时统计各动作类别准确率，并以验证集表现作为模型选择依据。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="innovation" class="band">
+  <section id="deploy-test" class="band">
     <div class="wrap">
       <div class="section-head">
-        <p class="kicker">Innovation Highlights</p>
-        <h2>论文创新点</h2>
+        <p class="kicker">Deployment & Test</p>
+        <h2>部署测试：为什么最终选择 OpenVINO FP</h2>
         <p class="lead">
-          本部分围绕系统相较于单一离线分类实验的创新展开，重点说明完整系统闭环、多模态特征融合、普通设备部署和样本回流优化。
+          这一部分重点讲测试数据怎么服务选择：PyTorch 适合训练，OpenVINO FP 在准确率和延迟之间最均衡，INT8 虽然更快但准确率下降。
         </p>
       </div>
       <div class="innovation-layout">
         <div class="card diagram-card innovation-diagram">
           <img src="assets/graduation-action/system-architecture.png" alt="实时人体动作识别系统总体架构图">
           <div class="diagram-caption">
-            本文围绕“视频输入 -> 三模态特征 -> 模型推理 -> 结果显示 -> 样本回流”形成完整系统链路，这是本文创新点的总体结构说明。
+            答辩讲图时只抓主线：视频输入 -> 预处理 -> 三模态特征 -> 模型推理 -> 结果显示与日志 -> 样本回流。
           </div>
         </div>
         <div class="innovation-cards">
           <div class="card">
-            <h3>创新点 1：完整系统闭环</h3>
-            <p>系统不是只做离线分类，而是把摄像头取流、预处理、特征构建、模型推理、结果显示、日志记录和样本回流连成完整流程。</p>
+            <h3>准确率测试</h3>
+            <p>OpenVINO clip12 验证集共 7702 个样本，总体准确率为 86.26%；sitting、standing、clapping 表现更稳定。</p>
           </div>
           <div class="card blue">
-            <h3>创新点 2：多模态融合</h3>
-            <p>系统不是只依赖单帧图像，而是将 RGB、光流和姿态关键点三类特征结合起来，从外观、动态和人体结构三个角度判断动作。</p>
+            <h3>实时性测试</h3>
+            <p>OpenVINO FP 平均推理延迟为 23.64 ms，P95 延迟为 25.42 ms，相比 PyTorch 推理速度更适合实时展示。</p>
           </div>
           <div class="card">
-            <h3>创新点 3：普通设备部署</h3>
-            <p>模型训练完成后接入 OpenVINO 推理后端，在普通 CPU 环境下平衡准确率和推理速度，使系统不只停留在离线测试。</p>
+            <h3>后端选择</h3>
+            <p>INT8 平均延迟降到 14.34 ms，但准确率下降到 0.8056，因此最终选择准确率和速度更均衡的 OpenVINO FP。</p>
           </div>
           <div class="card accent">
-            <h3>创新点 4：样本回流优化</h3>
-            <p>系统加入样本采集、日志记录和后续训练更新入口，使识别效果可以根据真实场景中的错误案例继续优化。</p>
+            <h3>功能测试</h3>
+            <p>摄像头取流、图像预处理、多模态构建、动作输出、结果显示、日志记录和样本采集均按测试项验证通过。</p>
           </div>
         </div>
       </div>
@@ -1336,13 +1363,13 @@
     </div>
   </section>
 
-  <section id="deck" hidden>
+  <section id="deck">
     <div class="wrap">
       <div class="section-head">
         <p class="kicker">PPT Structure</p>
-        <h2>毕业答辩 PPT 建议做 10 页，重点回答老师最可能追问的问题</h2>
+        <h2>答辩 PPT 页纲：控制在 10 页以内，只讲项目功能和实现路线</h2>
         <p class="lead">
-          下面的结构可以直接作为 PPT 页纲。每页控制在一个核心问题，避免把论文整段搬进幻灯片。
+          每页只保留一个核心问题，让答辩主线集中在“做了什么、怎么做、效果如何”。
         </p>
       </div>
       <div class="slide-grid">
@@ -1352,49 +1379,49 @@
           <p>实时人体动作识别系统的设计与实现；作者姓名、指导老师、学院专业班级。</p>
         </div>
         <div class="slide-card">
-          <strong>02 / Background</strong>
-          <h3>研究背景与意义</h3>
-          <p>人体动作识别在智能监控、运动辅助、人机交互、康复评估等场景中的价值，以及普通设备落地难点。</p>
+          <strong>02 / Functions</strong>
+          <h3>项目功能总览</h3>
+          <p>说明系统支持实时摄像头输入、六类动作识别、置信度与延迟显示、日志记录和样本采集。</p>
         </div>
         <div class="slide-card">
-          <strong>03 / Goal</strong>
-          <h3>研究目标与需求分析</h3>
-          <p>支持实时摄像头输入、六类动作识别、结果显示、延迟统计、日志记录和样本回流训练。</p>
+          <strong>03 / Architecture</strong>
+          <h3>系统总体架构</h3>
+          <p>放架构图，讲清视频输入、预处理、三模态特征、模型推理、结果显示和样本回流的链路。</p>
         </div>
         <div class="slide-card">
           <strong>04 / Data</strong>
-          <h3>数据来源与动作类别</h3>
-          <p>说明六类动作、样本整理方式、验证集 7702 条统计，以及现场样本采集如何补充真实场景数据。</p>
+          <h3>数据采集与预处理</h3>
+          <p>讲六类动作样本如何整理，视频帧如何进行裁剪、resize、颜色转换和归一化处理。</p>
         </div>
         <div class="slide-card">
-          <strong>05 / Architecture</strong>
-          <h3>系统总体架构</h3>
-          <p>放论文架构图，讲清实时识别主链路和样本采集模型更新链路。</p>
+          <strong>05 / Features</strong>
+          <h3>三模态特征构建</h3>
+          <p>RGB 负责外观，光流负责运动变化，姿态关键点负责人体结构，三类特征共同输入模型。</p>
         </div>
         <div class="slide-card">
-          <strong>06 / Features</strong>
-          <h3>多模态特征构建</h3>
-          <p>RGB 负责外观，光流负责动态，姿态关键点负责人体结构；三者互补以提升普通摄像头下的稳定性。</p>
+          <strong>06 / Model</strong>
+          <h3>模型训练方法</h3>
+          <p>说明 PyTorch 用于构建和训练多模态模型，验证集用于统计各类别准确率并选择模型版本。</p>
         </div>
         <div class="slide-card">
-          <strong>07 / Model</strong>
-          <h3>模型训练与部署优化</h3>
-          <p>PyTorch 训练三分支融合模型，OpenVINO 作为部署后端，统一推理接口降低上层逻辑改动成本。</p>
+          <strong>07 / Deploy</strong>
+          <h3>OpenVINO 部署</h3>
+          <p>说明训练后模型如何接入 OpenVINO 后端，以及为什么最终选择 OpenVINO FP 而不是 INT8。</p>
         </div>
         <div class="slide-card">
-          <strong>08 / System</strong>
-          <h3>系统实现与功能展示</h3>
-          <p>展示实时识别界面、置信度与延迟显示、姿态骨架、日志记录和样本采集工具。</p>
+          <strong>08 / Demo</strong>
+          <h3>系统功能展示</h3>
+          <p>展示实时识别界面、动作类别、置信度、推理延迟、姿态骨架、日志记录和样本采集入口。</p>
         </div>
         <div class="slide-card">
           <strong>09 / Test</strong>
-          <h3>测试结果与分析</h3>
-          <p>讲总体准确率 86.26%、OpenVINO 平均延迟 23.64ms，并解释 running 与 walking 的混淆原因。</p>
+          <h3>测试结果</h3>
+          <p>讲验证集总体准确率 86.26%、OpenVINO 平均延迟 23.64ms，并说明 running 与 walking 的混淆原因。</p>
         </div>
         <div class="slide-card">
-          <strong>10 / Summary</strong>
-          <h3>总结与展望</h3>
-          <p>总结完整闭环和可运行性，展望样本扩充、动作类别扩展、复杂环境鲁棒性提升。</p>
+          <strong>10 / Closing</strong>
+          <h3>总结与致谢</h3>
+          <p>一句话总结系统完成度：实现普通摄像头下的实时动作识别原型；最后感谢老师并请批评指正。</p>
         </div>
       </div>
     </div>
