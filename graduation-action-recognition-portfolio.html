@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>实时人体动作识别系统 | 毕业设计答辩作品集</title>
+  <title>实时人体动作识别系统 | 毕业设计项目展示</title>
   <style>
     :root {
       --paper: #fbfcf8;
@@ -173,14 +173,6 @@
       letter-spacing: 0;
       font-family: Georgia, "Times New Roman", "Songti SC", serif;
       font-weight: 700;
-    }
-
-    .hero-copy {
-      max-width: 720px;
-      margin-bottom: 26px;
-      color: var(--muted);
-      font-size: clamp(17px, 2.2vw, 23px);
-      line-height: 1.75;
     }
 
     .hero-meta {
@@ -926,30 +918,26 @@
     <div class="nav-inner">
       <a class="brand" href="#top">
         <img src="assets/graduation-action/xmit-logo.png" alt="厦门工学院">
-        <span>毕业设计答辩作品集</span>
+        <span>毕业设计项目展示</span>
       </a>
       <div class="nav-links" aria-label="页面导航">
         <a href="#main-work">项目功能</a>
         <a href="#route">技术路线</a>
-        <a href="#data-model">数据模型</a>
-        <a href="#deploy-test">部署测试</a>
-        <a href="#thanks">致谢</a>
+        <a href="#data-model">实现方法</a>
+        <a href="#deploy-test">测试结果</a>
+        <a href="#thanks">总结</a>
       </div>
     </div>
   </nav>
 
   <header id="top" class="hero">
     <div class="hero-content">
-      <p class="eyebrow">Defense PPT Function Version</p>
+      <p class="eyebrow">Project Implementation Overview</p>
       <h1>实时人体动作识别系统的设计与实现</h1>
-      <p class="hero-copy">
-        按答辩 PPT 要求，本页面重点展示项目功能、实现方法、技术路线和测试结果，围绕系统从输入到部署测试的实现过程展开。
-      </p>
       <div class="hero-meta">
         <span class="pill">作者姓名：蓝哲琦</span>
         <span class="pill">指导老师：王元斌</span>
         <span class="pill">学院专业班级：人工智能学院 · 软件工程 2022 级 3 班</span>
-        <span class="pill">PPT 控制在 10 页以内</span>
       </div>
     </div>
   </header>
@@ -960,7 +948,7 @@
         <p class="kicker">Project Functions</p>
         <h2>项目功能：系统最终要完成什么</h2>
         <p class="lead">
-          答辩先讲清楚系统能做什么：它不是单独训练一个模型，而是一套可以从摄像头输入到动作识别、结果显示、日志记录和样本回流的实时识别系统。
+          本系统不是单独训练一个动作分类模型，而是围绕摄像头输入、动作识别、结果展示、日志记录和样本回流构建的一套完整实时识别系统。
         </p>
       </div>
       <div class="timeline">
@@ -986,7 +974,7 @@
         </div>
       </div>
       <div class="logic-note">
-        这一页对应 PPT 第 2 页：先让老师知道系统已经做成了哪些功能，再进入具体实现路线。
+        上述功能共同构成“输入、识别、反馈、迭代”的闭环，为后续实现方法选择、技术路线设计和测试验证提供明确目标。
       </div>
     </div>
   </section>
@@ -997,7 +985,7 @@
         <p class="kicker">Implementation Route</p>
         <h2>实现方法与技术路线</h2>
         <p class="lead">
-          这一部分重点讲“系统怎么跑起来”：从视频输入开始，经过预处理、三模态特征构建、模型推理，最后输出动作结果并记录运行状态。
+          系统主流程从视频输入开始，依次经过预处理、三模态特征构建、模型推理和结果反馈，形成完整的实时识别链路。
         </p>
       </div>
       <div class="flow" aria-label="实时动作识别技术路线">
@@ -1045,7 +1033,7 @@
         <p class="kicker">Data & Model</p>
         <h2>数据处理与模型训练</h2>
         <p class="lead">
-          PPT 中这一部分不要泛泛讲数据来源，而是说明样本如何进入模型：先整理动作类别，再生成三类输入，最后用 PyTorch 完成训练和验证。
+          模型训练流程包括样本整理、预处理、三模态特征构建和 PyTorch 训练验证四个环节，用于支撑最终部署模型的生成与筛选。
         </p>
       </div>
       <div class="grid four">
@@ -1079,14 +1067,14 @@
         <p class="kicker">Deployment & Test</p>
         <h2>部署测试：为什么最终选择 OpenVINO FP</h2>
         <p class="lead">
-          这一部分重点讲测试数据怎么服务选择：PyTorch 适合训练，OpenVINO FP 在准确率和延迟之间最均衡，INT8 虽然更快但准确率下降。
+          测试环节围绕准确率、推理延迟和功能完整性展开，用于比较不同后端方案并确定最终部署版本。
         </p>
       </div>
       <div class="innovation-layout">
         <div class="card diagram-card innovation-diagram">
           <img src="assets/graduation-action/system-architecture.png" alt="实时人体动作识别系统总体架构图">
           <div class="diagram-caption">
-            答辩讲图时只抓主线：视频输入 -> 预处理 -> 三模态特征 -> 模型推理 -> 结果显示与日志 -> 样本回流。
+            系统主链路为：视频输入 -> 预处理 -> 三模态特征 -> 模型推理 -> 结果显示与日志 -> 样本回流。
           </div>
         </div>
         <div class="innovation-cards">
@@ -1096,7 +1084,7 @@
           </div>
           <div class="card blue">
             <h3>实时性测试</h3>
-            <p>OpenVINO FP 平均推理延迟为 23.64 ms，P95 延迟为 25.42 ms，相比 PyTorch 推理速度更适合实时展示。</p>
+            <p>OpenVINO FP 平均推理延迟为 23.64 ms，P95 延迟为 25.42 ms，相比 PyTorch 具有更低的推理延迟，更适合普通 CPU 条件下的实时运行。</p>
           </div>
           <div class="card">
             <h3>后端选择</h3>
@@ -1223,7 +1211,7 @@
         <p class="kicker">Conclusion</p>
         <h2>论文结论：系统可运行、实时性满足需求，但步态区分仍需加强</h2>
         <p class="lead">
-          这是答辩最后需要重点讲清楚的部分：本文完成了完整系统闭环，验证了多模态融合和 OpenVINO 部署的可行性，同时也明确了当前系统的主要不足和后续方向。
+          结论部分概括系统完成情况、性能表现、主要不足及后续优化方向，用于总结本项目的工程实现效果和应用边界。
         </p>
       </div>
       <div class="grid three">
@@ -1233,7 +1221,7 @@
         </div>
         <div class="card blue">
           <h3>结论 2：实时性较好</h3>
-          <p>OpenVINO FP 平均推理延迟约 23.64 ms，能够支撑普通 CPU 条件下的实时识别演示。</p>
+          <p>OpenVINO FP 平均推理延迟约 23.64 ms，能够支撑普通 CPU 条件下的实时识别运行。</p>
         </div>
         <div class="card">
           <h3>结论 3：总体效果可用</h3>
@@ -1259,9 +1247,9 @@
     <div class="wrap">
       <div class="section-head">
         <p class="kicker">Evaluation</p>
-        <h2>实验结果：OpenVINO FP 是当前演示版本的平衡点</h2>
+        <h2>实验结果：OpenVINO FP 在准确率与延迟之间更均衡</h2>
         <p class="lead">
-          从验证集准确率看，standing、sitting 和 clapping 表现稳定；从实时性看，OpenVINO 相比原始 PyTorch 推理明显降低延迟。INT8 更快，但准确率下降，因此当前答辩演示更适合使用 OpenVINO FP 版本。
+          从验证集准确率看，standing、sitting 和 clapping 表现稳定；从实时性看，OpenVINO 相比原始 PyTorch 推理明显降低延迟。INT8 更快，但准确率下降，因此 OpenVINO FP 更适合作为当前系统的部署版本。
         </p>
       </div>
       <div class="grid two">
@@ -1362,38 +1350,11 @@
     </div>
   </section>
 
-  <section class="band" hidden>
-    <div class="wrap">
-      <div class="section-head">
-        <p class="kicker">Defense Q&A</p>
-        <h2>答辩可能被问到的问题，可以提前准备这几句</h2>
-      </div>
-      <div class="qa-list">
-        <div class="qa">
-          <strong>数据是怎么来的？</strong>
-          <p>围绕六类动作整理视频片段作为训练与验证基础，系统还提供样本采集模块，可通过普通摄像头录制真实场景动作视频并按类别保存，用于后续回流训练。论文中的 7702 是 OpenVINO clip12 验证集统计样本量。</p>
-        </div>
-        <div class="qa">
-          <strong>为什么用多模态？</strong>
-          <p>单帧 RGB 容易受光照、背景和入镜范围影响；光流能补充动作节奏和运动变化；姿态关键点能突出人体结构。三类信息融合后更适合普通摄像头近景场景。</p>
-        </div>
-        <div class="qa">
-          <strong>为什么最终选 OpenVINO FP？</strong>
-          <p>PyTorch 平均延迟较高，INT8 虽然最快但准确率下降明显。OpenVINO FP 在 23.64ms 平均延迟和 86.26% 准确率之间取得了更适合演示和实际运行的平衡。</p>
-        </div>
-        <div class="qa">
-          <strong>为什么 running 准确率低？</strong>
-          <p>近景摄像头下下肢经常不完整入镜，而 running 与 walking 的差异高度依赖下肢节奏和位移变化；样本分布有限时，两者边界会更接近，因此后续需要补充真实场景样本并优化时序建模。</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <footer id="thanks" class="thanks-section">
     <div class="thanks-content">
       <div class="thanks-kicker">Thank You</div>
       <h2 class="thanks-title">感谢聆听</h2>
-      <p class="thanks-text">以上是我的毕业设计汇报内容，恳请各位老师批评指正。</p>
+      <p class="thanks-text">以上为本项目的核心设计、实现过程与测试结果。</p>
       <div class="thanks-meta">蓝哲琦 · 实时人体动作识别系统的设计与实现</div>
     </div>
   </footer>
