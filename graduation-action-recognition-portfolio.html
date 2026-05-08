@@ -933,7 +933,6 @@
         <a href="#route">技术路线</a>
         <a href="#data-model">数据模型</a>
         <a href="#deploy-test">部署测试</a>
-        <a href="#deck">PPT结构</a>
         <a href="#thanks">致谢</a>
       </div>
     </div>
@@ -944,7 +943,7 @@
       <p class="eyebrow">Defense PPT Function Version</p>
       <h1>实时人体动作识别系统的设计与实现</h1>
       <p class="hero-copy">
-        按答辩 PPT 要求，本页面重点展示项目功能、实现方法、技术路线和测试结果，并整理为 10 页以内的答辩页纲。
+        按答辩 PPT 要求，本页面重点展示项目功能、实现方法、技术路线和测试结果，围绕系统从输入到部署测试的实现过程展开。
       </p>
       <div class="hero-meta">
         <span class="pill">作者姓名：蓝哲琦</span>
@@ -1358,70 +1357,6 @@
         <div class="card">
           <h3>改进方向</h3>
           <p>继续补充真实场景样本，优化时序建模与融合策略，并扩展更多动作类别，提高复杂环境下的鲁棒性。</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="deck">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="kicker">PPT Structure</p>
-        <h2>答辩 PPT 页纲：控制在 10 页以内，只讲项目功能和实现路线</h2>
-        <p class="lead">
-          每页只保留一个核心问题，让答辩主线集中在“做了什么、怎么做、效果如何”。
-        </p>
-      </div>
-      <div class="slide-grid">
-        <div class="slide-card">
-          <strong>01 / Cover</strong>
-          <h3>题目与基本信息</h3>
-          <p>实时人体动作识别系统的设计与实现；作者姓名、指导老师、学院专业班级。</p>
-        </div>
-        <div class="slide-card">
-          <strong>02 / Functions</strong>
-          <h3>项目功能总览</h3>
-          <p>说明系统支持实时摄像头输入、六类动作识别、置信度与延迟显示、日志记录和样本采集。</p>
-        </div>
-        <div class="slide-card">
-          <strong>03 / Architecture</strong>
-          <h3>系统总体架构</h3>
-          <p>放架构图，讲清视频输入、预处理、三模态特征、模型推理、结果显示和样本回流的链路。</p>
-        </div>
-        <div class="slide-card">
-          <strong>04 / Data</strong>
-          <h3>数据采集与预处理</h3>
-          <p>讲六类动作样本如何整理，视频帧如何进行裁剪、resize、颜色转换和归一化处理。</p>
-        </div>
-        <div class="slide-card">
-          <strong>05 / Features</strong>
-          <h3>三模态特征构建</h3>
-          <p>RGB 负责外观，光流负责运动变化，姿态关键点负责人体结构，三类特征共同输入模型。</p>
-        </div>
-        <div class="slide-card">
-          <strong>06 / Model</strong>
-          <h3>模型训练方法</h3>
-          <p>说明 PyTorch 用于构建和训练多模态模型，验证集用于统计各类别准确率并选择模型版本。</p>
-        </div>
-        <div class="slide-card">
-          <strong>07 / Deploy</strong>
-          <h3>OpenVINO 部署</h3>
-          <p>说明训练后模型如何接入 OpenVINO 后端，以及为什么最终选择 OpenVINO FP 而不是 INT8。</p>
-        </div>
-        <div class="slide-card">
-          <strong>08 / Demo</strong>
-          <h3>系统功能展示</h3>
-          <p>展示实时识别界面、动作类别、置信度、推理延迟、姿态骨架、日志记录和样本采集入口。</p>
-        </div>
-        <div class="slide-card">
-          <strong>09 / Test</strong>
-          <h3>测试结果</h3>
-          <p>讲验证集总体准确率 86.26%、OpenVINO 平均延迟 23.64ms，并说明 running 与 walking 的混淆原因。</p>
-        </div>
-        <div class="slide-card">
-          <strong>10 / Closing</strong>
-          <h3>总结与致谢</h3>
-          <p>一句话总结系统完成度：实现普通摄像头下的实时动作识别原型；最后感谢老师并请批评指正。</p>
         </div>
       </div>
     </div>
