@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOL Screener AI 产品方案作品集 | 众筹转化评分模型</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            serif: ["Playfair Display", "serif"]
+          },
+          colors: {
+            ink: "#10231C",
+            moss: "#1F5C46",
+            mint: "#E8F2ED",
+            paper: "#FBFCFA",
+            line: "#DDE7E1",
+            amber: "#B7791F"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #fbfcfa; color: #10231c; }
+    .soft-grid {
+      background-image:
+        linear-gradient(rgba(16, 35, 28, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 35, 28, 0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .nav-blur {
+      background: rgba(251, 252, 250, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(16, 35, 28, 0.08);
+    }
+    .card {
+      border: 1px solid rgba(16, 35, 28, 0.12);
+      background: #fff;
+      box-shadow: 0 18px 46px rgba(16, 35, 28, 0.06);
+    }
+    .mini-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #b7791f;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(16, 35, 28, 0.1);
+      border-radius: 999px;
+      background: #fff;
+      padding: 8px 13px;
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(16, 35, 28, 0.82);
+    }
+    .tab-active {
+      background: #10231c !important;
+      color: #fff !important;
+      border-color: #10231c !important;
+      box-shadow: 0 16px 34px rgba(16, 35, 28, 0.16);
+    }
+    .dimension-tab:not(.tab-active) {
+      background: #fff;
+      color: #10231c;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .prompt-card {
+      display: flex;
+      min-height: 100%;
+      flex-direction: column;
+      position: relative;
+    }
+    .prompt-box {
+      flex: 1 1 auto;
+      min-height: 520px;
+      max-height: min(720px, calc(100vh - 180px));
+      overflow: auto;
+      white-space: pre-wrap;
+      padding-right: 14px;
+    }
+    .prompt-scroll-button {
+      align-self: flex-end;
+      margin-top: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.86);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .prompt-scroll-button:hover {
+      background: rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+    .prompt-scroll-button[hidden] {
+      display: none;
+    }
+    .prompt-box::-webkit-scrollbar { width: 8px; }
+    .prompt-box::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.08); border-radius: 999px; }
+    .prompt-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.36); border-radius: 999px; }
+    @media (max-width: 1024px) {
+      .prompt-box {
+        min-height: 360px;
+        max-height: 70vh;
+      }
+    }
+    .metric-card {
+      border: 1px solid rgba(16, 35, 28, 0.12);
+      background: rgba(232, 242, 237, 0.9);
+    }
+  </style>
+</head>
+<body class="font-sans antialiased">
+  <nav class="nav-blur fixed inset-x-0 top-0 z-50">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+      <a href="#top" class="font-serif text-xl font-bold tracking-tight text-ink">KOL Screener Case</a>
+      <div class="hidden items-center gap-6 text-sm font-semibold text-ink/70 md:flex">
+        <a href="#problem" class="hover:text-moss">背景</a>
+        <a href="#solution" class="hover:text-moss">方案</a>
+        <a href="#impact" class="hover:text-moss">效果</a>
+        <a href="#iteration" class="hover:text-moss">迭代</a>
+        <a href="#ai" class="hover:text-moss">AI 协作</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="soft-grid pt-28">
+      <div class="mx-auto max-w-7xl px-5 pb-16 pt-14">
+        <div class="max-w-5xl">
+          <p class="mini-label mb-5">AI Product Portfolio</p>
+          <h1 class="font-serif text-5xl font-bold leading-tight tracking-[-0.04em] text-ink md:text-7xl">
+            众筹 KOL 智能筛选工具<br class="hidden sm:block">v1.1 迭代方案
+          </h1>
+          <p class="mt-7 max-w-4xl text-xl leading-9 text-ink/70">
+            用冷启动专家规则模型（先用业务经验定可解释规则，不等大量历史数据也能快速上线），把 KOL 筛选从“流量导向”升级为“转化导向”，解决高客单价智能庭院设备众筹中 KOL 选不准、带不动销量的核心痛点。
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <span class="pill">冷启动规则模型</span>
+            <span class="pill">众筹转化评分</span>
+            <span class="pill">Prompt 协作</span>
+          </div>
+        </div>
+
+        <div class="mt-12 grid gap-4 md:grid-cols-3">
+          <article class="metric-card rounded-[24px] p-7">
+            <p class="mini-label">Signal</p>
+            <div class="mt-4 text-4xl font-extrabold text-moss">ROI 12</div>
+            <p class="mt-2 text-sm font-semibold leading-7 text-ink/70">已知 PR 资源平均 ROI，用作判断真实内容价值的参考信号</p>
+          </article>
+          <article class="metric-card rounded-[24px] p-7">
+            <p class="mini-label">Audience</p>
+            <div class="mt-4 text-4xl font-extrabold text-moss">目标人群优先</div>
+            <p class="mt-2 text-sm font-semibold leading-7 text-ink/70">把筛选重心从泛流量账号转向雪区、庭院家庭和高意向受众</p>
+          </article>
+          <article class="metric-card rounded-[24px] p-7">
+            <p class="mini-label">Decision</p>
+            <div class="mt-4 text-4xl font-extrabold text-moss">7 个</div>
+            <p class="mt-2 text-sm font-semibold leading-7 text-ink/70">上一轮合作 KOL 0 单直接带量，提示需要重新分层合作策略</p>
+          </article>
+        </div>
+
+        <div class="mt-10 rounded-[28px] border border-ink/10 bg-white/80 p-6">
+          <p class="mini-label">Project Logic</p>
+          <div class="mt-4 grid gap-3 text-sm font-bold leading-7 text-ink/78 md:grid-cols-4">
+            <div class="rounded-2xl bg-mint p-4">发现问题：流量导向选不准，7 个 KOL 0 单</div>
+            <div class="rounded-2xl bg-mint p-4">设计方案：用冷启动规则模型重构评分</div>
+            <div class="rounded-2xl bg-mint p-4">落地验证：修正业务误判，输出分层策略</div>
+            <div class="rounded-2xl bg-mint p-4">持续迭代：回收真实结果，反向校准权重</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem" class="border-y border-ink/10 bg-white py-16">
+      <div class="mx-auto max-w-7xl px-5 py-16">
+        <div class="grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-start">
+          <div>
+            <p class="mini-label">01 · Problem</p>
+            <h2 class="mt-4 font-serif text-4xl font-bold text-ink md:text-5xl">项目背景与问题</h2>
+            <p class="mt-5 text-lg leading-8 text-ink/68">
+              原工具的核心问题不是“少几个字段”，而是评分目标和业务目标错位。它在选流量大的账号，但众筹真正需要的是能建立信任、触达目标家庭并带来转化的账号。
+            </p>
+          </div>
+          <div class="grid gap-4 md:grid-cols-3">
+            <article class="rounded-[24px] border border-ink/10 p-6">
+              <p class="text-4xl font-extrabold text-moss">80%</p>
+              <h3 class="mt-4 font-extrabold text-ink">旧公式偏流量</h3>
+              <p class="mt-2 text-sm leading-7 text-ink/66">粉丝数和互动率占 80%，会天然推高泛科技大号。</p>
+            </article>
+            <article class="rounded-[24px] border border-ink/10 p-6">
+              <p class="text-4xl font-extrabold text-moss">0 单</p>
+              <h3 class="mt-4 font-extrabold text-ink">上轮合作低效</h3>
+              <p class="mt-2 text-sm leading-7 text-ink/66">口播 + 官方素材没有带来直接带量，说明信任内容不足。</p>
+            </article>
+            <article class="rounded-[24px] border border-ink/10 p-6">
+              <p class="text-4xl font-extrabold text-moss">ROI 12</p>
+              <h3 class="mt-4 font-extrabold text-ink">PR 资源反证</h3>
+              <p class="mt-2 text-sm leading-7 text-ink/66">真实测评和场景背书更接近有效转化特征。</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="solution" class="bg-mint py-20">
+      <div class="mx-auto max-w-7xl px-5">
+        <div class="max-w-4xl">
+          <p class="mini-label">02 · AI Solution</p>
+          <h2 class="mt-4 font-serif text-4xl font-bold text-ink md:text-5xl">AI 方案核心设计</h2>
+          <p class="mt-5 text-lg leading-8 text-ink/68">
+            针对“评分目标与业务目标错位”的问题，我没有直接上复杂模型，而是在数据不足的冷启动阶段，用可解释规则模型先把业务判断标准化，再用真实结果持续校准。
+          </p>
+        </div>
+
+        <div class="mt-10 grid gap-6 lg:grid-cols-3">
+          <article class="rounded-[28px] bg-white p-7">
+            <p class="mini-label">Model Choice</p>
+            <h3 class="mt-3 text-2xl font-extrabold text-ink">为什么不用机器学习</h3>
+            <p class="mt-4 text-sm leading-7 text-ink/66">
+              当前只有 12 条候选 KOL 数据，也没有真实 ROI 标签。强行训练排序模型会过拟合，反而不可解释。专家规则模型（把业务经验转成可复核的打分规则）更适合冷启动：上线快、运营能复核、后续能校准。
+            </p>
+          </article>
+          <article class="rounded-[28px] bg-white p-7">
+            <p class="mini-label">Weight Balance</p>
+            <h3 class="mt-3 text-2xl font-extrabold text-ink">权重如何平衡</h3>
+            <p class="mt-4 text-sm leading-7 text-ink/66">
+              受众权重过高会偏向小号，撑不起众筹声量；流量权重过高又回到旧工具问题。最终采用“转化要素 75% + 流量辅助 25%”（75% 看用户精准度和内容信任，25% 看粉丝规模和平台承接）。
+            </p>
+          </article>
+          <article class="rounded-[28px] bg-white p-7">
+            <p class="mini-label">Decision Output</p>
+            <h3 class="mt-3 text-2xl font-extrabold text-ink">输出不是分数</h3>
+            <p class="mt-4 text-sm leading-7 text-ink/66">
+              工具最终输出四类合作动作：转化优先、转化候选、场景验证、曝光备选。运营拿到结果可以直接对应预算和 brief。
+            </p>
+          </article>
+        </div>
+
+        <div class="mt-10 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
+          <div class="rounded-[28px] bg-white p-7">
+            <p class="mini-label">Scoring Formula</p>
+            <h3 class="mt-3 text-2xl font-extrabold text-ink">v1.1 综合得分</h3>
+            <p class="mt-4 text-base leading-8 text-ink/70">
+              受众匹配 30% + 内容心智 25% + 内容信任 20% + 有效触达 15% + 互动和平台 10%
+            </p>
+            <p class="mt-4 text-sm leading-7 text-ink/60">
+              有效触达不是总粉丝数，而是折算后的真实目标用户数。重点不是把字段变多，而是让每个字段都能解释“为什么它更可能带来众筹转化”。
+            </p>
+          </div>
+
+          <div class="card rounded-[28px] p-7">
+            <div class="flex flex-wrap gap-3">
+              <button class="dimension-tab tab-active rounded-2xl border border-ink/10 px-5 py-4 text-left font-extrabold" data-dimension="audience">受众匹配 · 30%</button>
+              <button class="dimension-tab rounded-2xl border border-ink/10 px-5 py-4 text-left font-extrabold" data-dimension="vertical">内容心智 · 25%</button>
+              <button class="dimension-tab rounded-2xl border border-ink/10 px-5 py-4 text-left font-extrabold" data-dimension="trust">内容信任 · 20%</button>
+              <button class="dimension-tab rounded-2xl border border-ink/10 px-5 py-4 text-left font-extrabold" data-dimension="reach">有效触达 · 15%</button>
+              <button class="dimension-tab rounded-2xl border border-ink/10 px-5 py-4 text-left font-extrabold" data-dimension="platform">互动平台 · 10%</button>
+            </div>
+            <p class="mt-4 text-xs font-semibold text-ink/52">提示：点击上方维度，可查看每个评分维度解决的问题。</p>
+            <div class="mt-7 rounded-2xl bg-mint p-6">
+              <p id="dimension-kicker" class="mini-label">Audience Fit</p>
+              <h3 id="dimension-title" class="mt-3 text-2xl font-extrabold text-ink">受众与产品匹配度</h3>
+              <p id="dimension-copy" class="mt-3 text-sm leading-7 text-ink/70">
+                重点看受众是否在美国核心市场，尤其是否覆盖雪区、庭院家庭和户外生活方式。雪区用户能同时使用割草和除雪能力，产品价值感更完整。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="impact" class="bg-white py-20">
+      <div class="mx-auto max-w-7xl px-5">
+        <div class="grid gap-8 lg:grid-cols-[0.76fr_1.24fr] lg:items-start">
+          <div>
+            <p class="mini-label">03 · Impact</p>
+            <h2 class="mt-4 font-serif text-4xl font-bold text-ink md:text-5xl">落地效果与价值</h2>
+            <p class="mt-5 text-lg leading-8 text-ink/68">
+              基于新的评分逻辑，我重新对 12 个候选 KOL 做了排序和分层。这里的重点不是证明模型绝对正确，而是验证它能否修正旧工具最明显的业务误判：泛流量高估、雪区低估、真实内容缺失。
+            </p>
+            <p class="mt-4 text-sm font-semibold text-ink/52">提示：表格在小屏幕上可横向滑动查看更多内容。</p>
+          </div>
+          <div class="table-wrap rounded-[24px] border border-ink/10">
+            <table class="min-w-[900px] w-full text-left text-sm">
+              <thead class="bg-ink text-white">
+                <tr>
+                  <th class="px-5 py-4">KOL</th>
+                  <th class="px-5 py-4">旧模型问题</th>
+                  <th class="px-5 py-4">新定位</th>
+                  <th class="px-5 py-4">价值判断</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-ink/10 bg-white">
+                <tr>
+                  <td class="px-5 py-4 font-extrabold">@LawnKingUS</td>
+                  <td class="px-5 py-4">雪区和庭院垂类价值未被拉开</td>
+                  <td class="px-5 py-4 text-moss font-bold">转化优先</td>
+                  <td class="px-5 py-4">US Northeast + YouTube + 庭院垂类，适合主预算投入。</td>
+                </tr>
+                <tr>
+                  <td class="px-5 py-4 font-extrabold">@SmartYardLife</td>
+                  <td class="px-5 py-4">高分方向正确，但缺少真实实测约束</td>
+                  <td class="px-5 py-4 text-moss font-bold">转化优先</td>
+                  <td class="px-5 py-4">内容相关度 5/5，需从口播素材改成真实庭院实测。</td>
+                </tr>
+                <tr>
+                  <td class="px-5 py-4 font-extrabold">@WinterPrep2025</td>
+                  <td class="px-5 py-4">雪区除雪痛点未被识别</td>
+                  <td class="px-5 py-4 font-bold">场景验证</td>
+                  <td class="px-5 py-4">适合补充除雪场景，但短视频不承担主转化。</td>
+                </tr>
+                <tr>
+                  <td class="px-5 py-4 font-extrabold">@TechGadgetReview</td>
+                  <td class="px-5 py-4">泛流量被高估，目标用户浓度不足</td>
+                  <td class="px-5 py-4 font-bold">曝光备选</td>
+                  <td class="px-5 py-4">320 万粉有声量价值，但内容相关度 2/5，不占主转化预算。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-10 grid gap-5 md:grid-cols-4">
+          <article class="rounded-[24px] bg-mint p-6">
+            <h3 class="text-xl font-extrabold text-ink">转化优先</h3>
+            <p class="mt-3 text-sm leading-7 text-ink/66">预算优先投入，必须要求真实割草、除雪、避障和安装测试。</p>
+          </article>
+          <article class="rounded-[24px] bg-mint p-6">
+            <h3 class="text-xl font-extrabold text-ink">转化候选</h3>
+            <p class="mt-3 text-sm leading-7 text-ink/66">适合解释智能硬件价值，但需要补强庭院或雪区场景。</p>
+          </article>
+          <article class="rounded-[24px] bg-mint p-6">
+            <h3 class="text-xl font-extrabold text-ink">场景验证</h3>
+            <p class="mt-3 text-sm leading-7 text-ink/66">用于制造除雪痛点和真实使用场景，不承担主转化。</p>
+          </article>
+          <article class="rounded-[24px] bg-mint p-6">
+            <h3 class="text-xl font-extrabold text-ink">曝光备选</h3>
+            <p class="mt-3 text-sm leading-7 text-ink/66">可补品牌声量，但预算和目标应与转化型 KOL 分开管理。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="iteration" class="border-y border-ink/10 bg-paper py-20">
+      <div class="mx-auto max-w-7xl px-5">
+        <div class="grid gap-10 lg:grid-cols-[0.78fr_1.22fr]">
+          <div>
+            <p class="mini-label">04 · Iteration</p>
+            <h2 class="mt-4 font-serif text-4xl font-bold text-ink md:text-5xl">迭代规划与模型边界</h2>
+            <p class="mt-5 text-lg leading-8 text-ink/68">
+              v1.1 已经能解决冷启动阶段的初筛问题，但它不是最终答案。后续要靠真实投放数据持续校准，避免长期依赖主观权重。
+            </p>
+          </div>
+          <div class="grid gap-5 md:grid-cols-3">
+            <article class="rounded-[24px] border border-ink/10 bg-white p-6">
+              <p class="mini-label">Step 01</p>
+              <h3 class="mt-3 text-xl font-extrabold text-ink">记录预测</h3>
+              <p class="mt-3 text-sm leading-7 text-ink/66">保留模型分数、推荐层级和预期角色，避免事后复盘只凭感觉。</p>
+            </article>
+            <article class="rounded-[24px] border border-ink/10 bg-white p-6">
+              <p class="mini-label">Step 02</p>
+              <h3 class="mt-3 text-xl font-extrabold text-ink">回收结果</h3>
+              <p class="mt-3 text-sm leading-7 text-ink/66">补充点击、预约、下单、ROI、内容完成度等真实业务数据。</p>
+            </article>
+            <article class="rounded-[24px] border border-ink/10 bg-white p-6">
+              <p class="mini-label">Step 03</p>
+              <h3 class="mt-3 text-xl font-extrabold text-ink">校准权重</h3>
+              <p class="mt-3 text-sm leading-7 text-ink/66">预测和实际偏差超过 20% 时，复盘是受众、内容还是执行问题。</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="mt-10 grid gap-6 lg:grid-cols-2">
+          <div class="rounded-[28px] border border-ink/10 bg-white p-7">
+            <p class="mini-label">Typical Bad Case</p>
+            <h3 class="mt-3 text-2xl font-extrabold text-ink">模型可能低估垂类小号</h3>
+            <p class="mt-4 text-sm leading-7 text-ink/66">
+              某些小号粉丝不多，但粉丝非常信任博主，真实转化可能高于模型预期。下一版需要增加“单位有效受众转化”指标，避免只看总量。
+            </p>
+          </div>
+          <div class="rounded-[28px] bg-ink p-7 text-white">
+            <p class="mini-label">Boundary</p>
+            <h3 class="mt-3 text-2xl font-extrabold">适用边界</h3>
+            <p class="mt-4 text-sm leading-7 text-white/68">
+              这套模型适用于高客单硬件众筹冷启动筛选；如果产品变成低客单快消品、主市场变化，或缺少报价和内容交付能力，模型只能做初筛，不能直接拍板。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ai" class="bg-ink py-20 text-white">
+      <div class="mx-auto max-w-7xl px-5">
+        <div class="grid gap-10 lg:grid-cols-[0.78fr_1.22fr]">
+          <div>
+            <p class="mini-label">05 · AI Collaboration</p>
+            <h2 class="mt-4 font-serif text-4xl font-bold md:text-5xl">AI 协作方法论</h2>
+            <p class="mt-5 text-lg leading-8 text-white/68">
+              整个项目迭代过程中，我也沉淀了一套和 AI 协作的方法论：既用 AI 提升分析效率，也通过边界约束避免幻觉带来的业务风险。AI 是分析助手，不是决策者；最终判断由产品经理结合业务目标、数据边界和执行风险完成。
+            </p>
+            <div class="mt-8 grid gap-4">
+              <div class="rounded-2xl border border-white/10 p-5">
+                <p class="font-extrabold">1. 约束数据边界</p>
+                <p class="mt-2 text-sm leading-7 text-white/62">只允许使用现有字段；报价、转化率、用户收入等缺失信息只能写成后续补充项。</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 p-5">
+                <p class="font-extrabold">2. 让 AI 做反向审查</p>
+                <p class="mt-2 text-sm leading-7 text-white/62">主动检查权重是否极端、排序是否违背业务常识、结论是否过度推断。</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 p-5">
+                <p class="font-extrabold">3. 人负责最终取舍</p>
+                <p class="mt-2 text-sm leading-7 text-white/62">AI 可以提升理解效率，但不能替代产品经理判断预算、风险和业务优先级。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="prompt-card rounded-[28px] border border-white/10 bg-white/6 p-6">
+            <p class="mb-4 text-xs font-extrabold uppercase tracking-[0.2em] text-amber">Core Prompt</p>
+            <pre id="core-prompt-text" class="prompt-box text-sm leading-7 text-white/78">你现在扮演一名 AI 产品经理，辅助我迭代一个海外众筹 KOL 筛选评分工具。你不是最终决策者，而是分析助手。
+
+背景：GOC 团队为客单价约 3000 美金的智能庭院设备 M Series 筛选海外 KOL，产品卖点包括自动割草和自动除雪。当前有 12 位候选 KOL，字段包括平台、粉丝数、互动率、内容相关度、原综合得分、受众地区和内容形式。
+
+历史参考：上一轮 7 个合作 KOL 内容以口播讲解 + 官方素材为主，结果 0 单直接带量；23 个 PR 资源中 17 个有带量，平均 ROI 12。用户调研希望看到真实 KOL 实测视频。
+
+任务：
+1. 判断原评分公式最核心的问题；
+2. 基于现有字段设计新评分公式，必须包含“受众与产品匹配度”；
+3. 给出权重、Top KOL 变化和 @TechGadgetReview 降级原因；
+4. 反向审查方案，指出权重、数据和业务逻辑风险。
+
+限制：不要编造报价、点击率、转化率、收入画像等不存在的数据。输出要用清晰业务语言，不堆模型术语。</pre>
+            <button id="prompt-scroll-button" class="prompt-scroll-button" type="button" aria-controls="core-prompt-text">向下查看完整 Prompt</button>
+          </div>
+        </div>
+
+        <div class="mt-12 rounded-[28px] border border-white/10 bg-white/6 p-7">
+          <p class="mini-label">Methodology Summary</p>
+          <p class="mt-3 text-lg leading-8 text-white/72">
+            这个项目沉淀的方法是：先从业务目标倒推关键特征，用可解释规则快速落地，再用真实投放结果持续校准。AI 提供信息、灵感和校验，产品经理负责判断边界、做取舍和承担最终决策。
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-ink/10 bg-white py-10">
+    <div class="mx-auto flex max-w-7xl flex-col justify-between gap-4 px-5 text-sm text-ink/56 md:flex-row md:items-center">
+      <p>KOL Screener v1.1 · AI Product Portfolio</p>
+      <p>冷启动专家规则模型 · 众筹转化评分 · AI 协作方法论</p>
+    </div>
+  </footer>
+
+  <script>
+    const dimensions = {
+      audience: {
+        kicker: "Audience Fit",
+        title: "受众与产品匹配度",
+        copy: "重点看受众是否在美国核心市场，尤其是否覆盖雪区、庭院家庭和户外生活方式。雪区用户能同时使用割草和除雪能力，产品价值感更完整。"
+      },
+      vertical: {
+        kicker: "Category Mindset",
+        title: "内容垂直度和购买心智",
+        copy: "高客单产品不仅要找有需求的人，还要找粉丝愿意听他推荐设备的人。垂类账号的粉丝更容易把内容理解为购买建议。"
+      },
+      trust: {
+        kicker: "Content Trust",
+        title: "内容形式与信任感",
+        copy: "历史数据说明口播 + 官方素材存在转化风险。新模型提高真实庭院、雪地、安装、避障等实测内容的权重。"
+      },
+      reach: {
+        kicker: "Effective Reach",
+        title: "有效目标触达规模",
+        copy: "不直接看总粉丝数，而是先按目标市场折算有效受众，避免泛全球大号只靠体量碾压垂类账号。"
+      },
+      platform: {
+        kicker: "Activation Fit",
+        title: "互动质量和平台适配",
+        copy: "互动率保留但降低权重；YouTube 更适合高客单硬件长视频讲解和众筹链接承接，短视频更适合场景种草。"
+      }
+    };
+
+    document.querySelectorAll(".dimension-tab").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".dimension-tab").forEach((tab) => tab.classList.remove("tab-active"));
+        button.classList.add("tab-active");
+        const data = dimensions[button.dataset.dimension];
+        document.getElementById("dimension-kicker").textContent = data.kicker;
+        document.getElementById("dimension-title").textContent = data.title;
+        document.getElementById("dimension-copy").textContent = data.copy;
+      });
+    });
+
+    const promptBox = document.getElementById("core-prompt-text");
+    const promptButton = document.getElementById("prompt-scroll-button");
+
+    function updatePromptButton() {
+      if (!promptBox || !promptButton) return;
+      const hasOverflow = promptBox.scrollHeight > promptBox.clientHeight + 4;
+      const isAtBottom = promptBox.scrollTop + promptBox.clientHeight >= promptBox.scrollHeight - 4;
+      promptButton.hidden = !hasOverflow || isAtBottom;
+    }
+
+    if (promptBox && promptButton) {
+      promptButton.addEventListener("click", () => {
+        promptBox.scrollBy({
+          top: Math.max(240, promptBox.clientHeight * 0.72),
+          behavior: "smooth"
+        });
+      });
+      promptBox.addEventListener("scroll", updatePromptButton);
+      window.addEventListener("resize", updatePromptButton);
+      requestAnimationFrame(updatePromptButton);
+    }
+  </script>
+</body>
+</html>
